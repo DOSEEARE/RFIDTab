@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">RFIDTab</string>
+    <string name="enterLogin">Введите логин и пароль</string>
+    <string name="login">Логин</string>
+    <string name="password">Пароль</string>
+    <string name="loading">Загрузка</string>
+    <string name="home">Главная</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

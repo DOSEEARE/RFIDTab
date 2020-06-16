@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation"
+    app:startDestination="@id/onlineTasks"
+    tools:ignore="UnusedNavigation">
+
+    <fragment
+        android:id="@+id/onlineTasks"
+        android:name="com.example.rfidtab.ui.task.OnlineTaskFragment"
+        android:label="fragment_online_tasks"
+        tools:layout="@layout/fragment_online_tasks" />
+    <fragment
+        android:id="@+id/savedTasks"
+        android:name="com.example.rfidtab.ui.task.SavedTaskFragment"
+        android:label="fragment_saved_tasks"
+        tools:layout="@layout/fragment_saved_tasks" />
+
+</navigation>

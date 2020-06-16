@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginHorizontal="@dimen/marginHorizontal"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/main_task_btn"
+        android:layout_width="match_parent"
+        android:layout_height="126dp"
+        android:layout_marginVertical="8dp"
+        android:background="@drawable/bg_main_button"
+        android:drawableStart="@drawable/ic_menu"
+        android:padding="@dimen/marginHorizontal"
+        android:paddingStart="6dp"
+        android:text="Мои задания"
+        android:textColor="@color/whiteColor"
+        android:textSize="18sp" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/main_scan_btn"
+        android:layout_width="match_parent"
+        android:layout_height="126dp"
+        android:layout_marginVertical="8dp"
+        android:background="@drawable/bg_main_button"
+        android:padding="@dimen/marginHorizontal"
+        android:text="Сканировать метку"
+        android:textColor="@color/whiteColor"
+        android:textSize="18sp" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/main_task_manager_btn"
+        android:layout_width="match_parent"
+        android:layout_height="126dp"
+        android:layout_marginVertical="8dp"
+        android:background="@drawable/bg_main_button"
+        android:padding="@dimen/marginHorizontal"
+        android:text="Создать комлект для постановщика задач"
+        android:textColor="@color/whiteColor"
+        android:textSize="18sp" />
+
+</LinearLayout>
