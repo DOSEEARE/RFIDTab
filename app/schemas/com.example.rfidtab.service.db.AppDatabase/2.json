@@ -1,0 +1,126 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 2,
+    "identityHash": "d65c9d20c884941036fbab76c1fcedfa",
+    "entities": [
+      {
+        "tableName": "TaskResultEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `statusId` INTEGER NOT NULL, `statusTitle` TEXT NOT NULL, `taskTypeId` INTEGER NOT NULL, `taskTypeTitle` TEXT NOT NULL, `createdByFio` TEXT NOT NULL, `executorFio` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "statusId",
+            "columnName": "statusId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "statusTitle",
+            "columnName": "statusTitle",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "taskTypeId",
+            "columnName": "taskTypeId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "taskTypeTitle",
+            "columnName": "taskTypeTitle",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdByFio",
+            "columnName": "createdByFio",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "executorFio",
+            "columnName": "executorFio",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "TaskCardListEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`cardId` INTEGER NOT NULL, `fullName` TEXT NOT NULL, `pipeSerialNumber` INTEGER NOT NULL, `serialNoOfNipple` INTEGER NOT NULL, `couplingSerialNumber` INTEGER NOT NULL, `rfidTagNo` INTEGER NOT NULL, `comment` TEXT, PRIMARY KEY(`cardId`))",
+        "fields": [
+          {
+            "fieldPath": "cardId",
+            "columnName": "cardId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fullName",
+            "columnName": "fullName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pipeSerialNumber",
+            "columnName": "pipeSerialNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "serialNoOfNipple",
+            "columnName": "serialNoOfNipple",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "couplingSerialNumber",
+            "columnName": "couplingSerialNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rfidTagNo",
+            "columnName": "rfidTagNo",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "comment",
+            "columnName": "comment",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "cardId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd65c9d20c884941036fbab76c1fcedfa')"
+    ]
+  }
+}

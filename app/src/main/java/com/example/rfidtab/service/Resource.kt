@@ -1,4 +1,4 @@
-package com.timelysoft.kainarcourierapp.service
+package com.example.rfidtab.service
 
 
 data class Resource<out T>(val status: Status, val data: T?, val msg: String?) {

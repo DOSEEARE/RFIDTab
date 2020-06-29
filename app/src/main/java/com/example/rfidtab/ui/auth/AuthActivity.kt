@@ -7,9 +7,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.example.rfidtab.MainActivity
 import com.example.rfidtab.R
-import com.example.rfidtab.service.model.AuthModel
 import com.example.rfidtab.extension.toast
-import com.timelysoft.kainarcourierapp.service.Status
+import com.example.rfidtab.service.AppPreferences
+import com.example.rfidtab.service.model.AuthModel
+import com.example.rfidtab.service.Status
 import kotlinx.android.synthetic.main.activity_auth.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -33,6 +34,8 @@ class AuthActivity : AppCompatActivity() {
                     when (result.status) {
                         Status.SUCCESS -> {
                             toast("Успешно авторизованы!")
+                            AppPreferences.accessToken = data?.jwt
+                            AppPreferences.isLogined = true
                             startActivity(Intent(this, MainActivity::class.java))
                         }
                         Status.ERROR -> {

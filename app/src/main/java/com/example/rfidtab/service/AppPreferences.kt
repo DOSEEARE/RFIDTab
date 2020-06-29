@@ -28,6 +28,12 @@ object AppPreferences {
             it.putString("accessToken", value)
         }
 
+    var isLogined: Boolean
+        get() = preferences.getBoolean("isLogined", false)
+        set(value) = preferences.edit {
+            it.putBoolean("isLogined", value)
+        }
+
     var name: String
         get() {
             val data = preferences.getString("name", "")

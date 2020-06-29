@@ -1,14 +1,15 @@
 package com.example.rfidtab.ui.auth
 
+import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.example.rfidtab.service.NetworkRepository
 import com.example.rfidtab.service.model.AuthModel
 import com.example.rfidtab.service.response.AuthResponse
-import com.timelysoft.kainarcourierapp.service.Resource
+import com.example.rfidtab.service.Resource
 
 
-class AuthViewModel : ViewModel() {
+class AuthViewModel(application: Application) : ViewModel() {
 
     private val repository = NetworkRepository()
 

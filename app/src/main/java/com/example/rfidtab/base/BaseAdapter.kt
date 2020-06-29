@@ -1,4 +1,4 @@
-package com.timelysoft.kainarapp.base
+package com.example.rfidtab.base
 
 import android.view.LayoutInflater
 import android.view.View

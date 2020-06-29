@@ -1,7 +1,8 @@
 package com.example.rfidtab.ui.task
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
 import com.example.rfidtab.R
 import com.timelysoft.kainarcourierapp.adapter.viewpager.FragmentVPAdapter
 import kotlinx.android.synthetic.main.activity_task.*
@@ -11,15 +12,23 @@ class TaskActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task)
-        actionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = getString(R.string.task)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         initTab()
     }
 
     private fun initTab() {
         val vpAdapter = FragmentVPAdapter(supportFragmentManager)
-        vpAdapter.addFragment(OnlineTaskFragment(),"Задания")
-        vpAdapter.addFragment(SavedTaskFragment(),"Сохарненные")
+        vpAdapter.addFragment(OnlineTaskFragment(), "Задания")
+        vpAdapter.addFragment(SavedTaskFragment(), "Сохарненные")
         task_vp.adapter = vpAdapter
         task_tabl.setupWithViewPager(task_vp)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> onBackPressed()
+        }
+        return super.onOptionsItemSelected(item)
     }
 }
