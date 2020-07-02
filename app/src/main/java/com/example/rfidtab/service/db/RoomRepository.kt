@@ -25,6 +25,10 @@ class RoomRepository(private val dao: RoomDao) {
         return dao.deleteTaskById(id)
     }
 
+    fun deleteCardsById(id: Int) {
+        return dao.deleteCardsById(id)
+    }
+
     fun findCardsById(id: Int): LiveData<List<TaskCardListEntity>> {
         return dao.findCardsById(id)
     }

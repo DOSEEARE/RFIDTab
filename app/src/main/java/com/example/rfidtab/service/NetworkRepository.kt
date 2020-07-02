@@ -43,5 +43,23 @@ class NetworkRepository {
         }
     }
 
+    fun userInfo(number : Int) = liveData(Dispatchers.IO) {
+        try {
+
+            val response = RetrofitClient.apiService().userInfo(number)
+            val code = response.code()
+            when {
+                response.isSuccessful -> {
+                    emit(Resource.success(response.body()))
+                }
+                else -> {
+                    emit(Resource.error("Ошибка при загрузке данных", null))
+                }
+            }
+        } catch (e: Exception) {
+            emit(Resource.netwrok("Проблеммы с подключение интернета", null))
+        }
+    }
+
 }
 

@@ -57,6 +57,7 @@ class SavedTaskFragment : Fragment(), TaskSavedListener {
         builder.setPositiveButton("Да, удалить") { dialog, which ->
             CoroutineScope(Dispatchers.IO).launch {
                 viewModel.deleteTaskById(id)
+                viewModel.deleteCardsById(id)
                 withContext(Dispatchers.Main) {
                     initViews()
                 }

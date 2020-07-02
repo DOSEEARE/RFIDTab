@@ -3,6 +3,7 @@ package com.example.rfidtab.service
 import com.example.rfidtab.service.model.AuthModel
 import com.example.rfidtab.service.response.AuthResponse
 import com.example.rfidtab.service.response.task.TaskResponse
+import com.example.rfidtab.service.response.user.UserInfoResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -17,5 +18,9 @@ interface ApiService {
 
     @GET("task/list")
     suspend fun task(@Query("withCards") withCards: Boolean): Response<TaskResponse>
+
+    @GET("user/item")
+    suspend fun userInfo(@Query("number") number: Int): Response<UserInfoResponse>
+
 
 }

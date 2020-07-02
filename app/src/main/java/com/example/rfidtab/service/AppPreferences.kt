@@ -44,5 +44,9 @@ object AppPreferences {
             it.putString("name", value)
         }
 
+    fun clear (){
+        isLogined = false
+        accessToken = ""
+    }
 
 }

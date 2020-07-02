@@ -27,6 +27,10 @@ class TaskViewModel(application: Application) : BaseViewModel(application) {
         return db.deleteTaskById(id)
     }
 
+    fun deleteCardsById(id: Int) {
+        return db.deleteCardsById(id)
+    }
+
     fun findCardsById(id: Int): LiveData<List<TaskCardListEntity>> {
         return db.findCardsById(id)
     }
