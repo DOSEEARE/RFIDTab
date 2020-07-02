@@ -13,7 +13,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.task.TaskDetailActivity"></activity>
+        <activity android:name=".ui.profile.ProfileActivity"></activity>
+        <activity android:name=".ui.task.TaskDetailActivity" />
         <activity
             android:name=".ui.auth.AuthActivity"
             android:noHistory="true" />

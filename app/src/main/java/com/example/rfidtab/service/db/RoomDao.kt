@@ -27,9 +27,15 @@ interface RoomDao {
     @Query("SELECT * FROM TaskResultEntity")
     fun findAllTasks(): LiveData<List<TaskResultEntity>>
 
+    @Query("SELECT * FROM TaskCardListEntity WHERE TaskCardListEntity.taskId=:taskId")
+    fun findCardsById(taskId: Int): LiveData<List<TaskCardListEntity>>
+
 /*    @Query("DELETE FROM TaskResultEntity")
     fun deleteAllTasks(): LiveData<List<TaskResultEntity>>*/
 
     @Query("DELETE FROM TaskResultEntity WHERE TaskResultEntity.id=:id")
     fun deleteTaskById(id: Int)
+
+    @Query("UPDATE TaskCardListEntity SET rfidTagNo=:rfid WHERE cardId =:cardId")
+    fun updateCard(cardId: Int, rfid: Long)
 }

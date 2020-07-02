@@ -20,7 +20,7 @@ class TaskActivity : AppCompatActivity() {
     private fun initTab() {
         val vpAdapter = FragmentVPAdapter(supportFragmentManager)
         vpAdapter.addFragment(OnlineTaskFragment(), "Задания")
-        vpAdapter.addFragment(SavedTaskFragment(), "Сохарненные")
+        vpAdapter.addFragment(SavedTaskFragment(), "Сохраненные")
         task_vp.adapter = vpAdapter
         task_tabl.setupWithViewPager(task_vp)
     }

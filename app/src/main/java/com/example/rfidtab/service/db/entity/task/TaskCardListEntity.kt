@@ -11,10 +11,14 @@ import kotlinx.android.parcel.Parcelize
 data class TaskCardListEntity(
     @PrimaryKey
     @SerializedName("id") val cardId: Int,
-    @SerializedName("fullName") val fullName: String,
+    @SerializedName("fullName") val fullName: String?,
     @SerializedName("pipeSerialNumber") val pipeSerialNumber: Int,
     @SerializedName("serialNoOfNipple") val serialNoOfNipple: Int,
     @SerializedName("couplingSerialNumber") val couplingSerialNumber: Int,
-    @SerializedName("rfidTagNo") val rfidTagNo: Int,
-    @SerializedName("comment") val comment: String?
+    @SerializedName("rfidTagNo") val rfidTagNo: Long,
+    @SerializedName("comment") val comment: String?,
+    @SerializedName("accounting") val accounting: Int,
+    @SerializedName("commentProblemWithMark") val commentProblemWithMark: String?,
+    @SerializedName("taskId") val taskId: Int,
+    @SerializedName("taskTypeId") val taskTypeId: Int
 ) : Parcelable

@@ -25,7 +25,7 @@ import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class OnlineTaskFragment : Fragment(), TaskOnlineListener {
-    private val viewModel: TasksViewModel by viewModel()
+    private val viewModel: TaskViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -79,13 +79,17 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                 val a = model.cardList[index]
                 cards.add(
                     TaskCardListEntity(
-                        a.id,
+                        a.cardId,
                         a.fullName,
                         a.pipeSerialNumber,
                         a.serialNoOfNipple,
                         a.couplingSerialNumber,
                         a.rfidTagNo,
-                        a.comment
+                        a.comment,
+                        a.accounting,
+                        a.commentProblemWithMark,
+                        a.taskId,
+                        a.taskTypeId
                     )
                 )
             }
@@ -93,11 +97,12 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                 TaskResultEntity(
                     model.id,
                     model.statusId,
-                    model.statusTitle,
                     model.taskTypeId,
+                    model.statusTitle,
                     model.taskTypeTitle,
                     model.createdByFio,
-                    model.executorFio
+                    model.executorFio,
+                    model.comment
                 ), cards
             )
             viewModel.insertTaskToDb(item)

@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "d65c9d20c884941036fbab76c1fcedfa",
+    "identityHash": "4c08ccb36b8facad1e2925b2809ecec0",
     "entities": [
       {
         "tableName": "TaskResultEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `statusId` INTEGER NOT NULL, `statusTitle` TEXT NOT NULL, `taskTypeId` INTEGER NOT NULL, `taskTypeTitle` TEXT NOT NULL, `createdByFio` TEXT NOT NULL, `executorFio` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `statusId` INTEGER NOT NULL, `taskTypeId` INTEGER NOT NULL, `statusTitle` TEXT, `taskTypeTitle` TEXT, `createdByFio` TEXT, `executorFio` TEXT, `comment` TEXT, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -21,34 +21,40 @@
             "notNull": true
           },
           {
-            "fieldPath": "statusTitle",
-            "columnName": "statusTitle",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
             "fieldPath": "taskTypeId",
             "columnName": "taskTypeId",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
+            "fieldPath": "statusTitle",
+            "columnName": "statusTitle",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
             "fieldPath": "taskTypeTitle",
             "columnName": "taskTypeTitle",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "createdByFio",
             "columnName": "createdByFio",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "executorFio",
             "columnName": "executorFio",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
+          },
+          {
+            "fieldPath": "comment",
+            "columnName": "comment",
+            "affinity": "TEXT",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -62,7 +68,7 @@
       },
       {
         "tableName": "TaskCardListEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`cardId` INTEGER NOT NULL, `fullName` TEXT NOT NULL, `pipeSerialNumber` INTEGER NOT NULL, `serialNoOfNipple` INTEGER NOT NULL, `couplingSerialNumber` INTEGER NOT NULL, `rfidTagNo` INTEGER NOT NULL, `comment` TEXT, PRIMARY KEY(`cardId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`cardId` INTEGER NOT NULL, `fullName` TEXT, `pipeSerialNumber` INTEGER NOT NULL, `serialNoOfNipple` INTEGER NOT NULL, `couplingSerialNumber` INTEGER NOT NULL, `rfidTagNo` INTEGER NOT NULL, `comment` TEXT, `accounting` INTEGER NOT NULL, `commentProblemWithMark` TEXT, `taskId` INTEGER NOT NULL, `taskTypeId` INTEGER NOT NULL, PRIMARY KEY(`cardId`))",
         "fields": [
           {
             "fieldPath": "cardId",
@@ -74,7 +80,7 @@
             "fieldPath": "fullName",
             "columnName": "fullName",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "pipeSerialNumber",
@@ -105,6 +111,30 @@
             "columnName": "comment",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "accounting",
+            "columnName": "accounting",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "commentProblemWithMark",
+            "columnName": "commentProblemWithMark",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "taskId",
+            "columnName": "taskId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "taskTypeId",
+            "columnName": "taskTypeId",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -120,7 +150,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd65c9d20c884941036fbab76c1fcedfa')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4c08ccb36b8facad1e2925b2809ecec0')"
     ]
   }
 }

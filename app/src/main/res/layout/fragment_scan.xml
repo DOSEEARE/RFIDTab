@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="8dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="@dimen/marginHorizontal">
+
+        <TextView
+            android:id="@+id/scan_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/marginHorizontal"
+            android:gravity="center"
+            android:text="Скан карточки:"
+            android:textColor="@color/blue"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.example.rfidtab.custom.ExpandableTextView
+            android:id="@+id/scan_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/scan_title"
+            tools:text="Шаурма ворвалась в уличную жизнь не так давно, но настолько полюбилась, что многим стало интересно, как приготовить шаурму дома." />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/scan_edit_out"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/marginHorizontal"
+            app:layout_constraintTop_toBottomOf="@id/scan_name">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/scan_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:hint="№ RFID"
+                android:textColor="@color/blackColor" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/scan_access"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/holo_green_dark"
+            android:padding="@dimen/marginHorizontal"
+            android:src="@drawable/ic_done_black_24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="@dimen/marginHorizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="@dimen/marginHorizontal"
+            app:layout_constraintStart_toEndOf="@id/scan_dismiss"
+            app:layout_constraintTop_toBottomOf="@id/scan_edit_out" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/scan_dismiss"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="@dimen/marginHorizontal"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:backgroundTint="@color/colorPrimaryDark"
+            android:layout_marginBottom="@dimen/marginHorizontal"
+            android:src="@drawable/ic_close"
+            app:layout_constraintEnd_toStartOf="@id/scan_access"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/scan_edit_out" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

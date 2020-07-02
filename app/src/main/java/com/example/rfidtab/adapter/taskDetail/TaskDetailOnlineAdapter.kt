@@ -1,5 +1,6 @@
 package com.example.rfidtab.adapter.taskDetail
 
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.rfidtab.R
@@ -18,12 +19,12 @@ class TaskDetailOnlineAdapter(
         holder.itemView.card_name.text = "Наименование: ${item.fullName}"
         holder.itemView.card_pipe.text = "№ трубы: ${item.pipeSerialNumber}"
         holder.itemView.card_nipple.text = "№ ниппеля: ${item.serialNoOfNipple}"
-        holder.itemView.card_rfid.text = "№ муфты: ${item.rfidTagNo}"
+        holder.itemView.card_rfid.text = "№ RFID: ${item.rfidTagNo}"
+        holder.itemView.card_scan_btn.visibility = View.GONE
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return super.onCreateViewHolder(parent, R.layout.item_cards)
     }
-
 
 }
