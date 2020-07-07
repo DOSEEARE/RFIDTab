@@ -16,13 +16,14 @@ import com.example.rfidtab.service.Status
 import com.example.rfidtab.service.db.entity.task.TaskCardListEntity
 import com.example.rfidtab.service.db.entity.task.TaskResultEntity
 import com.example.rfidtab.service.db.entity.task.TaskWithCards
-import com.example.rfidtab.service.response.task.TaskResult
+import com.example.rfidtab.service.response.task.TaskResponse
 import kotlinx.android.synthetic.main.fragment_online_tasks.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import kotlin.random.Random
 
 class OnlineTaskFragment : Fragment(), TaskOnlineListener {
     private val viewModel: TaskViewModel by viewModel()
@@ -39,6 +40,13 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
         iniViews()
     }
 
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+        if (isVisibleToUser && view != null) {
+            iniViews()
+        }
+    }
+
     private fun iniViews() {
         viewModel.taskNetwork(true).observe(viewLifecycleOwner, Observer { result ->
             val data = result.data
@@ -46,7 +54,7 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
             when (result.status) {
                 Status.SUCCESS -> {
                     online_task_rv.adapter =
-                        TaskOnlineAdapter(this, data?.result as ArrayList<TaskResult>)
+                        TaskOnlineAdapter(this, data as ArrayList<TaskResponse>)
                 }
                 Status.ERROR -> {
                     Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
@@ -63,7 +71,7 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
         })
     }
 
-    override fun onItemClicked(model: TaskResult) {
+    override fun onItemClicked(model: TaskResponse) {
         val intent = Intent(activity, TaskDetailActivity::class.java)
         intent.putExtra("data", model)
         intent.putExtra("isOnline", true)
@@ -71,7 +79,7 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
     }
 
 
-    override fun onItemSaved(model: TaskResult) {
+    override fun onItemSaved(model: TaskResponse) {
         CoroutineScope(Dispatchers.IO).launch {
             val cards = ArrayList<TaskCardListEntity>()
 
@@ -79,6 +87,7 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                 val a = model.cardList[index]
                 cards.add(
                     TaskCardListEntity(
+                        Random.nextInt(0, 1000),
                         a.cardId,
                         a.fullName,
                         a.pipeSerialNumber,
@@ -93,6 +102,7 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                     )
                 )
             }
+
             val item = TaskWithCards(
                 TaskResultEntity(
                     model.id,

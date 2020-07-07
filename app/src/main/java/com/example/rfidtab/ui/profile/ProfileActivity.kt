@@ -37,7 +37,7 @@ class ProfileActivity : AppCompatActivity() {
             builder.show()
 
         }
-        viewModel.userInfoModel(0).observe(this, Observer { result ->
+        viewModel.userInfo(0).observe(this, Observer { result ->
             val data = result.data
             val msg = result.msg
             when (result.status) {

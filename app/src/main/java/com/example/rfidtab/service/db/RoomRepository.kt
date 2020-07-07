@@ -4,17 +4,13 @@ import androidx.lifecycle.LiveData
 import com.example.rfidtab.service.db.entity.task.TaskCardListEntity
 import com.example.rfidtab.service.db.entity.task.TaskResultEntity
 import com.example.rfidtab.service.db.entity.task.TaskWithCards
-import com.example.rfidtab.service.response.task.TaskResult
+import com.example.rfidtab.service.response.task.TaskResponse
 
 class RoomRepository(private val dao: RoomDao) {
 
     fun insertTaskToDB(entity: TaskWithCards) {
         dao.insertTask(entity.task)
         dao.insertCard(entity.cards)
-    }
-
-    fun updateTasks(data: TaskResult) {
-
     }
 
     fun findAllTasks(): LiveData<List<TaskResultEntity>> {

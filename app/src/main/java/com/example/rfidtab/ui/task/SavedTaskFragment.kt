@@ -43,31 +43,31 @@ class SavedTaskFragment : Fragment(), TaskSavedListener {
         })
     }
 
-    override fun onItemClicked(model: TaskResultEntity) {
-        val intent = Intent(activity, TaskDetailActivity::class.java)
-        intent.putExtra("data", model)
-        intent.putExtra("isOnline", false)
-        startActivity(intent)
-    }
+override fun onItemClicked(model: TaskResultEntity) {
+    val intent = Intent(activity, TaskDetailActivity::class.java)
+    intent.putExtra("data", model)
+    intent.putExtra("isOnline", false)
+    startActivity(intent)
+}
 
-    override fun onItemDeleted(id: Int) {
-        val builder = AlertDialog.Builder(context)
-        builder.setTitle("Удалить задание?")
+override fun onItemDeleted(id: Int) {
+    val builder = AlertDialog.Builder(context)
+    builder.setTitle("Удалить задание?")
 
-        builder.setPositiveButton("Да, удалить") { dialog, which ->
-            CoroutineScope(Dispatchers.IO).launch {
-                viewModel.deleteTaskById(id)
-                viewModel.deleteCardsById(id)
-                withContext(Dispatchers.Main) {
-                    initViews()
-                }
+    builder.setPositiveButton("Да, удалить") { dialog, which ->
+        CoroutineScope(Dispatchers.IO).launch {
+            viewModel.deleteTaskById(id)
+            viewModel.deleteCardsById(id)
+            withContext(Dispatchers.Main) {
+                initViews()
             }
         }
-
-        builder.setNegativeButton("Нет") { dialog, which ->
-            dialog.dismiss()
-        }
-        builder.show()
     }
+
+    builder.setNegativeButton("Нет") { dialog, which ->
+        dialog.dismiss()
+    }
+    builder.show()
+}
 
 }

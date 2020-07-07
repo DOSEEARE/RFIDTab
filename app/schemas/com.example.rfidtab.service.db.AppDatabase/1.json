@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "4c08ccb36b8facad1e2925b2809ecec0",
+    "identityHash": "ea525834a75b73babe24cc29a785e533",
     "entities": [
       {
         "tableName": "TaskResultEntity",
@@ -68,8 +68,14 @@
       },
       {
         "tableName": "TaskCardListEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`cardId` INTEGER NOT NULL, `fullName` TEXT, `pipeSerialNumber` INTEGER NOT NULL, `serialNoOfNipple` INTEGER NOT NULL, `couplingSerialNumber` INTEGER NOT NULL, `rfidTagNo` INTEGER NOT NULL, `comment` TEXT, `accounting` INTEGER NOT NULL, `commentProblemWithMark` TEXT, `taskId` INTEGER NOT NULL, `taskTypeId` INTEGER NOT NULL, PRIMARY KEY(`cardId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `cardId` INTEGER NOT NULL, `fullName` TEXT, `pipeSerialNumber` INTEGER NOT NULL, `serialNoOfNipple` INTEGER NOT NULL, `couplingSerialNumber` INTEGER NOT NULL, `rfidTagNo` TEXT NOT NULL, `comment` TEXT, `accounting` INTEGER NOT NULL, `commentProblemWithMark` TEXT, `taskId` INTEGER NOT NULL, `taskTypeId` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
           {
             "fieldPath": "cardId",
             "columnName": "cardId",
@@ -103,7 +109,7 @@
           {
             "fieldPath": "rfidTagNo",
             "columnName": "rfidTagNo",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -139,7 +145,7 @@
         ],
         "primaryKey": {
           "columnNames": [
-            "cardId"
+            "id"
           ],
           "autoGenerate": false
         },
@@ -150,7 +156,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4c08ccb36b8facad1e2925b2809ecec0')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ea525834a75b73babe24cc29a785e533')"
     ]
   }
 }

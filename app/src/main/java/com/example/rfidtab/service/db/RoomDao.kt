@@ -20,7 +20,6 @@ interface RoomDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertTask(entity: TaskResultEntity)
 
-    @NotNull
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertCard(entity: List<TaskCardListEntity>)
 

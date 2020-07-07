@@ -6,16 +6,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.rfidtab.R
 import com.example.rfidtab.base.GenericRecyclerAdapter
 import com.example.rfidtab.base.ViewHolder
-import com.example.rfidtab.service.response.task.TaskCardList
+import com.example.rfidtab.service.response.task.TaskCardResponse
 import kotlinx.android.synthetic.main.item_cards.view.*
 
 
 class TaskDetailOnlineAdapter(
-    items: ArrayList<TaskCardList> = ArrayList()
+    items: ArrayList<TaskCardResponse> = ArrayList()
 ) :
-    GenericRecyclerAdapter<TaskCardList>(items) {
+    GenericRecyclerAdapter<TaskCardResponse>(items) {
 
-    override fun bind(item: TaskCardList, holder: ViewHolder) {
+    override fun bind(item: TaskCardResponse, holder: ViewHolder) {
         holder.itemView.card_name.text = "Наименование: ${item.fullName}"
         holder.itemView.card_pipe.text = "№ трубы: ${item.pipeSerialNumber}"
         holder.itemView.card_nipple.text = "№ ниппеля: ${item.serialNoOfNipple}"

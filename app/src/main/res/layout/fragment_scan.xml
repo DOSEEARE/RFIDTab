@@ -35,7 +35,9 @@
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/scan_edit_out"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/scan_scanner"
             android:layout_marginTop="@dimen/marginHorizontal"
             app:layout_constraintTop_toBottomOf="@id/scan_name">
 
@@ -43,35 +45,48 @@
                 android:id="@+id/scan_edit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="number"
                 android:hint="№ RFID"
+                android:inputType="number"
                 android:textColor="@color/blackColor" />
 
         </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/scan_scanner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/holo_green_dark"
+            android:text="Скан"
+            android:padding="@dimen/marginHorizontal"
+            android:src="@drawable/ic_done_black_24dp"
+            android:textColor="@color/whiteColor"
+            app:layout_constraintBottom_toBottomOf="@id/scan_edit_out"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/scan_edit_out" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/scan_access"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/marginHorizontal"
+            android:layout_marginBottom="@dimen/marginHorizontal"
             android:backgroundTint="@android:color/holo_green_dark"
             android:padding="@dimen/marginHorizontal"
             android:src="@drawable/ic_done_black_24dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="@dimen/marginHorizontal"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginBottom="@dimen/marginHorizontal"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/scan_dismiss"
             app:layout_constraintTop_toBottomOf="@id/scan_edit_out" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/scan_dismiss"
             android:layout_width="wrap_content"
-            android:layout_marginTop="@dimen/marginHorizontal"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:backgroundTint="@color/colorPrimaryDark"
+            android:layout_marginTop="@dimen/marginHorizontal"
             android:layout_marginBottom="@dimen/marginHorizontal"
+            android:backgroundTint="@color/colorPrimaryDark"
             android:src="@drawable/ic_close"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/scan_access"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/scan_edit_out" />

@@ -8,7 +8,7 @@ import com.example.rfidtab.service.response.user.UserInfoResponse
 
 class ProfileViewModel(application: Application) : BaseViewModel(application) {
 
-    fun userInfoModel(number: Int): LiveData<Resource<UserInfoResponse>> {
+    fun userInfo(number: Int): LiveData<Resource<UserInfoResponse>> {
         return network.userInfo(number)
     }
 }

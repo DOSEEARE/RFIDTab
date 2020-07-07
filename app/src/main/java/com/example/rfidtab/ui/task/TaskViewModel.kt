@@ -7,12 +7,23 @@ import com.example.rfidtab.service.Resource
 import com.example.rfidtab.service.db.entity.task.TaskCardListEntity
 import com.example.rfidtab.service.db.entity.task.TaskResultEntity
 import com.example.rfidtab.service.db.entity.task.TaskWithCards
+import com.example.rfidtab.service.model.CardModel
+import com.example.rfidtab.service.model.TaskStatusModel
+import com.example.rfidtab.service.response.task.TaskCardResponse
 import com.example.rfidtab.service.response.task.TaskResponse
 
 class TaskViewModel(application: Application) : BaseViewModel(application) {
 
-    fun taskNetwork(withCards: Boolean): LiveData<Resource<TaskResponse>> {
+    fun taskNetwork(withCards: Boolean): LiveData<Resource<List<TaskResponse>>> {
         return network.task(withCards)
+    }
+
+    fun changeCard(model: CardModel): LiveData<Resource<TaskCardResponse>> {
+        return network.cardChange(model)
+    }
+
+    fun taskStatusChange(model: TaskStatusModel): LiveData<Resource<String>> {
+        return network.taskStatusChange(model)
     }
 
     fun insertTaskToDb(item: TaskWithCards) {

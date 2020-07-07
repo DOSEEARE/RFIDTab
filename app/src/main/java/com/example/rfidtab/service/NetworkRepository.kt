@@ -2,6 +2,8 @@ package com.example.rfidtab.service
 
 import androidx.lifecycle.liveData
 import com.example.rfidtab.service.model.AuthModel
+import com.example.rfidtab.service.model.CardModel
+import com.example.rfidtab.service.model.TaskStatusModel
 import kotlinx.coroutines.Dispatchers
 
 
@@ -18,6 +20,40 @@ class NetworkRepository {
                 }
                 else -> {
                     emit(Resource.error("Неверный логин или пароль", null))
+                }
+            }
+        } catch (e: Exception) {
+            emit(Resource.netwrok("Проблеммы с подключение интернета", null))
+        }
+    }
+
+    fun cardChange(model: CardModel) = liveData(Dispatchers.IO) {
+        try {
+            val response = RetrofitClient.apiService().changeCard(model)
+            val code = response.code()
+            when {
+                response.isSuccessful -> {
+                    emit(Resource.success(response.body()))
+                }
+                else -> {
+                    emit(Resource.error("Неверно заполнен!", null))
+                }
+            }
+        } catch (e: Exception) {
+            emit(Resource.netwrok("Проблеммы с подключение интернета", null))
+        }
+    }
+
+    fun taskStatusChange(model: TaskStatusModel) = liveData(Dispatchers.IO) {
+        try {
+            val response = RetrofitClient.apiService().taskStatusChange(model)
+            val code = response.code()
+            when {
+                response.isSuccessful -> {
+                    emit(Resource.success(response.body()))
+                }
+                else -> {
+                    emit(Resource.error("Неверно заполнен!", null))
                 }
             }
         } catch (e: Exception) {

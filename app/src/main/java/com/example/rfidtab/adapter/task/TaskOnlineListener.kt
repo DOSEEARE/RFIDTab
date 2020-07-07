@@ -1,8 +1,8 @@
 package com.example.rfidtab.adapter.task
 
-import com.example.rfidtab.service.response.task.TaskResult
+import com.example.rfidtab.service.response.task.TaskResponse
 
 interface TaskOnlineListener {
-    fun onItemClicked(model: TaskResult)
-    fun onItemSaved(model: TaskResult)
+    fun onItemClicked(model: TaskResponse)
+    fun onItemSaved(model: TaskResponse)
 }
