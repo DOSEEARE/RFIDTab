@@ -9,8 +9,8 @@ import kotlinx.android.parcel.Parcelize
 @Entity
 @Parcelize
 data class TaskCardListEntity(
-    @PrimaryKey
-    @SerializedName("id") val id: Int,
+    @PrimaryKey(autoGenerate = true)
+    val id: Int,
     @SerializedName("id") val cardId: Int,
     @SerializedName("fullName") val fullName: String?,
     @SerializedName("pipeSerialNumber") val pipeSerialNumber: Int,

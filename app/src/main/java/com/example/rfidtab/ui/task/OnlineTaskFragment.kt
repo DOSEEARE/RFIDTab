@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.example.rfidtab.R
@@ -16,7 +17,11 @@ import com.example.rfidtab.service.Status
 import com.example.rfidtab.service.db.entity.task.TaskCardListEntity
 import com.example.rfidtab.service.db.entity.task.TaskResultEntity
 import com.example.rfidtab.service.db.entity.task.TaskWithCards
+import com.example.rfidtab.service.model.TaskStatusEnum
+import com.example.rfidtab.service.model.TaskStatusModel
 import com.example.rfidtab.service.response.task.TaskResponse
+import kotlinx.android.synthetic.main.alert_add.view.*
+import kotlinx.android.synthetic.main.alert_scan.view.add_negative_btn
 import kotlinx.android.synthetic.main.fragment_online_tasks.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -80,6 +85,63 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
 
 
     override fun onItemSaved(model: TaskResponse) {
+        val dialogBuilder = AlertDialog.Builder(requireContext())
+        val inflater = this.layoutInflater
+        val view = inflater.inflate(R.layout.alert_add, null)
+        dialogBuilder.setView(view)
+        val alertDialog = dialogBuilder.create()
+
+        view.add_positive_btn.setOnClickListener {
+            saveItemToDb(model)
+            /*    if (changeTaskStatus(model)) {
+                    alertDialog.dismiss()
+                }*/
+
+        }
+
+        view.add_negative_btn.setOnClickListener {
+            alertDialog.dismiss()
+        }
+
+        alertDialog.show()
+
+    }
+
+    private fun changeTaskStatus(model: TaskResponse): Boolean {
+        var isSuccess = false
+        viewModel.taskStatusChange(
+            TaskStatusModel(
+                model.id,
+                model.taskTypeId,
+                TaskStatusEnum.takenForExecution
+            )
+        ).observe(viewLifecycleOwner, Observer { result ->
+            val data = result.data
+            val msg = result.msg
+            when (result.status) {
+                Status.SUCCESS -> {
+                    isSuccess = true
+                    toast("Вы взяли задание на исполнение")
+                    saveItemToDb(model)
+                }
+                Status.ERROR -> {
+                    Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
+                }
+                Status.NETWORK -> {
+                    Toast.makeText(context, "Проблемы с интернетом", Toast.LENGTH_LONG)
+                        .show()
+                }
+                else -> {
+                    Toast.makeText(context, "Произошла ошибка", Toast.LENGTH_LONG).show()
+                }
+            }
+
+
+        })
+        return isSuccess
+    }
+
+    private fun saveItemToDb(model: TaskResponse) {
         CoroutineScope(Dispatchers.IO).launch {
             val cards = ArrayList<TaskCardListEntity>()
 
@@ -122,6 +184,4 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
             }
         }
     }
-
-
 }

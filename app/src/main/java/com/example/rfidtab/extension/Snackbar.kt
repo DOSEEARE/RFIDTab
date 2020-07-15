@@ -1,4 +1,4 @@
-package com.timelysoft.kainarcourierapp.extension
+package com.example.rfidtab.extension
 
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar

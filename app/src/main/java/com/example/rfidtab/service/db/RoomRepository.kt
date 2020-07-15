@@ -29,7 +29,7 @@ class RoomRepository(private val dao: RoomDao) {
         return dao.findCardsById(id)
     }
 
-    fun updateCard (cardId : Int, rfidTag : Long) {
+    fun updateCard (cardId : Int, rfidTag : String) {
         return dao.updateCard(cardId, rfidTag)
     }
 }

@@ -23,11 +23,13 @@
             android:textStyle="bold"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.example.rfidtab.custom.ExpandableTextView
+        <TextView
             android:id="@+id/scan_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="18sp"
+            android:layout_marginTop="@dimen/marginHorizontal"
+            android:scrollbars="vertical"
             android:textStyle="bold"
             app:layout_constraintTop_toBottomOf="@id/scan_title"
             tools:text="Шаурма ворвалась в уличную жизнь не так давно, но настолько полюбилась, что многим стало интересно, как приготовить шаурму дома." />
@@ -42,11 +44,12 @@
             app:layout_constraintTop_toBottomOf="@id/scan_name">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/scan_edit"
+                android:id="@+id/scan_result_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:editable="false"
                 android:hint="№ RFID"
-                android:inputType="number"
+                android:inputType="none"
                 android:textColor="@color/blackColor" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -56,9 +59,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/holo_green_dark"
-            android:text="Скан"
+            android:text="@string/scan"
             android:padding="@dimen/marginHorizontal"
-            android:src="@drawable/ic_done_black_24dp"
+            android:src="@drawable/ic_done"
             android:textColor="@color/whiteColor"
             app:layout_constraintBottom_toBottomOf="@id/scan_edit_out"
             app:layout_constraintEnd_toEndOf="parent"
@@ -72,14 +75,14 @@
             android:layout_marginBottom="@dimen/marginHorizontal"
             android:backgroundTint="@android:color/holo_green_dark"
             android:padding="@dimen/marginHorizontal"
-            android:src="@drawable/ic_done_black_24dp"
+            android:src="@drawable/ic_done"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/scan_dismiss"
+            app:layout_constraintStart_toEndOf="@id/add_negative_btn"
             app:layout_constraintTop_toBottomOf="@id/scan_edit_out" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/scan_dismiss"
+            android:id="@+id/add_negative_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/marginHorizontal"

@@ -46,7 +46,7 @@ class TaskViewModel(application: Application) : BaseViewModel(application) {
         return db.findCardsById(id)
     }
 
-    fun updateCard(cardId: Int, rfidTag: Long) {
+    fun updateCard(cardId: Int, rfidTag: String) {
         return db.updateCard(cardId, rfidTag)
     }
 }

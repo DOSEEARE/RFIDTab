@@ -10,6 +10,7 @@ import com.example.rfidtab.extension.toast
 import com.example.rfidtab.service.AppPreferences
 import com.example.rfidtab.service.Status
 import com.example.rfidtab.ui.auth.AuthActivity
+import com.senter.support.openapi.StUhf
 import kotlinx.android.synthetic.main.activity_profile.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -42,10 +43,10 @@ class ProfileActivity : AppCompatActivity() {
             val msg = result.msg
             when (result.status) {
                 Status.SUCCESS -> {
-                    task_name.text = "Пользователь: ${data!!.result.fio} "
-                    task_phone.text = "Номер тел: : ${data!!.result.phone} "
-                    task_email.text = "Эл почта: ${data!!.result.email} "
-                    task_role.text = "Обязанность: ${data!!.result.roleTitle} "
+                    task_name.text = "Пользователь: ${data!!.fio} "
+                    task_phone.text = "Номер тел: : ${data.phone} "
+                    task_email.text = "Эл почта: ${data.email} "
+                    task_role.text = "Обязанность: ${data.roleTitle} "
                 }
                 Status.ERROR -> {
                     toast(msg)
@@ -58,7 +59,6 @@ class ProfileActivity : AppCompatActivity() {
                     toast("Произшла ошибка")
                 }
             }
-
 
         })
     }
