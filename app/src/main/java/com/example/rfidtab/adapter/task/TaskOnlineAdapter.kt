@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.rfidtab.R
 import com.example.rfidtab.base.GenericRecyclerAdapter
 import com.example.rfidtab.base.ViewHolder
-import com.example.rfidtab.service.model.TaskStatusEnum
+import com.example.rfidtab.service.model.enums.TaskStatusEnum
 import com.example.rfidtab.service.response.task.TaskResponse
 import kotlinx.android.synthetic.main.item_task.view.*
 
@@ -23,7 +23,7 @@ class TaskOnlineAdapter(
         holder.itemView.task_executor.text = "Исполнитель ${item.executorFio}"
         holder.itemView.task_type.text = "Тип: ${item.taskTypeTitle}"
 
-        when (item.taskTypeId) {
+        when (item.statusId) {
             TaskStatusEnum.sentToExecutor -> holder.itemView.task_status_tv.setBackgroundColor(Color.GREEN)
             TaskStatusEnum.takenForExecution -> holder.itemView.task_status_tv.setBackgroundColor(Color.RED)
             TaskStatusEnum.savedToLocal -> holder.itemView.task_status_tv.setBackgroundColor(Color.BLUE)
@@ -34,7 +34,6 @@ class TaskOnlineAdapter(
         holder.itemView.task_status_tv.text = item.statusTitle
 
         holder.itemView.task_save_btn.visibility = View.VISIBLE
-        holder.itemView.task_delet_btn.visibility = View.GONE
 
         holder.itemView.task_save_btn.setOnClickListener {
             listener.onItemSaved(item)

@@ -5,9 +5,10 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.example.rfidtab.service.db.entity.task.CardImagesEntity
+import com.example.rfidtab.service.db.entity.task.OverCardsEntity
 import com.example.rfidtab.service.db.entity.task.TaskCardListEntity
 import com.example.rfidtab.service.db.entity.task.TaskResultEntity
-import org.jetbrains.annotations.NotNull
 
 @Dao
 interface RoomDao {
@@ -23,8 +24,20 @@ interface RoomDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertCard(entity: List<TaskCardListEntity>)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertImage(entity: CardImagesEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertOverCard(entity: OverCardsEntity)
+
     @Query("SELECT * FROM TaskResultEntity")
     fun findAllTasks(): LiveData<List<TaskResultEntity>>
+
+    @Query("SELECT * FROM CardImagesEntity WHERE CardImagesEntity.cardId=:id")
+    fun findAllImages(id: Int): LiveData<List<CardImagesEntity>>
+
+    @Query("SELECT * FROM OverCardsEntity WHERE OverCardsEntity.taskId=:id")
+    fun findOverCardById(id: Int): LiveData<List<OverCardsEntity>>
 
     @Query("SELECT * FROM TaskCardListEntity WHERE TaskCardListEntity.taskId=:taskId")
     fun findCardsById(taskId: Int): LiveData<List<TaskCardListEntity>>
@@ -40,4 +53,7 @@ interface RoomDao {
 
     @Query("UPDATE TaskCardListEntity SET rfidTagNo=:rfid WHERE cardId =:cardId")
     fun updateCard(cardId: Int, rfid: String)
+
+    @Query("UPDATE TaskCardListEntity SET commentProblemWithMark=:errorComment WHERE cardId =:cardId")
+    fun updateErrorComment(cardId: Int, errorComment: String)
 }

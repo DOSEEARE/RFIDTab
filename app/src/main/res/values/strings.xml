@@ -11,4 +11,8 @@
     <string name="_0042515">0042515</string>
     <string name="add_warning">Вы сохраняете задачу и берете на выполнение?</string>
     <string name="scan">Скан</string>
+    <string name="add_over">Добавить излишное</string>
+    <string name="send_to_check">Отправить на проверку</string>
+    <string name="save">Сохранить</string>
+    <string name="add_over_card">Добавление лишней карточки:</string>
 </resources>

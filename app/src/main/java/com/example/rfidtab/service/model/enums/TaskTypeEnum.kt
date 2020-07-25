@@ -1,4 +1,4 @@
-package com.example.rfidtab.service.model
+package com.example.rfidtab.service.model.enums
 
 object TaskTypeEnum {
     var marking = 1

@@ -3,6 +3,7 @@ package com.example.rfidtab.service
 import com.example.rfidtab.service.model.AuthModel
 import com.example.rfidtab.service.model.CardModel
 import com.example.rfidtab.service.model.TaskStatusModel
+import com.example.rfidtab.service.model.overlist.TaskOverCards
 import com.example.rfidtab.service.response.AuthResponse
 import com.example.rfidtab.service.response.task.TaskCardResponse
 import com.example.rfidtab.service.response.task.TaskResponse
@@ -15,6 +16,9 @@ import retrofit2.http.Query
 
 
 interface ApiService {
+
+    @POST("inventory/add-over")
+    suspend fun overCards(@Body model: TaskOverCards): Response<String>
 
     @POST("auth/login")
     suspend fun auth(@Body model: AuthModel): Response<AuthResponse>

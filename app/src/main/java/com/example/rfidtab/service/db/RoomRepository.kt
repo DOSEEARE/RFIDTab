@@ -1,16 +1,29 @@
 package com.example.rfidtab.service.db
 
 import androidx.lifecycle.LiveData
-import com.example.rfidtab.service.db.entity.task.TaskCardListEntity
-import com.example.rfidtab.service.db.entity.task.TaskResultEntity
-import com.example.rfidtab.service.db.entity.task.TaskWithCards
-import com.example.rfidtab.service.response.task.TaskResponse
+import com.example.rfidtab.service.db.entity.task.*
 
 class RoomRepository(private val dao: RoomDao) {
 
     fun insertTaskToDB(entity: TaskWithCards) {
         dao.insertTask(entity.task)
         dao.insertCard(entity.cards)
+    }
+
+    fun insertImage(entity: CardImagesEntity) {
+        dao.insertImage(entity)
+    }
+
+    fun insertOverCard(entity: OverCardsEntity) {
+        dao.insertOverCard(entity)
+    }
+
+    fun findImagesById(id: Int) {
+        dao.findAllImages(id)
+    }
+
+    fun findOverCardById(id: Int): LiveData<List<OverCardsEntity>> {
+       return dao.findOverCardById(id)
     }
 
     fun findAllTasks(): LiveData<List<TaskResultEntity>> {
@@ -29,7 +42,11 @@ class RoomRepository(private val dao: RoomDao) {
         return dao.findCardsById(id)
     }
 
-    fun updateCard (cardId : Int, rfidTag : String) {
+    fun updateCard(cardId: Int, rfidTag: String) {
         return dao.updateCard(cardId, rfidTag)
+    }
+
+    fun updateErrorComment(cardId: Int, comment: String) {
+        return dao.updateErrorComment(cardId, comment)
     }
 }

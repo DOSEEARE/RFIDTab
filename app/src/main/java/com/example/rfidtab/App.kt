@@ -21,7 +21,6 @@ class App : Application() {
 
     }
 
-
     private fun getModule(): List<Module> {
         return listOf(viewModelModule)
     }

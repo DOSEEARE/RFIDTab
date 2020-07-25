@@ -36,17 +36,6 @@
             app:layout_constraintEnd_toEndOf="@id/task_status_tv"
             app:layout_constraintTop_toBottomOf="@id/task_status_tv" />
 
-        <ImageButton
-            android:id="@+id/task_delet_btn"
-            android:layout_width="23dp"
-            android:layout_height="32dp"
-            android:background="@android:color/transparent"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_delete"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/task_save_btn"
-            app:layout_constraintTop_toBottomOf="@id/task_status_tv"/>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -4,6 +4,7 @@ import androidx.lifecycle.liveData
 import com.example.rfidtab.service.model.AuthModel
 import com.example.rfidtab.service.model.CardModel
 import com.example.rfidtab.service.model.TaskStatusModel
+import com.example.rfidtab.service.model.overlist.TaskOverCards
 import kotlinx.coroutines.Dispatchers
 
 
@@ -13,6 +14,25 @@ class NetworkRepository {
         try {
 
             val response = RetrofitClient.apiService().auth(model)
+            val code = response.code()
+            when {
+                response.isSuccessful -> {
+                    emit(Resource.success(response.body()))
+                }
+                else -> {
+                    emit(Resource.error("Неверный логин или пароль", null))
+                }
+            }
+        } catch (e: Exception) {
+            emit(Resource.netwrok("Проблеммы с подключение интернета", null))
+        }
+    }
+
+    fun overCards(model: TaskOverCards) = liveData(Dispatchers.IO) {
+        try {
+
+            val response = RetrofitClient.apiService().overCards(model)
+
             val code = response.code()
             when {
                 response.isSuccessful -> {

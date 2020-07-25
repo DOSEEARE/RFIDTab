@@ -8,12 +8,12 @@
 
     <fragment
         android:id="@+id/onlineTasks"
-        android:name="com.example.rfidtab.ui.task.OnlineTaskFragment"
+        android:name="com.example.rfidtab.ui.task.fragment.OnlineTaskFragment"
         android:label="fragment_online_tasks"
         tools:layout="@layout/fragment_online_tasks" />
     <fragment
         android:id="@+id/savedTasks"
-        android:name="com.example.rfidtab.ui.task.SavedTaskFragment"
+        android:name="com.example.rfidtab.ui.task.fragment.SavedTaskFragment"
         android:label="fragment_saved_tasks"
         tools:layout="@layout/fragment_saved_tasks" />
 

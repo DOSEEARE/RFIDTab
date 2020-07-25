@@ -4,4 +4,6 @@ import com.example.rfidtab.service.db.entity.task.TaskCardListEntity
 
 interface TaskDetailListener {
     fun scantBtnClicked(model: TaskCardListEntity)
+
+    fun cameraBtnClicked(model: TaskCardListEntity)
 }

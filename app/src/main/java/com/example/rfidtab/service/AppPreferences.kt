@@ -34,6 +34,12 @@ object AppPreferences {
             it.putBoolean("isLogined", value)
         }
 
+    var isOnline: Boolean
+        get() = preferences.getBoolean("isOnline", false)
+        set(value) = preferences.edit {
+            it.putBoolean("isOnline", value)
+        }
+
     var name: String
         get() {
             val data = preferences.getString("name", "")

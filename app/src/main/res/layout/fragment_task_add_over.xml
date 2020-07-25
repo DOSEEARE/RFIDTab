@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.task.fragment.TaskAddOverFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/over_tittle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/marginHorizontal"
+            android:gravity="center"
+            android:text="@string/add_over_card"
+            android:textColor="@color/blue"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/marginHorizontal"
+            android:layout_marginTop="@dimen/marginHorizontal"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toTopOf="@id/over_buttons_container"
+            app:layout_constraintTop_toBottomOf="@id/over_tittle">
+
+            <Button
+                android:id="@+id/over_pipe_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_blue_button"
+                android:padding="8dp"
+                android:text="Добавить № трубы"
+                android:textColor="@color/whiteColor" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/over_pipe_out"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginHorizontal">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/over_pipe_in"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="№ Трубы"
+                    android:textColor="@color/blackColor" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:layout_marginVertical="@dimen/marginHorizontal"
+                android:background="#919191" />
+
+            <Button
+                android:id="@+id/over_nipple_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_blue_button"
+                android:padding="8dp"
+                android:text="Добавить № ниппеля"
+                android:textColor="@color/whiteColor" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/over_nipple_out"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginHorizontal">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/over_nipple_in"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="№ ниппеля"
+                    android:textColor="@color/blackColor" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:layout_marginVertical="@dimen/marginHorizontal"
+                android:background="#919191" />
+
+            <Button
+                android:id="@+id/over_couple_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_blue_button"
+                android:padding="8dp"
+                android:text="Добавить № муфты"
+                android:textColor="@color/whiteColor" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/over_couple_out"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginHorizontal">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/over_couple_in"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="№ Муфты"
+                    android:textColor="@color/blackColor" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:layout_marginVertical="@dimen/marginHorizontal"
+                android:background="#919191" />
+
+            <Button
+                android:id="@+id/over_rfid_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_blue_button"
+                android:padding="8dp"
+                android:text="Добавить № RFID"
+                android:textColor="@color/whiteColor" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/over_rfid_out"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginHorizontal">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/over_rfid_in"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:editable="false"
+                        android:hint="№ RFID"
+                        android:inputType="none"
+                        android:textColor="@color/blackColor" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <Button
+                    android:id="@+id/over_scan_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@android:color/holo_green_dark"
+                    android:padding="@dimen/marginHorizontal"
+                    android:src="@drawable/ic_done"
+                    android:text="@string/scan"
+                    android:textColor="@color/whiteColor"
+                    app:layout_constraintBottom_toBottomOf="@id/over_rfid_out"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/over_rfid_out" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:layout_marginVertical="@dimen/marginHorizontal"
+                android:background="#919191" />
+
+            <Button
+                android:id="@+id/over_comment_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_blue_button"
+                android:padding="8dp"
+                android:text="Добавить № комментарии"
+                android:textColor="@color/whiteColor" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/over_comment_out"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginHorizontal">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/over_comment_in"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Комментарии"
+                    android:textColor="@color/blackColor" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:layout_marginVertical="@dimen/marginHorizontal"
+                android:background="#919191" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/over_buttons_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <Button
+                android:id="@+id/over_dismiss_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_weight="5"
+                android:background="@color/colorPrimary"
+                android:text="отмена"
+                android:textColor="@color/whiteColor" />
+
+            <Button
+                android:id="@+id/over_save_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_weight="5"
+                android:background="@android:color/holo_green_dark"
+                android:text="Сохранить"
+                android:textColor="@color/whiteColor" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

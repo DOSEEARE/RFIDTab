@@ -1,4 +1,4 @@
-package com.example.rfidtab.ui.task
+package com.example.rfidtab.ui.task.fragment
 
 import android.app.AlertDialog
 import android.content.Intent
@@ -12,6 +12,8 @@ import com.example.rfidtab.R
 import com.example.rfidtab.adapter.task.TaskSavedAdapter
 import com.example.rfidtab.adapter.task.TaskSavedListener
 import com.example.rfidtab.service.db.entity.task.TaskResultEntity
+import com.example.rfidtab.ui.task.TaskDetailActivity
+import com.example.rfidtab.ui.task.TaskViewModel
 import kotlinx.android.synthetic.main.fragment_saved_tasks.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

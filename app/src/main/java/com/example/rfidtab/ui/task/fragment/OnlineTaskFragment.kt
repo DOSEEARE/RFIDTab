@@ -1,4 +1,4 @@
-package com.example.rfidtab.ui.task
+package com.example.rfidtab.ui.task.fragment
 
 import android.content.Intent
 import android.os.Bundle
@@ -17,9 +17,11 @@ import com.example.rfidtab.service.Status
 import com.example.rfidtab.service.db.entity.task.TaskCardListEntity
 import com.example.rfidtab.service.db.entity.task.TaskResultEntity
 import com.example.rfidtab.service.db.entity.task.TaskWithCards
-import com.example.rfidtab.service.model.TaskStatusEnum
+import com.example.rfidtab.service.model.enums.TaskStatusEnum
 import com.example.rfidtab.service.model.TaskStatusModel
 import com.example.rfidtab.service.response.task.TaskResponse
+import com.example.rfidtab.ui.task.TaskDetailActivity
+import com.example.rfidtab.ui.task.TaskViewModel
 import kotlinx.android.synthetic.main.alert_add.view.*
 import kotlinx.android.synthetic.main.alert_scan.view.add_negative_btn
 import kotlinx.android.synthetic.main.fragment_online_tasks.*
@@ -92,10 +94,8 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
         val alertDialog = dialogBuilder.create()
 
         view.add_positive_btn.setOnClickListener {
-            saveItemToDb(model)
-            /*    if (changeTaskStatus(model)) {
-                    alertDialog.dismiss()
-                }*/
+            changeTaskStatus(model)
+            alertDialog.dismiss()
 
         }
 
@@ -107,8 +107,7 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
 
     }
 
-    private fun changeTaskStatus(model: TaskResponse): Boolean {
-        var isSuccess = false
+    private fun changeTaskStatus(model: TaskResponse) {
         viewModel.taskStatusChange(
             TaskStatusModel(
                 model.id,
@@ -120,7 +119,7 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
             val msg = result.msg
             when (result.status) {
                 Status.SUCCESS -> {
-                    isSuccess = true
+
                     toast("Вы взяли задание на исполнение")
                     saveItemToDb(model)
                 }
@@ -138,7 +137,6 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
 
 
         })
-        return isSuccess
     }
 
     private fun saveItemToDb(model: TaskResponse) {
@@ -168,9 +166,9 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
             val item = TaskWithCards(
                 TaskResultEntity(
                     model.id,
-                    model.statusId,
+                    TaskStatusEnum.takenForExecution,
                     model.taskTypeId,
-                    model.statusTitle,
+                    "Принято на исполнение",
                     model.taskTypeTitle,
                     model.createdByFio,
                     model.executorFio,

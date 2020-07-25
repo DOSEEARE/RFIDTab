@@ -1,6 +1,11 @@
 package com.example.rfidtab.ui.task
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
@@ -10,25 +15,29 @@ import androidx.lifecycle.Observer
 import com.example.rfidtab.R
 import com.example.rfidtab.adapter.taskDetail.TaskDetailListener
 import com.example.rfidtab.adapter.taskDetail.TaskDetailOnlineAdapter
+import com.example.rfidtab.adapter.taskDetail.TaskDetailOverAdapter
 import com.example.rfidtab.adapter.taskDetail.TaskDetailSavedAdapter
 import com.example.rfidtab.extension.loadingHide
 import com.example.rfidtab.extension.loadingShow
 import com.example.rfidtab.extension.toast
 import com.example.rfidtab.service.Status
-import com.example.rfidtab.service.db.entity.task.TaskCardListEntity
-import com.example.rfidtab.service.db.entity.task.TaskResultEntity
-import com.example.rfidtab.service.db.entity.task.TaskWithCards
+import com.example.rfidtab.service.db.entity.task.*
 import com.example.rfidtab.service.model.CardModel
-import com.example.rfidtab.service.model.TaskStatusEnum
 import com.example.rfidtab.service.model.TaskStatusModel
+import com.example.rfidtab.service.model.enums.TaskStatusEnum
+import com.example.rfidtab.service.model.enums.TaskTypeEnum
+import com.example.rfidtab.service.model.overlist.OverCards
+import com.example.rfidtab.service.model.overlist.TaskOverCards
 import com.example.rfidtab.service.response.task.TaskCardResponse
 import com.example.rfidtab.service.response.task.TaskResponse
+import com.example.rfidtab.ui.task.fragment.TaskAddOverFragment
 import com.example.rfidtab.util.DataTransfer
+import com.example.rfidtab.util.MyUtil
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.senter.support.openapi.StUhf
 import kotlinx.android.synthetic.main.activity_task_detail_activity.*
 import kotlinx.android.synthetic.main.alert_add.view.*
-import kotlinx.android.synthetic.main.alert_scan.*
 import kotlinx.android.synthetic.main.alert_scan.view.*
 import kotlinx.android.synthetic.main.alert_scan.view.add_negative_btn
 import kotlinx.coroutines.CoroutineScope
@@ -36,6 +45,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.io.File
+import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.random.Random
 
 class TaskDetailActivity : AppCompatActivity(), TaskDetailListener {
@@ -43,6 +55,10 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener {
     private lateinit var savedData: TaskResultEntity
     private var cardList = ArrayList<TaskCardListEntity>()
     private val viewModel: TaskViewModel by viewModel()
+    private lateinit var filePath: File
+    private var CAMERA_REQUEST_CODE = 1
+    private var cardId = 0
+
     private var tag: String = String()
 
 
@@ -56,15 +72,19 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener {
     }
 
 
+    // 1 активити на Online и Saved здесь идёт определение
+    // telegram: @doseeare. If u have some problem, i can help you.
+
     private fun initViews() {
         val isOnline = intent.getBooleanExtra("isOnline", true)
 
         if (isOnline) {
-            val model = intent.getParcelableExtra<TaskResponse>("data")
+            val model = intent.getSerializableExtra("data") as TaskResponse
             onlineData = model
             task_detail_createdby.text = "Постановщик: ${onlineData.createdByFio}"
             task_detail_executor.text = "Исполнитель: ${onlineData.executorFio}"
             task_detail_status.text = "Статус: ${onlineData.statusTitle}"
+            task_detail_type.text = "Тип задания: ${onlineData.taskTypeTitle}"
             task_detail_send_btn.visibility = View.GONE
             task_detail_rv.adapter =
                 TaskDetailOnlineAdapter(onlineData.cardList as ArrayList<TaskCardResponse>)
@@ -72,14 +92,23 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener {
             val model = intent.getParcelableExtra<TaskResultEntity>("data")
             savedData = model
 
+            //добавить излишное в inventory
+            if (savedData.taskTypeId == TaskTypeEnum.inventory) {
+                initOverCards()
+                task_detail_add_over.visibility = View.VISIBLE
+                task_detail_add_over.setOnClickListener {
+                    addOverCards()
+                }
+            }
+
             task_detail_save_btn.visibility = View.GONE
             task_detail_createdby.text = "Постановщик: ${savedData.createdByFio}"
             task_detail_executor.text = "Исполнитель: ${savedData.executorFio}"
             task_detail_status.text = "Статус: ${savedData.statusTitle}"
+            task_detail_type.text = "Тип задания: ${savedData.taskTypeTitle}"
             viewModel.findCardsById(savedData.id).observe(this, Observer {
                 cardList = it as ArrayList<TaskCardListEntity>
-                task_detail_rv.adapter =
-                    TaskDetailSavedAdapter(this, it)
+                task_detail_rv.adapter = TaskDetailSavedAdapter(this, savedData.taskTypeId, it)
             })
 
         }
@@ -90,6 +119,8 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener {
             val view = inflater.inflate(R.layout.alert_add, null)
             dialogBuilder.setView(view)
             val alertDialog = dialogBuilder.create()
+
+            alertDialog.setCancelable(false)
 
             view.add_positive_btn.setOnClickListener {
                 if (changeTaskStatus(onlineData)) {
@@ -106,6 +137,12 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener {
 
         }
 
+    }
+
+    private fun initOverCards() {
+        viewModel.findOverCardById(savedData.id).observe(this, Observer {
+            task_detail_over_rv.adapter = TaskDetailOverAdapter(it as ArrayList<OverCardsEntity>)
+        })
     }
 
     private fun sendToCheck() {
@@ -139,40 +176,43 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener {
                             }
                         }
                     })
+
             }
 
             viewModel.taskStatusChange(
                 TaskStatusModel(
                     savedData.id,
                     savedData.taskTypeId,
-                    TaskStatusEnum.createdEdited
+                    TaskStatusEnum.savedToLocal
                 )
-            )
-                .observe(this, Observer { result ->
-                    val data = result.data
-                    val msg = result.msg
-                    when (result.status) {
-                        Status.SUCCESS -> {
-                            loadingHide()
-                            toast("$data")
-                        }
-                        Status.ERROR -> {
-                            loadingHide()
-                            toast("$data")
-                        }
-                        Status.NETWORK -> {
-                            loadingHide()
-                            toast("$data")
-
-                        }
-                        else -> {
-                            loadingHide()
-                            toast("$data")
+            ).observe(this, Observer { result ->
+                val data = result.data
+                val msg = result.msg
+                when (result.status) {
+                    Status.SUCCESS -> {
+                        loadingHide()
+                        toast("$data")
+                        CoroutineScope(Dispatchers.IO).launch {
+                            viewModel.deleteTaskById(savedData.id)
+                            viewModel.deleteCardsById(savedData.id)
                         }
                     }
+                    Status.ERROR -> {
+                        loadingHide()
+                        toast("$data")
+                    }
+                    Status.NETWORK -> {
+                        loadingHide()
+                        toast("$data")
+                    }
+                    else -> {
+                        loadingHide()
+                        toast("$data")
+                    }
+                }
 
-                })
-
+            })
+            sendOverCards()
         }
     }
 
@@ -184,6 +224,7 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener {
         val alertDialog = dialogBuilder.create()
         view.scan_name.text = model.fullName
 
+        //Сохранение карточки
         view.scan_access.setOnClickListener {
             if (tag.isNotEmpty()) {
                 CoroutineScope(Dispatchers.IO).launch {
@@ -194,12 +235,18 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener {
                     }
                 }
             } else {
-                scan_edit_out.error = "Пусто"
+                CoroutineScope(Dispatchers.IO).launch {
+                    viewModel.updateErrorComment(model.cardId, view.scan_comment_et.text.toString())
+                    runOnUiThread {
+                        alertDialog.dismiss()
+                    }
+                }
             }
         }
 
+        //Чтение со сканера
         view.scan_scanner.setOnClickListener {
-            readTag(view.scan_result_et)
+            readTag(view.scan_result_et, view.scan_comment_out)
         }
 
         view.add_negative_btn.setOnClickListener {
@@ -209,7 +256,43 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener {
         alertDialog.show()
     }
 
-//изменить статус
+    override fun cameraBtnClicked(model: TaskCardListEntity) {
+        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        MyUtil().createCardFolder()
+        filePath = File(
+            Environment.getExternalStorageDirectory().path + "/RFID cards",
+            "/card ${Calendar.getInstance().time}.jpg"
+        )
+        cardId = model.cardId
+
+        val uri = Uri.fromFile(filePath)
+
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
+        startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == CAMERA_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+
+                toast("Фото сделан")
+                CoroutineScope(Dispatchers.IO).launch {
+                    viewModel.insertImage(
+                        CardImagesEntity(
+                            Random.nextInt(1, 1000),
+                            cardId,
+                            filePath.absolutePath
+                        )
+                    )
+                }
+            } else {
+                toast("Доступ к камере запрещён")
+            }
+        }
+    }
+
+    //изменить статус
     private fun changeTaskStatus(model: TaskResponse): Boolean {
         var isSucces = false
         viewModel.taskStatusChange(
@@ -271,9 +354,9 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener {
             val item = TaskWithCards(
                 TaskResultEntity(
                     model.id,
-                    model.statusId,
+                    TaskStatusEnum.takenForExecution,
                     model.taskTypeId,
-                    model.statusTitle,
+                    "Принято на исполнение",
                     model.taskTypeTitle,
                     model.createdByFio,
                     model.executorFio,
@@ -289,61 +372,105 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener {
     }
 
     // чтение RFID метки на кнопку скан
-    private fun readTag(view: TextInputEditText) {
+    private fun readTag(resultView: TextInputEditText, commentView: TextInputLayout) {
         val bank = StUhf.Bank.TID
         val ptr = 0
         val cnt = 1
         val pwd = "00000000"
         val acsPass = StUhf.AccessPassword.getNewInstance(DataTransfer.getBytesByHexString(pwd))
 
-        val iso18k6c: StUhf.InterrogatorModelDs.UmdOnIso18k6cRead =
-            object : StUhf.InterrogatorModelDs.UmdOnIso18k6cRead() {
-                override fun onFailed(error: StUhf.InterrogatorModelDs.UmdErrorCode) {
-                    runOnUiThread {
-                        Toast.makeText(applicationContext, "Нет метки!!!", Toast.LENGTH_LONG).show()
-                    }
-                }
-
-                override fun onTagRead(
-                    tagCount: Int,
-                    uii: StUhf.UII,
-                    data: ByteArray,
-                    frequencyPoint: StUhf.InterrogatorModelDs.UmdFrequencyPoint,
-                    antennaId: Int,
-                    readCount: Int
-                ) {
-                    tag = DataTransfer.xGetString(uii.bytes)
-
-                    if (tag.isNotEmpty()) {
+        try {
+            val iso18k6c: StUhf.InterrogatorModelDs.UmdOnIso18k6cRead =
+                object : StUhf.InterrogatorModelDs.UmdOnIso18k6cRead() {
+                    override fun onFailed(error: StUhf.InterrogatorModelDs.UmdErrorCode) {
                         runOnUiThread {
-                            view.setText(tag)
+                            Toast.makeText(applicationContext, "Нет метки!!!", Toast.LENGTH_LONG)
+                                .show()
+                            commentView.visibility = View.VISIBLE
+                        }
+                    }
+
+                    override fun onTagRead(
+                        tagCount: Int,
+                        uii: StUhf.UII,
+                        data: ByteArray,
+                        frequencyPoint: StUhf.InterrogatorModelDs.UmdFrequencyPoint,
+                        antennaId: Int,
+                        readCount: Int
+                    ) {
+                        tag = DataTransfer.xGetString(uii.bytes)
+
+                        if (tag.isNotEmpty()) {
+                            runOnUiThread {
+                                resultView.setText(tag)
+                            }
                         }
                     }
                 }
-            }
 
-        val uhf: StUhf =
-            StUhf.getUhfInstance(StUhf.InterrogatorModel.InterrogatorModelD1).apply {
-                init()
+            val uhf: StUhf =
+                StUhf.getUhfInstance(StUhf.InterrogatorModel.InterrogatorModelD1).apply {
+                    init()
 
-            }
+                }
 
-        uhf.getInterrogatorAs(StUhf.InterrogatorModelDs.InterrogatorModelD1::class.java)
-            .iso18k6cRead(
-                acsPass,
-                bank,
-                ptr,
-                cnt,
-                iso18k6c
-            )
+            uhf.getInterrogatorAs(StUhf.InterrogatorModelDs.InterrogatorModelD1::class.java)
+                .iso18k6cRead(
+                    acsPass,
+                    bank,
+                    ptr,
+                    cnt,
+                    iso18k6c
+                )
 
-
-        /*} catch (e: Exception) {
+        } catch (e: Exception) {
             Toast.makeText(this, "Нет метки!", Toast.LENGTH_SHORT).show()
             Log.w("RFID SCANNER", e.message)
-        }*/
+        }
     }
 
+    private fun addOverCards() {
+        val fragment = TaskAddOverFragment(savedData.id)
+        fragment.show(supportFragmentManager, "AddOverCard")
+    }
+
+    private fun sendOverCards() {
+        if (savedData.taskTypeId == TaskTypeEnum.inventory) {
+            val list = ArrayList<OverCards>()
+            viewModel.findOverCardById(savedData.id).observe(this, Observer {
+                it.forEach {
+                    list.add(OverCards(it.pipeSerialNumber, it.serialNoOfNipple, it.couplingSerialNumber, it.rfidTagNo, it.comment))
+                }
+            })
+
+            val model = TaskOverCards(savedData.id, list)
+
+            viewModel.sendOverCards(model).observe(this, Observer { result ->
+                val data = result.data
+                val msg = result.msg
+                when (result.status) {
+                    Status.SUCCESS -> {
+                        loadingHide()
+                        toast("$data")
+                    }
+                    Status.ERROR -> {
+                        loadingHide()
+                        toast("$data")
+                    }
+                    Status.NETWORK -> {
+                        loadingHide()
+                        toast("$data")
+                    }
+                    else -> {
+                        loadingHide()
+                        toast("$data")
+                    }
+                }
+
+
+            })
+        }
+    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
@@ -351,4 +478,6 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener {
         }
         return super.onOptionsItemSelected(item)
     }
+
+
 }

@@ -8,7 +8,7 @@ import com.example.rfidtab.R
 import com.example.rfidtab.base.GenericRecyclerAdapter
 import com.example.rfidtab.base.ViewHolder
 import com.example.rfidtab.service.db.entity.task.TaskResultEntity
-import com.example.rfidtab.service.model.TaskStatusEnum
+import com.example.rfidtab.service.model.enums.TaskStatusEnum
 import kotlinx.android.synthetic.main.item_task.view.*
 
 
@@ -23,7 +23,7 @@ class TaskSavedAdapter(
         holder.itemView.task_executor.text = "Исполнитель ${item.executorFio}"
         holder.itemView.task_type.text = "Тип: ${item.taskTypeTitle}"
 
-        when (item.taskTypeId) {
+        when (item.statusId) {
             TaskStatusEnum.sentToExecutor -> holder.itemView.task_status_tv.setBackgroundColor(Color.GREEN)
             TaskStatusEnum.takenForExecution -> holder.itemView.task_status_tv.setBackgroundColor(
                 Color.RED
@@ -31,7 +31,9 @@ class TaskSavedAdapter(
             TaskStatusEnum.savedToLocal -> holder.itemView.task_status_tv.setBackgroundColor(Color.BLUE)
             TaskStatusEnum.done -> holder.itemView.task_status_tv.setBackgroundColor(Color.YELLOW)
             TaskStatusEnum.createdEdited -> holder.itemView.task_status_tv.setBackgroundColor(Color.CYAN)
-            TaskStatusEnum.sentForRevision -> holder.itemView.task_status_tv.setBackgroundColor(Color.GRAY)
+            TaskStatusEnum.sentForRevision -> holder.itemView.task_status_tv.setBackgroundColor(
+                Color.GRAY
+            )
         }
 
         holder.itemView.task_status_tv.text = item.statusTitle
@@ -41,9 +43,6 @@ class TaskSavedAdapter(
             listener.onItemClicked(item)
         }
 
-        holder.itemView.task_delet_btn.setOnClickListener {
-            listener.onItemDeleted(item.id)
-        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {

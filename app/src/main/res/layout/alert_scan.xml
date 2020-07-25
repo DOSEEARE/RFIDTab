@@ -54,6 +54,27 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/scan_comment_out"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/marginHorizontal"
+            app:layout_constraintEnd_toStartOf="@id/scan_scanner"
+            app:layout_constraintStart_toStartOf="parent"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/scan_edit_out">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/scan_comment_et"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Проблемы с RFID меткой"
+                android:textColor="@color/blackColor" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <!--кнопка сканнер-->
         <Button
             android:id="@+id/scan_scanner"
             android:layout_width="wrap_content"
@@ -67,32 +88,34 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/scan_edit_out" />
 
+        <!--кнопка камеры-->
+
+        <!--кнопка принять-->
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/scan_access"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/marginHorizontal"
-            android:layout_marginBottom="@dimen/marginHorizontal"
             android:backgroundTint="@android:color/holo_green_dark"
             android:padding="@dimen/marginHorizontal"
             android:src="@drawable/ic_done"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/add_negative_btn"
-            app:layout_constraintTop_toBottomOf="@id/scan_edit_out" />
+            app:layout_constraintTop_toBottomOf="@id/scan_comment_out" />
 
+        <!--кнопка отказ-->
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/add_negative_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/marginHorizontal"
             android:layout_marginBottom="@dimen/marginHorizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:backgroundTint="@color/colorPrimaryDark"
             android:src="@drawable/ic_close"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/scan_access"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/scan_edit_out" />
+            app:layout_constraintEnd_toStartOf="@id/scan_access"
+            app:layout_constraintTop_toBottomOf="@id/scan_comment_out" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
