@@ -13,12 +13,13 @@ import com.example.rfidtab.R
 import com.example.rfidtab.adapter.task.TaskOnlineAdapter
 import com.example.rfidtab.adapter.task.TaskOnlineListener
 import com.example.rfidtab.extension.toast
+import com.example.rfidtab.service.AppPreferences
 import com.example.rfidtab.service.Status
 import com.example.rfidtab.service.db.entity.task.TaskCardListEntity
 import com.example.rfidtab.service.db.entity.task.TaskResultEntity
 import com.example.rfidtab.service.db.entity.task.TaskWithCards
-import com.example.rfidtab.service.model.enums.TaskStatusEnum
 import com.example.rfidtab.service.model.TaskStatusModel
+import com.example.rfidtab.service.model.enums.TaskStatusEnum
 import com.example.rfidtab.service.response.task.TaskResponse
 import com.example.rfidtab.ui.task.TaskDetailActivity
 import com.example.rfidtab.ui.task.TaskViewModel
@@ -166,6 +167,7 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
             val item = TaskWithCards(
                 TaskResultEntity(
                     model.id,
+                    AppPreferences.userLogin,
                     TaskStatusEnum.takenForExecution,
                     model.taskTypeId,
                     "Принято на исполнение",

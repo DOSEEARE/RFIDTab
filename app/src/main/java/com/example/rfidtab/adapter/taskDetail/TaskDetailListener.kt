@@ -6,4 +6,6 @@ interface TaskDetailListener {
     fun scantBtnClicked(model: TaskCardListEntity)
 
     fun cameraBtnClicked(model: TaskCardListEntity)
+
+    fun cardClicked (model : TaskCardListEntity)
 }

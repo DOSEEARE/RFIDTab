@@ -7,7 +7,6 @@ import com.example.rfidtab.ui.profile.ProfileActivity
 import com.example.rfidtab.ui.task.TaskActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
-
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

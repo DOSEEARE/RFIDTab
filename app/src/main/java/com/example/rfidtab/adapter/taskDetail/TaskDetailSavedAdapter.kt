@@ -28,11 +28,15 @@ class TaskDetailSavedAdapter(
             listener.scantBtnClicked(item)
         }
 
+        holder.itemView.setOnClickListener {
+            listener.cardClicked(item)
+        }
+
         if (taskTypeId == TaskTypeEnum.inspection) {
             holder.itemView.card_camera_btn.setOnClickListener {
                 listener.cameraBtnClicked(item)
             }
-        }else{
+        } else {
             holder.itemView.card_camera_btn.visibility = View.GONE
         }
 

@@ -17,7 +17,6 @@ interface RoomDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertTaskToDB(entity: Task)
 */
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertTask(entity: TaskResultEntity)
 
@@ -30,11 +29,11 @@ interface RoomDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertOverCard(entity: OverCardsEntity)
 
-    @Query("SELECT * FROM TaskResultEntity")
-    fun findAllTasks(): LiveData<List<TaskResultEntity>>
+    @Query("SELECT * FROM TaskResultEntity WHERE TaskResultEntity.userLogin=:userLogin")
+    fun finTasksByLogin(userLogin: String): LiveData<List<TaskResultEntity>>
 
     @Query("SELECT * FROM CardImagesEntity WHERE CardImagesEntity.cardId=:id")
-    fun findAllImages(id: Int): LiveData<List<CardImagesEntity>>
+    fun findImagesById(id: Int): LiveData<List<CardImagesEntity>>
 
     @Query("SELECT * FROM OverCardsEntity WHERE OverCardsEntity.taskId=:id")
     fun findOverCardById(id: Int): LiveData<List<OverCardsEntity>>

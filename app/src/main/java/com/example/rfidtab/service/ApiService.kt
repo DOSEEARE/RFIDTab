@@ -8,17 +8,18 @@ import com.example.rfidtab.service.response.AuthResponse
 import com.example.rfidtab.service.response.task.TaskCardResponse
 import com.example.rfidtab.service.response.task.TaskResponse
 import com.example.rfidtab.service.response.user.UserInfoResponse
+import okhttp3.MultipartBody
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Query
-
+import retrofit2.http.*
 
 interface ApiService {
 
     @POST("inventory/add-over")
     suspend fun overCards(@Body model: TaskOverCards): Response<String>
+
+    @Multipart
+    @POST("card/file")
+    suspend fun sendImage(@Part image: MultipartBody.Part, cardId : Int) : Response<String>
 
     @POST("auth/login")
     suspend fun auth(@Body model: AuthModel): Response<AuthResponse>

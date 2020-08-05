@@ -28,6 +28,12 @@ object AppPreferences {
             it.putString("accessToken", value)
         }
 
+    var userLogin: String?
+        get() = preferences.getString("userLogin", "")
+        set(value) = preferences.edit {
+            it.putString("userLogin", value)
+        }
+    
     var isLogined: Boolean
         get() = preferences.getBoolean("isLogined", false)
         set(value) = preferences.edit {

@@ -18,16 +18,16 @@ class RoomRepository(private val dao: RoomDao) {
         dao.insertOverCard(entity)
     }
 
-    fun findImagesById(id: Int) {
-        dao.findAllImages(id)
+    fun findImagesById(id: Int): LiveData<List<CardImagesEntity>> {
+       return dao.findImagesById(id)
     }
 
     fun findOverCardById(id: Int): LiveData<List<OverCardsEntity>> {
        return dao.findOverCardById(id)
     }
 
-    fun findAllTasks(): LiveData<List<TaskResultEntity>> {
-        return dao.findAllTasks()
+    fun finTasksByLogin(userLogin : String): LiveData<List<TaskResultEntity>> {
+        return dao.finTasksByLogin(userLogin)
     }
 
     fun deleteTaskById(id: Int) {

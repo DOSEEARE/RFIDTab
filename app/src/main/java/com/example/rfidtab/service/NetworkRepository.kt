@@ -6,6 +6,7 @@ import com.example.rfidtab.service.model.CardModel
 import com.example.rfidtab.service.model.TaskStatusModel
 import com.example.rfidtab.service.model.overlist.TaskOverCards
 import kotlinx.coroutines.Dispatchers
+import okhttp3.MultipartBody
 
 
 class NetworkRepository {
@@ -50,6 +51,23 @@ class NetworkRepository {
     fun cardChange(model: CardModel) = liveData(Dispatchers.IO) {
         try {
             val response = RetrofitClient.apiService().changeCard(model)
+            val code = response.code()
+            when {
+                response.isSuccessful -> {
+                    emit(Resource.success(response.body()))
+                }
+                else -> {
+                    emit(Resource.error("Неверно заполнен!", null))
+                }
+            }
+        } catch (e: Exception) {
+            emit(Resource.netwrok("Проблеммы с подключение интернета", null))
+        }
+    }
+
+    fun sendImage(image: MultipartBody.Part, cardId: Int) = liveData(Dispatchers.IO) {
+        try {
+            val response = RetrofitClient.apiService().sendImage(image, cardId)
             val code = response.code()
             when {
                 response.isSuccessful -> {
@@ -116,6 +134,5 @@ class NetworkRepository {
             emit(Resource.netwrok("Проблеммы с подключение интернета", null))
         }
     }
-
 }
 

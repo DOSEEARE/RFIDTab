@@ -11,6 +11,7 @@ import kotlinx.android.parcel.Parcelize
 data class TaskResultEntity(
     @PrimaryKey
     val id: Int,
+    val userLogin: String?,
     @SerializedName("statusId") val statusId: Int,
     @SerializedName("taskTypeId") val taskTypeId: Int,
     @SerializedName("statusTitle") val statusTitle: String?,

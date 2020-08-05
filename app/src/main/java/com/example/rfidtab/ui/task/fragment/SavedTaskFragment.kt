@@ -11,6 +11,7 @@ import androidx.lifecycle.Observer
 import com.example.rfidtab.R
 import com.example.rfidtab.adapter.task.TaskSavedAdapter
 import com.example.rfidtab.adapter.task.TaskSavedListener
+import com.example.rfidtab.service.AppPreferences
 import com.example.rfidtab.service.db.entity.task.TaskResultEntity
 import com.example.rfidtab.ui.task.TaskDetailActivity
 import com.example.rfidtab.ui.task.TaskViewModel
@@ -37,7 +38,7 @@ class SavedTaskFragment : Fragment(), TaskSavedListener {
     }
 
     private fun initViews() {
-        viewModel.findAllTasks().observe(viewLifecycleOwner, Observer {
+        viewModel.finTasksByLogin(AppPreferences.userLogin!!).observe(viewLifecycleOwner, Observer {
             val taskAdapter = TaskSavedAdapter(this, it as ArrayList<TaskResultEntity>)
             saved_task_rv.adapter = taskAdapter
             /* saved_empty_tv.visibility = View.GONE

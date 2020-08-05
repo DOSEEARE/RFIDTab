@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_blue_button"
                 android:padding="8dp"
-                android:text="Добавить № трубы"
+                android:text="@string/add_pipe"
                 android:textColor="@color/whiteColor" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -67,7 +67,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_blue_button"
                 android:padding="8dp"
-                android:text="Добавить № ниппеля"
+                android:text="@string/add_nipple"
                 android:textColor="@color/whiteColor" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -127,7 +127,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_blue_button"
                 android:padding="8dp"
-                android:text="Добавить № RFID"
+                android:text="@string/add_rfid"
                 android:textColor="@color/whiteColor" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -180,7 +180,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_blue_button"
                 android:padding="8dp"
-                android:text="Добавить № комментарии"
+                android:text="@string/add_comment"
                 android:textColor="@color/whiteColor" />
 
             <com.google.android.material.textfield.TextInputLayout

@@ -10,6 +10,7 @@ import com.example.rfidtab.service.model.TaskStatusModel
 import com.example.rfidtab.service.model.overlist.TaskOverCards
 import com.example.rfidtab.service.response.task.TaskCardResponse
 import com.example.rfidtab.service.response.task.TaskResponse
+import okhttp3.MultipartBody
 
 class TaskViewModel(application: Application) : BaseViewModel(application) {
 
@@ -19,6 +20,10 @@ class TaskViewModel(application: Application) : BaseViewModel(application) {
 
     fun changeCard(model: CardModel): LiveData<Resource<TaskCardResponse>> {
         return network.cardChange(model)
+    }
+
+    fun sendImage(image: MultipartBody.Part, cardId: Int): LiveData<Resource<String>> {
+        return network.sendImage(image, cardId)
     }
 
     fun sendOverCards(model: TaskOverCards): LiveData<Resource<String>> {
@@ -41,15 +46,15 @@ class TaskViewModel(application: Application) : BaseViewModel(application) {
         return db.insertOverCard(entity)
     }
 
-    fun findAllTasks(): LiveData<List<TaskResultEntity>> {
-        return db.findAllTasks()
+    fun finTasksByLogin(userLogin: String): LiveData<List<TaskResultEntity>> {
+        return db.finTasksByLogin(userLogin)
     }
 
-    fun findImagesByid(id: Int) {
+    fun findImagesById(id: Int): LiveData<List<CardImagesEntity>> {
         return db.findImagesById(id)
     }
 
-    fun findOverCardById(id: Int) : LiveData<List<OverCardsEntity>>  {
+    fun findOverCardById(id: Int): LiveData<List<OverCardsEntity>> {
         return db.findOverCardById(id)
     }
 
