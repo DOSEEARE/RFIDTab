@@ -38,7 +38,7 @@ class SavedTaskFragment : Fragment(), TaskSavedListener {
     }
 
     private fun initViews() {
-        viewModel.finTasksByLogin(AppPreferences.userLogin!!).observe(viewLifecycleOwner, Observer {
+        viewModel.findTasksByLogin(AppPreferences.userLogin!!).observe(viewLifecycleOwner, Observer {
             val taskAdapter = TaskSavedAdapter(this, it as ArrayList<TaskResultEntity>)
             saved_task_rv.adapter = taskAdapter
             /* saved_empty_tv.visibility = View.GONE

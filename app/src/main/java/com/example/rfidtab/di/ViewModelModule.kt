@@ -2,6 +2,7 @@ package com.example.rfidtab.di
 
 
 import com.example.rfidtab.ui.auth.AuthViewModel
+import com.example.rfidtab.ui.createkit.CreateKitViewModel
 import com.example.rfidtab.ui.profile.ProfileViewModel
 import com.example.rfidtab.ui.task.TaskViewModel
 import org.koin.android.ext.koin.androidApplication
@@ -12,4 +13,5 @@ val viewModelModule = module {
     viewModel { AuthViewModel(androidApplication()) }
     viewModel { TaskViewModel(androidApplication()) }
     viewModel { ProfileViewModel(androidApplication()) }
+    viewModel { CreateKitViewModel(androidApplication()) }
 }

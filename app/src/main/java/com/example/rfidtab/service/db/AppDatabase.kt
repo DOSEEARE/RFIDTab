@@ -4,11 +4,10 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.rfidtab.service.db.entity.task.CardImagesEntity
-import com.example.rfidtab.service.db.entity.task.OverCardsEntity
-import com.example.rfidtab.service.db.entity.task.TaskCardListEntity
-import com.example.rfidtab.service.db.entity.task.TaskResultEntity
-import com.example.rfidtab.service.model.overlist.TaskOverCards
+import com.example.rfidtab.service.db.entity.kit.KitCommentEntity
+import com.example.rfidtab.service.db.entity.kit.KitItemEntity
+import com.example.rfidtab.service.db.entity.kit.KitRfidEntity
+import com.example.rfidtab.service.db.entity.task.*
 
 
 @Database(
@@ -16,7 +15,10 @@ import com.example.rfidtab.service.model.overlist.TaskOverCards
         TaskResultEntity::class,
         TaskCardListEntity::class,
         OverCardsEntity::class,
-        CardImagesEntity::class
+        CardImagesEntity::class,
+        KitCommentEntity::class,
+        KitRfidEntity::class,
+        KitItemEntity::class
     ], version = 1
 )
 abstract class AppDatabase : RoomDatabase() {

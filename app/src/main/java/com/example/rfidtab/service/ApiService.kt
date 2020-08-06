@@ -2,6 +2,7 @@ package com.example.rfidtab.service
 
 import com.example.rfidtab.service.model.AuthModel
 import com.example.rfidtab.service.model.CardModel
+import com.example.rfidtab.service.model.kit.CreateKitModel
 import com.example.rfidtab.service.model.TaskStatusModel
 import com.example.rfidtab.service.model.overlist.TaskOverCards
 import com.example.rfidtab.service.response.AuthResponse
@@ -14,15 +15,19 @@ import retrofit2.http.*
 
 interface ApiService {
 
+    @POST("auth/login")
+    suspend fun auth(@Body model: AuthModel): Response<AuthResponse>
+
     @POST("inventory/add-over")
     suspend fun overCards(@Body model: TaskOverCards): Response<String>
 
+    @Headers("Content-Type: multipart/form-data")
     @Multipart
-    @POST("card/file")
-    suspend fun sendImage(@Part image: MultipartBody.Part, cardId : Int) : Response<String>
-
-    @POST("auth/login")
-    suspend fun auth(@Body model: AuthModel): Response<AuthResponse>
+    @POST("card/file/{id}")
+    suspend fun sendImage(
+        @Part image: MultipartBody.Part,
+        @Path("id") cardId: Int
+    ): Response<String>
 
     @GET("task/list")
     suspend fun task(@Query("withCards") withCards: Boolean): Response<List<TaskResponse>>
@@ -35,5 +40,9 @@ interface ApiService {
 
     @POST("task/change-status")
     suspend fun taskStatusChange(@Body model: TaskStatusModel): Response<String>
+
+    @POST("kit/create")
+    suspend fun createKit(@Body model: CreateKitModel): Response<String>
+
 
 }

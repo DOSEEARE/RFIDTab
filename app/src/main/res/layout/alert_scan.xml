@@ -47,8 +47,8 @@
                 android:id="@+id/scan_result_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:editable="false"
                 android:hint="№ RFID"
+                android:editable="false"
                 android:inputType="none"
                 android:textColor="@color/blackColor" />
 
@@ -92,7 +92,7 @@
 
         <!--кнопка принять-->
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/scan_access"
+            android:id="@+id/scan_access_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/marginHorizontal"
@@ -100,12 +100,12 @@
             android:padding="@dimen/marginHorizontal"
             android:src="@drawable/ic_done"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/add_negative_btn"
+            app:layout_constraintStart_toEndOf="@id/scan_negative_btn"
             app:layout_constraintTop_toBottomOf="@id/scan_comment_out" />
 
         <!--кнопка отказ-->
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/add_negative_btn"
+            android:id="@+id/scan_negative_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/marginHorizontal"
@@ -114,7 +114,7 @@
             android:backgroundTint="@color/colorPrimaryDark"
             android:src="@drawable/ic_close"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/scan_access"
+            app:layout_constraintEnd_toStartOf="@id/scan_access_btn"
             app:layout_constraintTop_toBottomOf="@id/scan_comment_out" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

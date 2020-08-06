@@ -1,7 +1,6 @@
 package com.example.rfidtab.ui.task
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -42,15 +41,13 @@ import com.senter.support.openapi.StUhf
 import kotlinx.android.synthetic.main.activity_task_detail_activity.*
 import kotlinx.android.synthetic.main.alert_add.view.*
 import kotlinx.android.synthetic.main.alert_scan.view.*
-import kotlinx.android.synthetic.main.alert_scan.view.add_negative_btn
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.util.*
@@ -236,8 +233,9 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener {
             if (it.isNotEmpty()) {
                 it.forEach {
                     val file = File(it.imagePath)
-                  val filePart = MultipartBody.Part.createFormData("file", file.name, RequestBody.create("image/*".toMediaTypeOrNull(), file))
-
+                    //  val filePart = MultipartBody.Part.createFormData("file", file.name, RequestBody.create("image/*".toMediaTypeOrNull(), file))
+                    val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+                    val filePart = MultipartBody.Part.createFormData("File", file.name, requestFile)
                     viewModel.sendImage(filePart, id).observe(this, Observer { result ->
                         val data = result.data
                         val msg = result.msg
@@ -281,7 +279,7 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener {
         view.scan_name.text = model.fullName
 
         //Сохранение карточки
-        view.scan_access.setOnClickListener {
+        view.scan_access_btn.setOnClickListener {
             if (tag.isNotEmpty()) {
                 CoroutineScope(Dispatchers.IO).launch {
                     viewModel.updateCard(model.cardId, tag)
@@ -306,7 +304,7 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener {
             readTag(view.scan_result_et, view.scan_comment_out)
         }
 
-        view.add_negative_btn.setOnClickListener {
+        view.scan_negative_btn.setOnClickListener {
             alertDialog.dismiss()
         }
 

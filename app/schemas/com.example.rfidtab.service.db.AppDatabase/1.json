@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "685b6190de2bd7c52d52ea90396bb866",
+    "identityHash": "c6b40c1cf318f7ae25fee54c4fab0f84",
     "entities": [
       {
         "tableName": "TaskResultEntity",
@@ -245,12 +245,96 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "KitCommentEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`kitId` INTEGER NOT NULL, `comment` TEXT, PRIMARY KEY(`kitId`))",
+        "fields": [
+          {
+            "fieldPath": "kitId",
+            "columnName": "kitId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "comment",
+            "columnName": "comment",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "kitId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "KitRfidEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`kitId` INTEGER NOT NULL, `rfidId` INTEGER NOT NULL, `rfid` TEXT, PRIMARY KEY(`rfidId`))",
+        "fields": [
+          {
+            "fieldPath": "kitId",
+            "columnName": "kitId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rfidId",
+            "columnName": "rfidId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rfid",
+            "columnName": "rfid",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "rfidId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "KitItemEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`kitId` INTEGER NOT NULL, `comment` TEXT, PRIMARY KEY(`kitId`))",
+        "fields": [
+          {
+            "fieldPath": "kitId",
+            "columnName": "kitId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "comment",
+            "columnName": "comment",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "kitId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '685b6190de2bd7c52d52ea90396bb866')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c6b40c1cf318f7ae25fee54c4fab0f84')"
     ]
   }
 }

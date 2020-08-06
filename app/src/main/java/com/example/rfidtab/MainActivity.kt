@@ -3,6 +3,8 @@ package com.example.rfidtab
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.example.rfidtab.ui.createkit.CreateKitActivity
+import com.example.rfidtab.ui.createkit.CreateKitViewModel
 import com.example.rfidtab.ui.profile.ProfileActivity
 import com.example.rfidtab.ui.task.TaskActivity
 import kotlinx.android.synthetic.main.activity_main.*
@@ -24,7 +26,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, TaskActivity::class.java))
         }
         main_task_manager_btn.setOnClickListener {
-            startActivity(Intent(this, TaskActivity::class.java))
+            startActivity(Intent(this, CreateKitActivity::class.java))
         }
 
         main_task_profile_btn.setOnClickListener {

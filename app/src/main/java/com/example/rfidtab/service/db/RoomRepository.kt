@@ -1,6 +1,9 @@
 package com.example.rfidtab.service.db
 
 import androidx.lifecycle.LiveData
+import com.example.rfidtab.service.db.entity.kit.KitCommentEntity
+import com.example.rfidtab.service.db.entity.kit.KitItemEntity
+import com.example.rfidtab.service.db.entity.kit.KitRfidEntity
 import com.example.rfidtab.service.db.entity.task.*
 
 class RoomRepository(private val dao: RoomDao) {
@@ -14,21 +17,46 @@ class RoomRepository(private val dao: RoomDao) {
         dao.insertImage(entity)
     }
 
+    fun insertKitItem(entity: KitItemEntity) {
+        dao.insertKitItem(entity)
+    }
+
     fun insertOverCard(entity: OverCardsEntity) {
         dao.insertOverCard(entity)
     }
 
+    fun insertKitComment(entity: KitCommentEntity) {
+        dao.insertKitComment(entity)
+    }
+
+    fun insertKitRfid(entity: KitRfidEntity) {
+        dao.insertKitRfid(entity)
+    }
+
     fun findImagesById(id: Int): LiveData<List<CardImagesEntity>> {
-       return dao.findImagesById(id)
+        return dao.findImagesById(id)
     }
 
     fun findOverCardById(id: Int): LiveData<List<OverCardsEntity>> {
-       return dao.findOverCardById(id)
+        return dao.findOverCardById(id)
     }
 
-    fun finTasksByLogin(userLogin : String): LiveData<List<TaskResultEntity>> {
-        return dao.finTasksByLogin(userLogin)
+    fun findTasksByLogin(userLogin: String): LiveData<List<TaskResultEntity>> {
+        return dao.findTasksByLogin(userLogin)
     }
+
+    fun findKitComment(kitId: Int): LiveData<List<KitCommentEntity>> {
+        return dao.findKitComment(kitId)
+    }
+
+    fun findKitItem(): LiveData<List<KitItemEntity>> {
+        return dao.findKitItem()
+    }
+
+    fun findKitRfid(kitId: Int): LiveData<List<KitRfidEntity>> {
+        return dao.findKitRfid(kitId)
+    }
+
 
     fun deleteTaskById(id: Int) {
         return dao.deleteTaskById(id)
@@ -36,6 +64,10 @@ class RoomRepository(private val dao: RoomDao) {
 
     fun deleteCardsById(id: Int) {
         return dao.deleteCardsById(id)
+    }
+
+    fun deleteKitRfid(rfidID: Int) {
+        return dao.deleteKitRfid(rfidID)
     }
 
     fun findCardsById(id: Int): LiveData<List<TaskCardListEntity>> {

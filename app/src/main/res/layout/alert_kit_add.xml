@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="8dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="@dimen/marginHorizontal">
+
+        <TextView
+            android:id="@+id/kit_item_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/marginHorizontal"
+            android:gravity="center"
+            android:text="@string/create_kit"
+            android:textColor="@color/blue"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/kit_item_comment_out"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/marginHorizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/kit_item_title">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/kit_item_et"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/comment"
+                android:textColor="@color/blackColor" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!--кнопка принять-->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/kit_item_access"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/marginHorizontal"
+            android:backgroundTint="@android:color/holo_green_dark"
+            android:padding="@dimen/marginHorizontal"
+            android:src="@drawable/ic_done"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/kit_item_denied"
+            app:layout_constraintTop_toBottomOf="@id/kit_item_comment_out" />
+
+        <!--кнопка отказ-->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/kit_item_denied"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/marginHorizontal"
+            android:layout_marginBottom="@dimen/marginHorizontal"
+            android:backgroundTint="@color/colorPrimaryDark"
+            android:src="@drawable/ic_close"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/kit_item_access"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/kit_item_comment_out" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/kit_detail_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/marginHorizontal"
+            android:layout_marginTop="@dimen/marginHorizontal"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/kit_detail_title"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/marginHorizontal"
+                android:text="@string/gold_fish"
+                android:textColor="@color/blackColor"
+                android:textSize="16sp" />
+
+        </androidx.cardview.widget.CardView>
+
+        <Button
+            android:id="@+id/kit_detail_add_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/marginHorizontal"
+            android:layout_marginTop="@dimen/marginHorizontal"
+            android:background="@drawable/bg_blue_button"
+            android:text="Добавить RFID метку"
+            android:textColor="@color/whiteColor"
+            app:layout_constraintTop_toBottomOf="@id/kit_detail_container" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/kit_detail_rv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/marginHorizontal"
+            android:nestedScrollingEnabled="false"
+            android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toTopOf="@id/kit_detail_send_button"
+            app:layout_constraintTop_toBottomOf="@id/kit_detail_add_button"
+            tools:listitem="@layout/item_kit_detail" />
+
+
+        <Button
+            android:id="@+id/kit_detail_send_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/marginHorizontal"
+            android:layout_marginTop="@dimen/marginHorizontal"
+            android:background="@drawable/bg_main_button"
+            android:text="@string/send_to_check"
+            android:textColor="@color/whiteColor"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/kit_detail_rv" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

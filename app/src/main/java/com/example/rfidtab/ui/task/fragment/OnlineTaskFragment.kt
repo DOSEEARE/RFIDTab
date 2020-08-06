@@ -24,7 +24,7 @@ import com.example.rfidtab.service.response.task.TaskResponse
 import com.example.rfidtab.ui.task.TaskDetailActivity
 import com.example.rfidtab.ui.task.TaskViewModel
 import kotlinx.android.synthetic.main.alert_add.view.*
-import kotlinx.android.synthetic.main.alert_scan.view.add_negative_btn
+import kotlinx.android.synthetic.main.alert_kit_add.view.*
 import kotlinx.android.synthetic.main.fragment_online_tasks.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

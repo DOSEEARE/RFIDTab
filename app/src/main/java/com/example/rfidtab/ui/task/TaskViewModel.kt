@@ -46,8 +46,8 @@ class TaskViewModel(application: Application) : BaseViewModel(application) {
         return db.insertOverCard(entity)
     }
 
-    fun finTasksByLogin(userLogin: String): LiveData<List<TaskResultEntity>> {
-        return db.finTasksByLogin(userLogin)
+    fun findTasksByLogin(userLogin: String): LiveData<List<TaskResultEntity>> {
+        return db.findTasksByLogin(userLogin)
     }
 
     fun findImagesById(id: Int): LiveData<List<CardImagesEntity>> {
