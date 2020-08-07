@@ -15,16 +15,20 @@ import com.example.rfidtab.adapter.task.TaskOnlineListener
 import com.example.rfidtab.extension.toast
 import com.example.rfidtab.service.AppPreferences
 import com.example.rfidtab.service.Status
+import com.example.rfidtab.service.db.entity.kitorder.KitOrderEntity
+import com.example.rfidtab.service.db.entity.kitorder.OrderCardEntity
 import com.example.rfidtab.service.db.entity.task.TaskCardListEntity
 import com.example.rfidtab.service.db.entity.task.TaskResultEntity
 import com.example.rfidtab.service.db.entity.task.TaskWithCards
 import com.example.rfidtab.service.model.TaskStatusModel
 import com.example.rfidtab.service.model.enums.TaskStatusEnum
+import com.example.rfidtab.service.model.enums.TaskTypeEnum
 import com.example.rfidtab.service.response.task.TaskResponse
+import com.example.rfidtab.ui.kitorder.KitOrderActivity
+import com.example.rfidtab.ui.kitorder.KitOrderViewModel
 import com.example.rfidtab.ui.task.TaskDetailActivity
 import com.example.rfidtab.ui.task.TaskViewModel
 import kotlinx.android.synthetic.main.alert_add.view.*
-import kotlinx.android.synthetic.main.alert_kit_add.view.*
 import kotlinx.android.synthetic.main.fragment_online_tasks.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -35,6 +39,7 @@ import kotlin.random.Random
 
 class OnlineTaskFragment : Fragment(), TaskOnlineListener {
     private val viewModel: TaskViewModel by viewModel()
+    private val kitOrderViewModel: KitOrderViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -80,12 +85,18 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
     }
 
     override fun onItemClicked(model: TaskResponse) {
-        val intent = Intent(activity, TaskDetailActivity::class.java)
-        intent.putExtra("data", model)
-        intent.putExtra("isOnline", true)
-        startActivity(intent)
+        if (model.taskTypeId == TaskTypeEnum.kitForOder) {
+            val orderIntent = Intent(activity, KitOrderActivity::class.java)
+            orderIntent.putExtra("data", model)
+            orderIntent.putExtra("isOnline", true)
+            startActivity(orderIntent)
+        } else {
+            val intent = Intent(activity, TaskDetailActivity::class.java)
+            intent.putExtra("data", model)
+            intent.putExtra("isOnline", true)
+            startActivity(intent)
+        }
     }
-
 
     override fun onItemSaved(model: TaskResponse) {
         val dialogBuilder = AlertDialog.Builder(requireContext())
@@ -95,9 +106,14 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
         val alertDialog = dialogBuilder.create()
 
         view.add_positive_btn.setOnClickListener {
-            changeTaskStatus(model)
-            alertDialog.dismiss()
-
+            if (model.taskTypeId != TaskTypeEnum.kitForOder) {
+                changeTaskStatus(model)
+                alertDialog.dismiss()
+            } else {
+                saveKitOrder(model.id)
+                changeTaskStatus(model)
+                alertDialog.dismiss()
+            }
         }
 
         view.add_negative_btn.setOnClickListener {
@@ -123,6 +139,60 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
 
                     toast("Вы взяли задание на исполнение")
                     saveItemToDb(model)
+                }
+                Status.ERROR -> {
+                    Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
+                }
+                Status.NETWORK -> {
+                    Toast.makeText(context, "Проблемы с интернетом", Toast.LENGTH_LONG)
+                        .show()
+                }
+                else -> {
+                    Toast.makeText(context, "Произошла ошибка", Toast.LENGTH_LONG).show()
+                }
+            }
+
+
+        })
+    }
+
+    private fun saveKitOrder(kitInt: Int) {
+        kitOrderViewModel.kitOrder(kitInt).observe(viewLifecycleOwner, Observer { result ->
+            val data = result.data
+            val msg = result.msg
+            when (result.status) {
+                Status.SUCCESS -> {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val entity = KitOrderEntity(
+                            data!!.id,
+                            data.mainReason,
+                            data.tenantName,
+                            data.createAt,
+                            data.comment,
+                            data.statusTitle,
+                            data.statusId,
+                            data.createdByFio,
+                            data.executorFio
+                        )
+                        val listCard = ArrayList<OrderCardEntity>()
+
+                        data.cardList.forEach {
+                            listCard.add(
+                                OrderCardEntity(
+                                    it.id,
+                                    kitInt,
+                                    it.rfidTagNo,
+                                    it.pipeSerialNumber,
+                                    it.serialNoOfNipple,
+                                    it.couplingSerialNumber,
+                                    it.fullName,
+                                    it.comment
+                                )
+                            )
+                        }
+                        kitOrderViewModel.insertKitOrder(entity)
+                        kitOrderViewModel.insertKitCards(listCard)
+                    }
                 }
                 Status.ERROR -> {
                     Toast.makeText(context, msg, Toast.LENGTH_LONG).show()

@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.rfidtab.ui.createkit.CreateKitActivity
 import com.example.rfidtab.ui.createkit.CreateKitViewModel
 import com.example.rfidtab.ui.profile.ProfileActivity
+import com.example.rfidtab.ui.search.SearchActivity
 import com.example.rfidtab.ui.task.TaskActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -23,7 +24,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, TaskActivity::class.java))
         }
         main_scan_btn.setOnClickListener {
-            startActivity(Intent(this, TaskActivity::class.java))
+            startActivity(Intent(this, SearchActivity::class.java))
         }
         main_task_manager_btn.setOnClickListener {
             startActivity(Intent(this, CreateKitActivity::class.java))

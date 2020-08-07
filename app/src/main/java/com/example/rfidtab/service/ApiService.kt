@@ -2,10 +2,13 @@ package com.example.rfidtab.service
 
 import com.example.rfidtab.service.model.AuthModel
 import com.example.rfidtab.service.model.CardModel
-import com.example.rfidtab.service.model.kit.CreateKitModel
 import com.example.rfidtab.service.model.TaskStatusModel
+import com.example.rfidtab.service.model.kit.CreateKitModel
 import com.example.rfidtab.service.model.overlist.TaskOverCards
+import com.example.rfidtab.service.model.search.SearchModel
 import com.example.rfidtab.service.response.AuthResponse
+import com.example.rfidtab.service.response.SearchResponse
+import com.example.rfidtab.service.response.kitorder.KitOrderResponse
 import com.example.rfidtab.service.response.task.TaskCardResponse
 import com.example.rfidtab.service.response.task.TaskResponse
 import com.example.rfidtab.service.response.user.UserInfoResponse
@@ -32,8 +35,14 @@ interface ApiService {
     @GET("task/list")
     suspend fun task(@Query("withCards") withCards: Boolean): Response<List<TaskResponse>>
 
+    @GET("equipment/item")
+    suspend fun kitOrder(@Query("id") taskId: Int): Response<KitOrderResponse>
+
     @GET("user/item")
     suspend fun userInfo(@Query("number") number: Int): Response<UserInfoResponse>
+
+    @POST("card/identification")
+    suspend fun searchCard(@Body model: SearchModel): Response<SearchResponse>
 
     @POST("card/edit")
     suspend fun changeCard(@Body model: CardModel): Response<TaskCardResponse>

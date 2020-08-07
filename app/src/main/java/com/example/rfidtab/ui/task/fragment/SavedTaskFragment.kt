@@ -9,10 +9,16 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.example.rfidtab.R
+import com.example.rfidtab.adapter.kitorder.KitOrderSavedAdapter
+import com.example.rfidtab.adapter.kitorder.KitOrderSavedListener
 import com.example.rfidtab.adapter.task.TaskSavedAdapter
 import com.example.rfidtab.adapter.task.TaskSavedListener
 import com.example.rfidtab.service.AppPreferences
+import com.example.rfidtab.service.db.entity.kitorder.KitOrderEntity
 import com.example.rfidtab.service.db.entity.task.TaskResultEntity
+import com.example.rfidtab.service.model.enums.TaskTypeEnum
+import com.example.rfidtab.ui.kitorder.KitOrderActivity
+import com.example.rfidtab.ui.kitorder.KitOrderViewModel
 import com.example.rfidtab.ui.task.TaskDetailActivity
 import com.example.rfidtab.ui.task.TaskViewModel
 import kotlinx.android.synthetic.main.fragment_saved_tasks.*
@@ -22,8 +28,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SavedTaskFragment : Fragment(), TaskSavedListener {
+class SavedTaskFragment : Fragment(), TaskSavedListener, KitOrderSavedListener {
     private val viewModel: TaskViewModel by viewModel()
+    private val kitOrderViewModel: KitOrderViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,19 +45,30 @@ class SavedTaskFragment : Fragment(), TaskSavedListener {
     }
 
     private fun initViews() {
-        viewModel.findTasksByLogin(AppPreferences.userLogin!!).observe(viewLifecycleOwner, Observer {
-            val taskAdapter = TaskSavedAdapter(this, it as ArrayList<TaskResultEntity>)
-            saved_task_rv.adapter = taskAdapter
-            /* saved_empty_tv.visibility = View.GONE
-             saved_empty_tv.visibility = View.VISIBLE*/
+        viewModel.findTasksByLogin(AppPreferences.userLogin!!)
+            .observe(viewLifecycleOwner, Observer {
+                val taskAdapter = TaskSavedAdapter(this, it as ArrayList<TaskResultEntity>)
+                saved_task_rv.adapter = taskAdapter
+            })
+
+        kitOrderViewModel.findKitOrder().observe(viewLifecycleOwner, Observer {
+            saved_task_kit_rv.adapter = KitOrderSavedAdapter(this, it as ArrayList<KitOrderEntity>)
         })
+
     }
 
 override fun onItemClicked(model: TaskResultEntity) {
-    val intent = Intent(activity, TaskDetailActivity::class.java)
-    intent.putExtra("data", model)
-    intent.putExtra("isOnline", false)
-    startActivity(intent)
+    if (model.taskTypeId == TaskTypeEnum.kitForOder) {
+        val orderIntent = Intent(activity, KitOrderActivity::class.java)
+        orderIntent.putExtra("data", model)
+        orderIntent.putExtra("isOnline", false)
+        startActivity(orderIntent)
+    } else {
+        val intent = Intent(activity, TaskDetailActivity::class.java)
+        intent.putExtra("data", model)
+        intent.putExtra("isOnline", false)
+        startActivity(intent)
+    }
 }
 
 override fun onItemDeleted(id: Int) {
@@ -72,5 +90,12 @@ override fun onItemDeleted(id: Int) {
     }
     builder.show()
 }
+
+    override fun onKitItemClicked(model: KitOrderEntity) {
+        val intent = Intent(activity, KitOrderActivity::class.java)
+        intent.putExtra("data", model)
+        intent.putExtra("isOnline", false)
+        startActivity(intent)
+    }
 
 }

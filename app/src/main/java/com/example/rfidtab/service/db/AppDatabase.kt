@@ -7,6 +7,8 @@ import androidx.room.RoomDatabase
 import com.example.rfidtab.service.db.entity.kit.KitCommentEntity
 import com.example.rfidtab.service.db.entity.kit.KitItemEntity
 import com.example.rfidtab.service.db.entity.kit.KitRfidEntity
+import com.example.rfidtab.service.db.entity.kitorder.KitOrderEntity
+import com.example.rfidtab.service.db.entity.kitorder.OrderCardEntity
 import com.example.rfidtab.service.db.entity.task.*
 
 
@@ -18,7 +20,9 @@ import com.example.rfidtab.service.db.entity.task.*
         CardImagesEntity::class,
         KitCommentEntity::class,
         KitRfidEntity::class,
-        KitItemEntity::class
+        KitItemEntity::class,
+        OrderCardEntity::class,
+        KitOrderEntity::class
     ], version = 1
 )
 abstract class AppDatabase : RoomDatabase() {

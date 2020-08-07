@@ -1,6 +1,7 @@
 package com.example.rfidtab.ui.createkit
 
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -9,12 +10,14 @@ import com.example.rfidtab.R
 import com.example.rfidtab.adapter.kit.CreateKitAdapter
 import com.example.rfidtab.adapter.kit.CreateKitListener
 import com.example.rfidtab.extension.toast
+import com.example.rfidtab.service.AppPreferences
 import com.example.rfidtab.service.db.entity.kit.KitItemEntity
 import kotlinx.android.synthetic.main.activity_create_set.*
 import kotlinx.android.synthetic.main.alert_kit_add.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.random.Random
 
@@ -24,6 +27,8 @@ class CreateKitActivity : AppCompatActivity(), CreateKitListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_set)
+        supportActionBar?.title = "Создание комплекта"
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         initKitRv()
         initFabBtn()
     }
@@ -39,12 +44,20 @@ class CreateKitActivity : AppCompatActivity(), CreateKitListener {
             view.kit_item_access.setOnClickListener {
                 val text = view.kit_item_et.text.toString()
                 CoroutineScope(Dispatchers.IO).launch {
-                    viewModel.insertKitItem(KitItemEntity(Random.nextInt(0, 1000), text))
+                    viewModel.insertKitItem(
+                        KitItemEntity(
+                            Random.nextInt(0, 1000),
+                            AppPreferences.userLogin!!,
+                            text
+                        )
+                    )
+                    withContext(Dispatchers.Main){
+                        kitAdapter.notifyDataSetChanged()
+                    }
                 }
                 alertDialog.dismiss()
                 kit_empty.visibility = View.GONE
-                toast("Копмлект создан")
-                initKitRv()
+                toast("Комплект создан")
             }
             view.kit_item_denied.setOnClickListener {
                 alertDialog.dismiss()
@@ -54,7 +67,7 @@ class CreateKitActivity : AppCompatActivity(), CreateKitListener {
     }
 
     private fun initKitRv() {
-        viewModel.findKitItem().observe(this, Observer {
+        viewModel.findKitItem(AppPreferences.userLogin!!).observe(this, Observer {
             kitAdapter = CreateKitAdapter(this, it as ArrayList<KitItemEntity>)
             if (it.isEmpty()) {
                 kit_empty.visibility = View.VISIBLE
@@ -69,5 +82,12 @@ class CreateKitActivity : AppCompatActivity(), CreateKitListener {
     override fun kitItemClicked(model: KitItemEntity) {
         val fm = CreateKitDetailFragment(model)
         fm.show(supportFragmentManager, "CreateKitDetailFragment")
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> onBackPressed()
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

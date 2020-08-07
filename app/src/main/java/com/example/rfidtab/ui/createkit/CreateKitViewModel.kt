@@ -35,8 +35,8 @@ class CreateKitViewModel(application: Application) : BaseViewModel(application) 
         return db.findKitRfid(kitId)
     }
 
-    fun findKitItem(): LiveData<List<KitItemEntity>> {
-        return db.findKitItem()
+    fun findKitItem(userLogin: String): LiveData<List<KitItemEntity>> {
+        return db.findKitItem(userLogin)
     }
 
     fun deleteKitRfid(rfid: Int) {

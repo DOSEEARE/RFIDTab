@@ -8,7 +8,12 @@ import androidx.room.Query
 import com.example.rfidtab.service.db.entity.kit.KitCommentEntity
 import com.example.rfidtab.service.db.entity.kit.KitItemEntity
 import com.example.rfidtab.service.db.entity.kit.KitRfidEntity
-import com.example.rfidtab.service.db.entity.task.*
+import com.example.rfidtab.service.db.entity.kitorder.KitOrderEntity
+import com.example.rfidtab.service.db.entity.kitorder.OrderCardEntity
+import com.example.rfidtab.service.db.entity.task.CardImagesEntity
+import com.example.rfidtab.service.db.entity.task.OverCardsEntity
+import com.example.rfidtab.service.db.entity.task.TaskCardListEntity
+import com.example.rfidtab.service.db.entity.task.TaskResultEntity
 
 @Dao
 interface RoomDao {
@@ -34,14 +39,26 @@ interface RoomDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertKitRfid(entity: KitRfidEntity)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertKitOrder(entity: KitOrderEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertKitOrderCards(list: List<OrderCardEntity>)
+
+    @Query("SELECT * FROM OrderCardEntity WHERE OrderCardEntity.kitInt=:kitId")
+    fun findKitOrderCard(kitId: Int): LiveData<List<OrderCardEntity>>
+
+    @Query("SELECT * FROM KitOrderEntity")
+    fun findKitOrder(): LiveData<List<KitOrderEntity>>
+
     @Query("SELECT * FROM TaskResultEntity WHERE TaskResultEntity.userLogin=:userLogin")
     fun findTasksByLogin(userLogin: String): LiveData<List<TaskResultEntity>>
 
     @Query("SELECT * FROM KitCommentEntity WHERE KitCommentEntity.kitId=:kitId")
     fun findKitComment(kitId: Int): LiveData<List<KitCommentEntity>>
 
-    @Query("SELECT * FROM KitItemEntity")
-    fun findKitItem(): LiveData<List<KitItemEntity>>
+    @Query("SELECT * FROM KitItemEntity WHERE KitItemEntity.userLogin=:userLogin")
+    fun findKitItem(userLogin: String): LiveData<List<KitItemEntity>>
 
     @Query("SELECT * FROM KitRfidEntity WHERE KitRfidEntity.kitId=:kitId")
     fun findKitRfid(kitId: Int): LiveData<List<KitRfidEntity>>
@@ -54,9 +71,6 @@ interface RoomDao {
 
     @Query("SELECT * FROM TaskCardListEntity WHERE TaskCardListEntity.taskId=:taskId")
     fun findCardsById(taskId: Int): LiveData<List<TaskCardListEntity>>
-
-/*    @Query("DELETE FROM TaskResultEntity")
-    fun deleteAllTasks(): LiveData<List<TaskResultEntity>>*/
 
     @Query("DELETE FROM TaskResultEntity WHERE TaskResultEntity.id=:id")
     fun deleteTaskById(id: Int)

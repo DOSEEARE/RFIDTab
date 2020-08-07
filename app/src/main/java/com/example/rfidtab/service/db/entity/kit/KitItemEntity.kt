@@ -7,5 +7,6 @@ import androidx.room.PrimaryKey
 class KitItemEntity(
     @PrimaryKey
     val kitId: Int,
+    val userLogin : String?,
     val comment: String?
 )

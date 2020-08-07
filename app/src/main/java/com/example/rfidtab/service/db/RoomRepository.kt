@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import com.example.rfidtab.service.db.entity.kit.KitCommentEntity
 import com.example.rfidtab.service.db.entity.kit.KitItemEntity
 import com.example.rfidtab.service.db.entity.kit.KitRfidEntity
+import com.example.rfidtab.service.db.entity.kitorder.KitOrderEntity
+import com.example.rfidtab.service.db.entity.kitorder.OrderCardEntity
 import com.example.rfidtab.service.db.entity.task.*
 
 class RoomRepository(private val dao: RoomDao) {
@@ -33,6 +35,22 @@ class RoomRepository(private val dao: RoomDao) {
         dao.insertKitRfid(entity)
     }
 
+    fun insertKitOrder(entity: KitOrderEntity) {
+        dao.insertKitOrder(entity)
+    }
+
+    fun insertKitCads(list: List<OrderCardEntity>) {
+        dao.insertKitOrderCards(list)
+    }
+
+    fun findOrderCard(kitInt: Int): LiveData<List<OrderCardEntity>> {
+        return dao.findKitOrderCard(kitInt)
+    }
+
+    fun findKitOrder(): LiveData<List<KitOrderEntity>> {
+        return dao.findKitOrder()
+    }
+
     fun findImagesById(id: Int): LiveData<List<CardImagesEntity>> {
         return dao.findImagesById(id)
     }
@@ -49,8 +67,8 @@ class RoomRepository(private val dao: RoomDao) {
         return dao.findKitComment(kitId)
     }
 
-    fun findKitItem(): LiveData<List<KitItemEntity>> {
-        return dao.findKitItem()
+    fun findKitItem(userLogin: String): LiveData<List<KitItemEntity>> {
+        return dao.findKitItem(userLogin)
     }
 
     fun findKitRfid(kitId: Int): LiveData<List<KitRfidEntity>> {

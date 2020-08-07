@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="56dp"
+    android:layout_margin="@dimen/marginHorizontal">
+
+    <TextView
+        android:id="@+id/search_item_title"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="@dimen/marginHorizontal"
+        android:gravity="center_vertical"
+        android:textColor="@color/blackColor"
+        android:textSize="18sp"
+        tools:text="1) Карточка" />
+
+</androidx.cardview.widget.CardView>

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "c6b40c1cf318f7ae25fee54c4fab0f84",
+    "identityHash": "4b91f8dd4ee2e776995cdf6a4998043a",
     "entities": [
       {
         "tableName": "TaskResultEntity",
@@ -306,13 +306,19 @@
       },
       {
         "tableName": "KitItemEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`kitId` INTEGER NOT NULL, `comment` TEXT, PRIMARY KEY(`kitId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`kitId` INTEGER NOT NULL, `userLogin` TEXT, `comment` TEXT, PRIMARY KEY(`kitId`))",
         "fields": [
           {
             "fieldPath": "kitId",
             "columnName": "kitId",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "userLogin",
+            "columnName": "userLogin",
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "comment",
@@ -329,12 +335,142 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "OrderCardEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `kitInt` INTEGER NOT NULL, `rfidTagNo` TEXT, `pipeSerialNumber` INTEGER NOT NULL, `serialNoOfNipple` INTEGER NOT NULL, `couplingSerialNumber` INTEGER NOT NULL, `fullName` TEXT, `comment` TEXT, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "kitInt",
+            "columnName": "kitInt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rfidTagNo",
+            "columnName": "rfidTagNo",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "pipeSerialNumber",
+            "columnName": "pipeSerialNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "serialNoOfNipple",
+            "columnName": "serialNoOfNipple",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "couplingSerialNumber",
+            "columnName": "couplingSerialNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fullName",
+            "columnName": "fullName",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "comment",
+            "columnName": "comment",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "KitOrderEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `mainReason` TEXT, `tenantName` TEXT, `createAt` TEXT, `comment` TEXT, `statusTitle` TEXT, `statusId` TEXT, `createdByFio` TEXT, `executorFio` TEXT, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mainReason",
+            "columnName": "mainReason",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "tenantName",
+            "columnName": "tenantName",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "createAt",
+            "columnName": "createAt",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "comment",
+            "columnName": "comment",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "statusTitle",
+            "columnName": "statusTitle",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "statusId",
+            "columnName": "statusId",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "createdByFio",
+            "columnName": "createdByFio",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "executorFio",
+            "columnName": "executorFio",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c6b40c1cf318f7ae25fee54c4fab0f84')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4b91f8dd4ee2e776995cdf6a4998043a')"
     ]
   }
 }
