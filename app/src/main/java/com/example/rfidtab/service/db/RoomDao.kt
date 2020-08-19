@@ -76,7 +76,10 @@ interface RoomDao {
     fun deleteTaskById(id: Int)
 
     @Query("DELETE FROM KitRfidEntity WHERE KitRfidEntity.rfidId=:rfidId")
-    fun deleteKitRfid(rfidId : Int)
+    fun deleteKitRfid(rfidId: Int)
+
+    @Query("DELETE FROM KitItemEntity WHERE KitItemEntity.kitId=:kitId")
+    fun deleteKitItem(kitId: Int)
 
     @Query("DELETE FROM TaskCardListEntity WHERE TaskCardListEntity.taskId=:id")
     fun deleteCardsById(id: Int)

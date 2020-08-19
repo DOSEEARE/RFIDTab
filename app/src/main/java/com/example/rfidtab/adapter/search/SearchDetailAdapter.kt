@@ -9,6 +9,7 @@ import com.bumptech.glide.Glide
 import com.example.rfidtab.R
 import com.example.rfidtab.base.GenericRecyclerAdapter
 import com.example.rfidtab.base.ViewHolder
+import com.example.rfidtab.service.model.search.ImageCardModel
 import kotlinx.android.synthetic.main.item_image.view.*
 
 
@@ -30,7 +31,6 @@ class SearchDetailAdapter(
         )
 
     }
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return super.onCreateViewHolder(parent, R.layout.item_image)

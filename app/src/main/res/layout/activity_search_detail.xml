@@ -29,15 +29,6 @@
                     app:layout_constraintTop_toTopOf="parent">
 
                     <TextView
-                        android:id="@+id/search_detail_name"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginVertical="8dp"
-                        android:text="Наименование: ТЕКСТ ЕК текст етк"
-                        android:textColor="@color/blackColor"
-                        android:textSize="16sp" />
-
-                    <TextView
                         android:id="@+id/search_detail_pipe"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

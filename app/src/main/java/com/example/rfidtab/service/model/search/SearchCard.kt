@@ -11,5 +11,5 @@ data class SearchCard (
 	@SerializedName("couplingSerialNumber") val couplingSerialNumber : Int,
 	@SerializedName("fullName") val fullName : String,
 	@SerializedName("imagesLink") val imagesLink : List<String>,
-	@SerializedName("comment") val comment : String
+	@SerializedName("comment") val comment : 	String
 ) : Serializable

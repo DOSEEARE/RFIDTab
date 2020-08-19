@@ -17,7 +17,6 @@ import kotlinx.android.synthetic.main.alert_kit_add.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.random.Random
 
@@ -51,29 +50,32 @@ class CreateKitActivity : AppCompatActivity(), CreateKitListener {
                             text
                         )
                     )
-                    withContext(Dispatchers.Main){
-                        kitAdapter.notifyDataSetChanged()
-                    }
                 }
                 alertDialog.dismiss()
                 kit_empty.visibility = View.GONE
                 toast("Комплект создан")
+
+                if (kitAdapter.itemCount == 0) {
+                    finish()
+                    startActivity(intent)
+                }
+
             }
             view.kit_item_denied.setOnClickListener {
                 alertDialog.dismiss()
             }
             alertDialog.show()
+            initKitRv()
         }
     }
 
     private fun initKitRv() {
         viewModel.findKitItem(AppPreferences.userLogin!!).observe(this, Observer {
             kitAdapter = CreateKitAdapter(this, it as ArrayList<KitItemEntity>)
+            kit_rv.adapter = kitAdapter
             if (it.isEmpty()) {
                 kit_empty.visibility = View.VISIBLE
                 kit_rv.visibility = View.GONE
-            } else {
-                kit_rv.adapter = kitAdapter
             }
         })
 

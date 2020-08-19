@@ -57,31 +57,31 @@ class SavedTaskFragment : Fragment(), TaskSavedListener, KitOrderSavedListener {
 
     }
 
-override fun onItemClicked(model: TaskResultEntity) {
-    if (model.taskTypeId == TaskTypeEnum.kitForOder) {
-        val orderIntent = Intent(activity, KitOrderActivity::class.java)
-        orderIntent.putExtra("data", model)
-        orderIntent.putExtra("isOnline", false)
-        startActivity(orderIntent)
-    } else {
-        val intent = Intent(activity, TaskDetailActivity::class.java)
-        intent.putExtra("data", model)
-        intent.putExtra("isOnline", false)
-        startActivity(intent)
+    override fun onItemClicked(model: TaskResultEntity) {
+        if (model.taskTypeId == TaskTypeEnum.kitForOder) {
+            val orderIntent = Intent(activity, KitOrderActivity::class.java)
+            orderIntent.putExtra("data", model)
+            orderIntent.putExtra("isOnline", false)
+            startActivity(orderIntent)
+        } else {
+            val intent = Intent(activity, TaskDetailActivity::class.java)
+            intent.putExtra("data", model)
+            intent.putExtra("isOnline", false)
+            startActivity(intent)
     }
 }
 
-override fun onItemDeleted(id: Int) {
-    val builder = AlertDialog.Builder(context)
-    builder.setTitle("Удалить задание?")
+    override fun onItemDeleted(id: Int) {
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle("Удалить задание?")
 
-    builder.setPositiveButton("Да, удалить") { dialog, which ->
-        CoroutineScope(Dispatchers.IO).launch {
-            viewModel.deleteTaskById(id)
-            viewModel.deleteCardsById(id)
-            withContext(Dispatchers.Main) {
-                initViews()
-            }
+        builder.setPositiveButton("Да, удалить") { dialog, which ->
+            CoroutineScope(Dispatchers.IO).launch {
+                viewModel.deleteTaskById(id)
+                viewModel.deleteCardsById(id)
+                withContext(Dispatchers.Main) {
+                    initViews()
+                }
         }
     }
 

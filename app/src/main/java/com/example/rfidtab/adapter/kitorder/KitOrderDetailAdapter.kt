@@ -16,13 +16,13 @@ class KitOrderDetailAdapter(
 
     override fun bind(item: OrderCardEntity, holder: ViewHolder) {
         holder.itemView.card_rfid.text = "№ RFID: ${item.rfidTagNo}"
-        holder.itemView.card_name.text = "Наименование: ${item.fullName}"
+        holder.itemView.card_name.visibility = View.GONE
         holder.itemView.card_pipe.text = "№ трубы: ${item.pipeSerialNumber}"
         holder.itemView.card_nipple.text = "№ ниппеля: ${item.serialNoOfNipple}"
         holder.itemView.card_bond.text = "№ муфты: ${item.couplingSerialNumber}"
 
         holder.itemView.card_camera_btn.visibility = View.GONE
-        holder.itemView.card_scan_btn.visibility = View.GONE
+        holder.itemView.card_scan_btn.visibility = View.VISIBLE
 
     }
 

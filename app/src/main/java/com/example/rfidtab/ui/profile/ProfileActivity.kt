@@ -3,6 +3,7 @@ package com.example.rfidtab.ui.profile
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.example.rfidtab.R
@@ -10,7 +11,6 @@ import com.example.rfidtab.extension.toast
 import com.example.rfidtab.service.AppPreferences
 import com.example.rfidtab.service.Status
 import com.example.rfidtab.ui.auth.AuthActivity
-import com.senter.support.openapi.StUhf
 import kotlinx.android.synthetic.main.activity_profile.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -20,6 +20,8 @@ class ProfileActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = "Профиль"
         initViews()
     }
 
@@ -61,5 +63,12 @@ class ProfileActivity : AppCompatActivity() {
             }
 
         })
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> onBackPressed()
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

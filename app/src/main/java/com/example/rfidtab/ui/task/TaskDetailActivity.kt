@@ -76,7 +76,6 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener {
         sendToCheck()
     }
 
-
     // 1 активити на Online и Saved здесь идёт определение
     // telegram: @doseeare. If u have some problem, i can help you.
 

@@ -1,6 +1,7 @@
 package com.example.rfidtab.ui.kitorder
 
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -32,7 +33,6 @@ class KitOrderActivity : AppCompatActivity() {
         setContentView(R.layout.activity_kit_order)
         supportActionBar?.title = "Комплектация в аренду"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
         initViews()
     }
 
@@ -51,8 +51,7 @@ class KitOrderActivity : AppCompatActivity() {
                         kit_order_createdby.text = "Автор: ${data?.createdByFio}"
                         kit_order_status.text = "Статус: ${data?.statusTitle}"
                         kit_order_send_btn.visibility = View.GONE
-                        kit_order_kits_rv.adapter =
-                            KitOrderOnlineAdapter(data?.cardList as ArrayList<OrderCardList>)
+                        kit_order_kits_rv.adapter = KitOrderOnlineAdapter(data?.cardList as ArrayList<OrderCardList>)
                     }
                     Status.ERROR -> {
                         toast("Проблемы с интернетом!")
@@ -112,5 +111,11 @@ class KitOrderActivity : AppCompatActivity() {
 
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> onBackPressed()
+        }
+        return super.onOptionsItemSelected(item)
+    }
 
 }

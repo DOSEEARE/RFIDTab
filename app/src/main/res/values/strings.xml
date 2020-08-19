@@ -12,7 +12,7 @@
     <string name="add_warning">Вы сохраняете задачу и берете на выполнение?</string>
     <string name="scan">Скан</string>
     <string name="add_over">Добавить излишек</string>
-    <string name="send_to_check">ОТПРАВИТЬ ЗАДАНИЕ В ВЕБ-ПРИЛОЖЕНИЕ НА ДОРАБОТКУ</string>
+    <string name="send_to_check">Отправить сформированный комплект на сервер</string>
     <string name="save">Сохранить</string>
     <string name="add_over_card">Добавление данных об излишке:</string>
     <string name="add_comment">Добавить комментарии</string>

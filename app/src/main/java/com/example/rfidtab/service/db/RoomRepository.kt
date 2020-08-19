@@ -7,6 +7,9 @@ import com.example.rfidtab.service.db.entity.kit.KitRfidEntity
 import com.example.rfidtab.service.db.entity.kitorder.KitOrderEntity
 import com.example.rfidtab.service.db.entity.kitorder.OrderCardEntity
 import com.example.rfidtab.service.db.entity.task.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class RoomRepository(private val dao: RoomDao) {
 
@@ -86,6 +89,12 @@ class RoomRepository(private val dao: RoomDao) {
 
     fun deleteKitRfid(rfidID: Int) {
         return dao.deleteKitRfid(rfidID)
+    }
+
+    fun deleteKitItem(kitId: Int) {
+        CoroutineScope(Dispatchers.IO).launch {
+            return@launch dao.deleteKitItem(kitId)
+        }
     }
 
     fun findCardsById(id: Int): LiveData<List<TaskCardListEntity>> {

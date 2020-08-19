@@ -3,7 +3,6 @@ package com.example.rfidtab.ui.createkit
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -67,37 +66,40 @@ class CreateKitDetailFragment(private val model: KitItemEntity) : BottomSheetDia
     private fun sendToCheck() {
         kit_detail_send_button.setOnClickListener {
             loadingShow()
-            val rfidCards = ArrayList<KitRfidCards>()
             viewModel.findKitRfid(model.kitId).observe(viewLifecycleOwner, Observer {
+                val rfidList = ArrayList<KitRfidCards>()
                 it.forEach {
-                    rfidCards.add(KitRfidCards(it.rfid))
+                    rfidList.add(KitRfidCards(it.rfid))
                 }
-            })
-            val body = CreateKitModel(model.comment, rfidCards)
-            viewModel.createKit(body).observe(viewLifecycleOwner, Observer { result ->
-                val data = result.data
-                val msg = result.msg
-                when (result.status) {
-                    Status.SUCCESS -> {
-                        loadingHide()
+                val body = CreateKitModel(model.comment, rfidList)
+                viewModel.createKit(body).observe(viewLifecycleOwner, Observer { result ->
+                    val data = result.data
+                    val msg = result.msg
+                    when (result.status) {
+                        Status.SUCCESS -> {
+                            toast("Успешно!")
+                            viewModel.deleteKitItem(model.kitId)
+                            loadingHide()
+                        }
+                        Status.ERROR -> {
+                            Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
+                            loadingHide()
+                        }
+                        Status.NETWORK -> {
+                            Toast.makeText(context, "Проблемы с интернетом", Toast.LENGTH_LONG)
+                                .show()
+                            loadingHide()
+                        }
+                        else -> {
+                            Toast.makeText(context, "Произошла ошибка", Toast.LENGTH_LONG).show()
+                            loadingHide()
+                        }
                     }
-                    Status.ERROR -> {
-                        Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
-                        loadingHide()
-                    }
-                    Status.NETWORK -> {
-                        Toast.makeText(context, "Проблемы с интернетом", Toast.LENGTH_LONG)
-                            .show()
-                        loadingHide()
-                    }
-                    else -> {
-                        Toast.makeText(context, "Произошла ошибка", Toast.LENGTH_LONG).show()
-                        loadingHide()
-                    }
-                }
 
 
+                })
             })
+
         }
     }
 
@@ -109,14 +111,16 @@ class CreateKitDetailFragment(private val model: KitItemEntity) : BottomSheetDia
             dialogBuilder.setView(view)
             val alertDialog = dialogBuilder.create()
 
-            view.scan_access_btn.setOnClickListener {
+            view.scan_scanner.setOnClickListener {
                 readTag(view.scan_result_et)
+            }
+
+            view.scan_access_btn.setOnClickListener {
                 val tag = view.scan_result_et.text.toString()
                 CoroutineScope(Dispatchers.IO).launch {
                     viewModel.insertKitRfid(
                         KitRfidEntity(
-                            model.kitId,
-                            Random.nextInt(0, 1000),
+                            model.kitId, Random.nextInt(0, 1000),
                             tag
                         )
                     )
@@ -124,6 +128,7 @@ class CreateKitDetailFragment(private val model: KitItemEntity) : BottomSheetDia
                         adapter.notifyDataSetChanged()
                     }
                 }
+                alertDialog.dismiss()
             }
             view.scan_negative_btn.setOnClickListener {
                 alertDialog.dismiss()

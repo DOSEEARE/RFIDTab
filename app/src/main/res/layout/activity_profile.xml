@@ -10,8 +10,7 @@
         android:id="@+id/profile_img"
         android:layout_width="match_parent"
         android:layout_height="192dp"
-        android:background="@color/whiteColor"
-        android:foreground="@drawable/logo"
+        android:src="@drawable/logo"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

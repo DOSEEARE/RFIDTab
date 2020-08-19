@@ -3,6 +3,7 @@ package com.example.rfidtab.ui.search
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -26,6 +27,8 @@ class SearchActivity : AppCompatActivity(), SearchListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = "Идентификация метки"
         initViews()
         initScanner()
     }
@@ -146,5 +149,12 @@ class SearchActivity : AppCompatActivity(), SearchListener {
         val intent = Intent(this, SearchDetailActivity::class.java)
         intent.putExtra("data", model)
         startActivity(intent)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> onBackPressed()
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

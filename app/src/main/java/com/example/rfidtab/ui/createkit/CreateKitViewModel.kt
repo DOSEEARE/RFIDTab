@@ -43,4 +43,8 @@ class CreateKitViewModel(application: Application) : BaseViewModel(application) 
         db.deleteKitRfid(rfid)
     }
 
+    fun deleteKitItem(kitId: Int) {
+        db.deleteKitItem(kitId)
+    }
+
 }
