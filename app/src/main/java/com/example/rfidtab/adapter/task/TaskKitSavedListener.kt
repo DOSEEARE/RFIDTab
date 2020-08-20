@@ -1,7 +1,7 @@
-package com.example.rfidtab.adapter.kitorder
+package com.example.rfidtab.adapter.task
 
 import com.example.rfidtab.service.db.entity.kitorder.KitOrderEntity
 
-interface KitOrderSavedListener {
+interface TaskKitSavedListener {
     fun onKitItemClicked (model : KitOrderEntity)
 }

@@ -9,8 +9,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.example.rfidtab.R
-import com.example.rfidtab.adapter.kitorder.KitOrderSavedAdapter
-import com.example.rfidtab.adapter.kitorder.KitOrderSavedListener
+import com.example.rfidtab.adapter.task.TaskKitSavedAdapter
+import com.example.rfidtab.adapter.task.TaskKitSavedListener
 import com.example.rfidtab.adapter.task.TaskSavedAdapter
 import com.example.rfidtab.adapter.task.TaskSavedListener
 import com.example.rfidtab.service.AppPreferences
@@ -28,7 +28,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SavedTaskFragment : Fragment(), TaskSavedListener, KitOrderSavedListener {
+class SavedTaskFragment : Fragment(), TaskSavedListener,
+    TaskKitSavedListener {
     private val viewModel: TaskViewModel by viewModel()
     private val kitOrderViewModel: KitOrderViewModel by viewModel()
 
@@ -52,7 +53,11 @@ class SavedTaskFragment : Fragment(), TaskSavedListener, KitOrderSavedListener {
             })
 
         kitOrderViewModel.findKitOrder().observe(viewLifecycleOwner, Observer {
-            saved_task_kit_rv.adapter = KitOrderSavedAdapter(this, it as ArrayList<KitOrderEntity>)
+            saved_task_kit_rv.adapter =
+                TaskKitSavedAdapter(
+                    this,
+                    it as ArrayList<KitOrderEntity>
+                )
         })
 
     }

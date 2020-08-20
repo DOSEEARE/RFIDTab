@@ -1,4 +1,4 @@
-package com.example.rfidtab.adapter.kitorder
+package com.example.rfidtab.adapter.task
 
 import android.graphics.Color
 import android.view.View
@@ -12,8 +12,8 @@ import com.example.rfidtab.service.model.enums.TaskStatusEnum
 import kotlinx.android.synthetic.main.item_task.view.*
 
 
-class KitOrderSavedAdapter(
-    private val listener: KitOrderSavedListener,
+class TaskKitSavedAdapter(
+    private val listener: TaskKitSavedListener,
     items: ArrayList<KitOrderEntity> = ArrayList()
 ) :
     GenericRecyclerAdapter<KitOrderEntity>(items) {

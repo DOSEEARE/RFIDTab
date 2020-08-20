@@ -19,6 +19,7 @@
         android:usesCleartextTraffic="true">
         <activity android:name=".ui.search.SearchDetailActivity" />
         <activity android:name=".ui.kitorder.KitOrderActivity" />
+        <activity android:name=".ui.kitorder.KitOrderDetailActivity" />
         <activity android:name=".ui.search.SearchActivity" />
         <activity android:name=".ui.createkit.CreateKitActivity" />
         <activity

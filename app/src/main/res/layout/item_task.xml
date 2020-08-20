@@ -27,9 +27,12 @@
 
         <ImageButton
             android:id="@+id/task_save_btn"
-            android:layout_width="23dp"
-            android:layout_height="32dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:background="@android:color/transparent"
+            android:paddingStart="@dimen/marginHorizontal"
+            android:paddingTop="@dimen/marginHorizontal"
+            android:paddingBottom="@dimen/marginHorizontal"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_bookmark"
             app:layout_constraintBottom_toBottomOf="parent"

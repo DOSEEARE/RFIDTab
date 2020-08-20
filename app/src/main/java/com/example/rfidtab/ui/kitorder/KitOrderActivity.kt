@@ -1,13 +1,15 @@
 package com.example.rfidtab.ui.kitorder
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.example.rfidtab.R
-import com.example.rfidtab.adapter.kitorder.KitOrderDetailAdapter
-import com.example.rfidtab.adapter.kitorder.KitOrderOnlineAdapter
+import com.example.rfidtab.adapter.kitorder.kitdetail.KitOrderDetailAdapter
+import com.example.rfidtab.adapter.kitorder.kit.KitOrderOnlineAdapter
+import com.example.rfidtab.adapter.kitorder.kit.KitOrderOnlineListener
 import com.example.rfidtab.extension.toast
 import com.example.rfidtab.service.Status
 import com.example.rfidtab.service.db.entity.kitorder.KitOrderEntity
@@ -15,13 +17,14 @@ import com.example.rfidtab.service.db.entity.kitorder.OrderCardEntity
 import com.example.rfidtab.service.model.TaskStatusModel
 import com.example.rfidtab.service.model.enums.TaskStatusEnum
 import com.example.rfidtab.service.model.enums.TaskTypeEnum
-import com.example.rfidtab.service.model.kitorder.OrderCardList
+import com.example.rfidtab.service.response.kitorder.KitOrderKit
 import com.example.rfidtab.service.response.task.TaskResponse
 import com.example.rfidtab.ui.task.TaskViewModel
 import kotlinx.android.synthetic.main.activity_kit_order.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class KitOrderActivity : AppCompatActivity() {
+class KitOrderActivity : AppCompatActivity(),
+    KitOrderOnlineListener {
     private val taskViewModel: TaskViewModel by viewModel()
     private val kitOrderViewModel: KitOrderViewModel by viewModel()
 
@@ -51,7 +54,11 @@ class KitOrderActivity : AppCompatActivity() {
                         kit_order_createdby.text = "Автор: ${data?.createdByFio}"
                         kit_order_status.text = "Статус: ${data?.statusTitle}"
                         kit_order_send_btn.visibility = View.GONE
-                        kit_order_kits_rv.adapter = KitOrderOnlineAdapter(data?.cardList as ArrayList<OrderCardList>)
+                        kit_order_kits_rv.adapter =
+                            KitOrderOnlineAdapter(
+                                this,
+                                data?.kits as ArrayList<KitOrderKit>
+                            )
                     }
                     Status.ERROR -> {
                         toast("Проблемы с интернетом!")
@@ -76,7 +83,9 @@ class KitOrderActivity : AppCompatActivity() {
 
             kitOrderViewModel.findKitCards(savedData.id).observe(this, Observer {
                 kit_order_kits_rv.adapter =
-                    KitOrderDetailAdapter(it as ArrayList<OrderCardEntity>)
+                    KitOrderDetailAdapter(
+                        it as ArrayList<OrderCardEntity>
+                    )
             })
 
             kit_order_send_btn.setOnClickListener {
@@ -117,5 +126,13 @@ class KitOrderActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
+
+    override fun onOnlineKitClicked(model: KitOrderKit) {
+        val detailIntent = Intent(this, KitOrderDetailActivity::class.java)
+        detailIntent.putExtra("data", model)
+        detailIntent.putExtra("isOnline", true)
+        startActivity(detailIntent)
+    }
+
 
 }

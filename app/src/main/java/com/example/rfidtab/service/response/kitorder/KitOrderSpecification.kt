@@ -1,12 +1,12 @@
-package com.example.rfidtab.service.model.kitorder
+package com.example.rfidtab.service.response.kitorder
 
 import com.google.gson.annotations.SerializedName
 
 
 
-data class Specification(
+data class KitOrderSpecification(
     @SerializedName("id") val id: Int,
-    @SerializedName("refTypeEquipment") val refTypeEquipment: RefTypeEquipment,
+    @SerializedName("refTypeEquipment") val refTypeEquipment: KitOrderEquipment,
     @SerializedName("outerDiameterOfThePipe") val outerDiameterOfThePipe: Int,
     @SerializedName("pipeWallThickness") val pipeWallThickness: Int,
     @SerializedName("odlockNipple") val odlockNipple: Int,
