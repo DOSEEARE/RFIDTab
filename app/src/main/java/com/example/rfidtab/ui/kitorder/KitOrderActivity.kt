@@ -7,13 +7,14 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.example.rfidtab.R
-import com.example.rfidtab.adapter.kitorder.kitdetail.KitOrderDetailAdapter
 import com.example.rfidtab.adapter.kitorder.kit.KitOrderOnlineAdapter
 import com.example.rfidtab.adapter.kitorder.kit.KitOrderOnlineListener
+import com.example.rfidtab.adapter.kitorder.kit.KitOrderSavedAdapter
+import com.example.rfidtab.adapter.kitorder.kit.KitOrderSavedListener
 import com.example.rfidtab.extension.toast
 import com.example.rfidtab.service.Status
 import com.example.rfidtab.service.db.entity.kitorder.KitOrderEntity
-import com.example.rfidtab.service.db.entity.kitorder.OrderCardEntity
+import com.example.rfidtab.service.db.entity.kitorder.KitOrderKitEntity
 import com.example.rfidtab.service.model.TaskStatusModel
 import com.example.rfidtab.service.model.enums.TaskStatusEnum
 import com.example.rfidtab.service.model.enums.TaskTypeEnum
@@ -24,7 +25,7 @@ import kotlinx.android.synthetic.main.activity_kit_order.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class KitOrderActivity : AppCompatActivity(),
-    KitOrderOnlineListener {
+    KitOrderOnlineListener, KitOrderSavedListener {
     private val taskViewModel: TaskViewModel by viewModel()
     private val kitOrderViewModel: KitOrderViewModel by viewModel()
 
@@ -81,11 +82,9 @@ class KitOrderActivity : AppCompatActivity(),
             kit_order_createdby.text = "Автор: ${savedData?.createdByFio}"
             kit_order_status.text = "Статус: ${savedData?.statusTitle}"
 
-            kitOrderViewModel.findKitCards(savedData.id).observe(this, Observer {
+            kitOrderViewModel.findKitItem(savedData.id).observe(this, Observer {
                 kit_order_kits_rv.adapter =
-                    KitOrderDetailAdapter(
-                        it as ArrayList<OrderCardEntity>
-                    )
+                    KitOrderSavedAdapter(this, it as ArrayList<KitOrderKitEntity>)
             })
 
             kit_order_send_btn.setOnClickListener {
@@ -131,6 +130,13 @@ class KitOrderActivity : AppCompatActivity(),
         val detailIntent = Intent(this, KitOrderDetailActivity::class.java)
         detailIntent.putExtra("data", model)
         detailIntent.putExtra("isOnline", true)
+        startActivity(detailIntent)
+    }
+
+    override fun onSavedKitClicked(model: KitOrderKitEntity) {
+        val detailIntent = Intent(this, KitOrderDetailActivity::class.java)
+        detailIntent.putExtra("data", model)
+        detailIntent.putExtra("isOnline", false)
         startActivity(detailIntent)
     }
 

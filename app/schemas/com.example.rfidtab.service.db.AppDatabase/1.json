@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "4b91f8dd4ee2e776995cdf6a4998043a",
+    "identityHash": "38b751d90c212e22aecedd513f4faa1b",
     "entities": [
       {
         "tableName": "TaskResultEntity",
@@ -337,8 +337,8 @@
         "foreignKeys": []
       },
       {
-        "tableName": "OrderCardEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `kitInt` INTEGER NOT NULL, `rfidTagNo` TEXT, `pipeSerialNumber` INTEGER NOT NULL, `serialNoOfNipple` INTEGER NOT NULL, `couplingSerialNumber` INTEGER NOT NULL, `fullName` TEXT, `comment` TEXT, PRIMARY KEY(`id`))",
+        "tableName": "KitOrderCardEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `kitId` INTEGER NOT NULL, `rfidTagNo` TEXT, `pipeSerialNumber` INTEGER NOT NULL, `serialNoOfNipple` INTEGER NOT NULL, `couplingSerialNumber` INTEGER NOT NULL, `fullName` TEXT, `comment` TEXT, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -347,8 +347,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "kitInt",
-            "columnName": "kitInt",
+            "fieldPath": "kitId",
+            "columnName": "kitId",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -465,12 +465,44 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "KitOrderKitEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `taskId` INTEGER NOT NULL, `title` TEXT, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "taskId",
+            "columnName": "taskId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4b91f8dd4ee2e776995cdf6a4998043a')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '38b751d90c212e22aecedd513f4faa1b')"
     ]
   }
 }

@@ -4,10 +4,10 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class OrderCardEntity(
+data class KitOrderCardEntity(
     @PrimaryKey
     val id: Int,
-    val kitInt: Int,
+    val kitId: Int,
     val rfidTagNo: String?,
     val pipeSerialNumber: Int,
     val serialNoOfNipple: Int,

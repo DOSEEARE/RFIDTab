@@ -8,8 +8,10 @@ import com.example.rfidtab.service.db.entity.kit.KitCommentEntity
 import com.example.rfidtab.service.db.entity.kit.KitItemEntity
 import com.example.rfidtab.service.db.entity.kit.KitRfidEntity
 import com.example.rfidtab.service.db.entity.kitorder.KitOrderEntity
-import com.example.rfidtab.service.db.entity.kitorder.OrderCardEntity
+import com.example.rfidtab.service.db.entity.kitorder.KitOrderCardEntity
+import com.example.rfidtab.service.db.entity.kitorder.KitOrderKitEntity
 import com.example.rfidtab.service.db.entity.task.*
+import com.example.rfidtab.service.response.kitorder.KitOrderKit
 
 
 @Database(
@@ -21,8 +23,9 @@ import com.example.rfidtab.service.db.entity.task.*
         KitCommentEntity::class,
         KitRfidEntity::class,
         KitItemEntity::class,
-        OrderCardEntity::class,
-        KitOrderEntity::class
+        KitOrderCardEntity::class,
+        KitOrderEntity::class,
+        KitOrderKitEntity::class
     ], version = 1
 )
 abstract class AppDatabase : RoomDatabase() {

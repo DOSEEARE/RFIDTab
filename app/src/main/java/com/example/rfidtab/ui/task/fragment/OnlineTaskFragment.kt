@@ -15,8 +15,9 @@ import com.example.rfidtab.adapter.task.TaskOnlineListener
 import com.example.rfidtab.extension.toast
 import com.example.rfidtab.service.AppPreferences
 import com.example.rfidtab.service.Status
+import com.example.rfidtab.service.db.entity.kitorder.KitOrderCardEntity
 import com.example.rfidtab.service.db.entity.kitorder.KitOrderEntity
-import com.example.rfidtab.service.db.entity.kitorder.OrderCardEntity
+import com.example.rfidtab.service.db.entity.kitorder.KitOrderKitEntity
 import com.example.rfidtab.service.db.entity.task.TaskCardListEntity
 import com.example.rfidtab.service.db.entity.task.TaskResultEntity
 import com.example.rfidtab.service.db.entity.task.TaskWithCards
@@ -156,8 +157,8 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
         })
     }
 
-    private fun saveKitOrder(kitInt: Int) {
-        kitOrderViewModel.kitOrder(kitInt).observe(viewLifecycleOwner, Observer { result ->
+    private fun saveKitOrder(taskId: Int) {
+        kitOrderViewModel.kitOrder(taskId).observe(viewLifecycleOwner, Observer { result ->
             val data = result.data
             val msg = result.msg
             when (result.status) {
@@ -174,23 +175,37 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                             data.createdByFio,
                             data.executorFio
                         )
-                        val listCard = ArrayList<OrderCardEntity>()
+                        val listCard = ArrayList<KitOrderCardEntity>()
+                        val listKit = ArrayList<KitOrderKitEntity>()
 
-                        data.cardList.forEach {
-                            listCard.add(
-                                OrderCardEntity(
+                        data.kits.forEach {
+                            listKit.add(
+                                KitOrderKitEntity(
                                     it.id,
-                                    kitInt,
-                                    it.rfidTagNo,
-                                    it.pipeSerialNumber,
-                                    it.serialNoOfNipple,
-                                    it.couplingSerialNumber,
-                                    it.fullName,
-                                    it.comment
+                                    taskId,
+                                    it.title
                                 )
                             )
+
+                            val childKitId = it.id
+                            it.cards.forEach {
+                                listCard.add(
+                                    KitOrderCardEntity(
+                                        it.id,
+                                        childKitId,
+                                        it.rfidTagNo,
+                                        it.pipeSerialNumber,
+                                        it.serialNoOfNipple,
+                                        it.couplingSerialNumber,
+                                        it.fullName,
+                                        it.comment
+                                    )
+                                )
+                            }
                         }
+
                         kitOrderViewModel.insertKitOrder(entity)
+                        kitOrderViewModel.insertKitItem(listKit)
                         kitOrderViewModel.insertKitCards(listCard)
                     }
                 }

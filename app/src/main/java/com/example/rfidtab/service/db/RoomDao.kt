@@ -8,8 +8,9 @@ import androidx.room.Query
 import com.example.rfidtab.service.db.entity.kit.KitCommentEntity
 import com.example.rfidtab.service.db.entity.kit.KitItemEntity
 import com.example.rfidtab.service.db.entity.kit.KitRfidEntity
+import com.example.rfidtab.service.db.entity.kitorder.KitOrderCardEntity
 import com.example.rfidtab.service.db.entity.kitorder.KitOrderEntity
-import com.example.rfidtab.service.db.entity.kitorder.OrderCardEntity
+import com.example.rfidtab.service.db.entity.kitorder.KitOrderKitEntity
 import com.example.rfidtab.service.db.entity.task.CardImagesEntity
 import com.example.rfidtab.service.db.entity.task.OverCardsEntity
 import com.example.rfidtab.service.db.entity.task.TaskCardListEntity
@@ -43,10 +44,16 @@ interface RoomDao {
     fun insertKitOrder(entity: KitOrderEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertKitOrderCards(list: List<OrderCardEntity>)
+    fun insertKitItem(entity: List<KitOrderKitEntity>)
 
-    @Query("SELECT * FROM OrderCardEntity WHERE OrderCardEntity.kitInt=:kitId")
-    fun findKitOrderCard(kitId: Int): LiveData<List<OrderCardEntity>>
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertKitOrderCards(list: List<KitOrderCardEntity>)
+
+    @Query("SELECT * FROM KitOrderKitEntity WHERE KitOrderKitEntity.taskId=:taskId")
+    fun findKitItem(taskId: Int): LiveData<List<KitOrderKitEntity>>
+
+    @Query("SELECT * FROM KitOrderCardEntity WHERE KitOrderCardEntity.kitId=:kitId")
+    fun findKitOrderCard(kitId: Int): LiveData<List<KitOrderCardEntity>>
 
     @Query("SELECT * FROM KitOrderEntity")
     fun findKitOrder(): LiveData<List<KitOrderEntity>>
@@ -75,6 +82,9 @@ interface RoomDao {
     @Query("DELETE FROM TaskResultEntity WHERE TaskResultEntity.id=:id")
     fun deleteTaskById(id: Int)
 
+    @Query("DELETE FROM KitOrderEntity WHERE KitOrderEntity.id=:id")
+    fun deleteKitTaskById(id: Int)
+
     @Query("DELETE FROM KitRfidEntity WHERE KitRfidEntity.rfidId=:rfidId")
     fun deleteKitRfid(rfidId: Int)
 
@@ -86,6 +96,9 @@ interface RoomDao {
 
     @Query("UPDATE TaskCardListEntity SET rfidTagNo=:rfid WHERE cardId =:cardId")
     fun updateCard(cardId: Int, rfid: String)
+
+    @Query("UPDATE KitOrderCardEntity SET rfidTagNo=:rfid WHERE id =:cardId")
+    fun updateKitCard(cardId: Int, rfid: String)
 
     @Query("UPDATE TaskCardListEntity SET commentProblemWithMark=:errorComment WHERE cardId =:cardId")
     fun updateErrorComment(cardId: Int, errorComment: String)

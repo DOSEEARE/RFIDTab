@@ -9,6 +9,7 @@ import com.example.rfidtab.base.GenericRecyclerAdapter
 import com.example.rfidtab.base.ViewHolder
 import com.example.rfidtab.service.db.entity.task.TaskResultEntity
 import com.example.rfidtab.service.model.enums.TaskStatusEnum
+import com.example.rfidtab.service.model.enums.TaskTypeEnum
 import kotlinx.android.synthetic.main.item_task.view.*
 
 
@@ -22,6 +23,10 @@ class TaskSavedAdapter(
         holder.itemView.task_auth.text = "Автор: ${item.createdByFio}"
         holder.itemView.task_executor.text = "Исполнитель ${item.executorFio}"
         holder.itemView.task_type.text = "Тип: ${item.taskTypeTitle}"
+
+        if (item.taskTypeId == TaskTypeEnum.kitForOder) {
+            holder.itemView.layoutParams.height = 0
+        }
 
         when (item.statusId) {
             TaskStatusEnum.sentToExecutor -> holder.itemView.task_status_tv.setBackgroundColor(Color.GREEN)
