@@ -9,6 +9,7 @@ import java.io.Serializable
 class KitOrderEntity(
     @PrimaryKey
     @SerializedName("id") val id: Int,
+    val userLogin: String?,
     @SerializedName("mainReason") val mainReason: String?,
     @SerializedName("tenantName") val tenantName: String?,
     @SerializedName("createAt") val createAt: String?,

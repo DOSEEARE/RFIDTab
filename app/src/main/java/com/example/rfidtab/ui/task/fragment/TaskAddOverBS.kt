@@ -1,20 +1,17 @@
 package com.example.rfidtab.ui.task.fragment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import com.example.rfidtab.R
 import com.example.rfidtab.service.db.entity.task.OverCardsEntity
 import com.example.rfidtab.ui.task.TaskViewModel
-import com.example.rfidtab.util.DataTransfer
+import com.example.rfidtab.util.scanrfid.RfidScannerListener
+import com.example.rfidtab.util.scanrfid.RfidScannerUtil
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.textfield.TextInputEditText
-import com.senter.support.openapi.StUhf
 import kotlinx.android.synthetic.main.fragment_task_add_over.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -23,14 +20,13 @@ import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.random.Random
 
-class TaskAddOverFragment(val taskId: Int) : BottomSheetDialogFragment() {
+class TaskAddOverBS(val taskId: Int) : BottomSheetDialogFragment(), RfidScannerListener {
     private val viewModel: TaskViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
 
         dialog!!.setOnShowListener { dialog ->
             val d: BottomSheetDialog = dialog as BottomSheetDialog
@@ -40,7 +36,6 @@ class TaskAddOverFragment(val taskId: Int) : BottomSheetDialogFragment() {
         }
 
         dialog!!.setCancelable(false)
-
         return inflater.inflate(R.layout.fragment_task_add_over, container, false)
     }
 
@@ -49,7 +44,6 @@ class TaskAddOverFragment(val taskId: Int) : BottomSheetDialogFragment() {
         hideAndShow()
         initViews()
     }
-
 
     private fun hideAndShow() {
         hideView(over_pipe_out)
@@ -73,7 +67,10 @@ class TaskAddOverFragment(val taskId: Int) : BottomSheetDialogFragment() {
         over_rfid_btn.setOnClickListener {
             showView(over_rfid_out)
             over_scan_btn.setOnClickListener {
-                readTag(over_rfid_in)
+                RfidScannerUtil(this).run {
+                    isCancelable = false
+                    show(this@TaskAddOverBS.childFragmentManager, "RfidScannerUtil")
+                }
             }
 
         }
@@ -121,63 +118,8 @@ class TaskAddOverFragment(val taskId: Int) : BottomSheetDialogFragment() {
         view.visibility = View.GONE
     }
 
-    // чтение RFID метки на кнопку скан
-    private fun readTag(resultView: TextInputEditText) {
-        var tag = String()
-        val bank = StUhf.Bank.TID
-        val ptr = 0
-        val cnt = 1
-        val pwd = "00000000"
-        val acsPass = StUhf.AccessPassword.getNewInstance(DataTransfer.getBytesByHexString(pwd))
-
-        try {
-            val iso18k6c: StUhf.InterrogatorModelDs.UmdOnIso18k6cRead =
-                object : StUhf.InterrogatorModelDs.UmdOnIso18k6cRead() {
-                    override fun onFailed(error: StUhf.InterrogatorModelDs.UmdErrorCode) {
-                        activity!!.runOnUiThread {
-                            Toast.makeText(context, "Нет метки!!!", Toast.LENGTH_LONG)
-                                .show()
-                        }
-                    }
-
-                    override fun onTagRead(
-                        tagCount: Int,
-                        uii: StUhf.UII,
-                        data: ByteArray,
-                        frequencyPoint: StUhf.InterrogatorModelDs.UmdFrequencyPoint,
-                        antennaId: Int,
-                        readCount: Int
-                    ) {
-                        tag = DataTransfer.xGetString(uii.bytes)
-
-                        activity!!.runOnUiThread {
-                            if (tag.isNotEmpty()) {
-                                resultView.setText(tag)
-                            }
-                        }
-
-                    }
-                }
-
-            val uhf: StUhf =
-                StUhf.getUhfInstance(StUhf.InterrogatorModel.InterrogatorModelD1).apply {
-                    init()
-
-                }
-
-            uhf.getInterrogatorAs(StUhf.InterrogatorModelDs.InterrogatorModelD1::class.java)
-                .iso18k6cRead(
-                    acsPass,
-                    bank,
-                    ptr,
-                    cnt,
-                    iso18k6c
-                )
-
-        } catch (e: Exception) {
-            Toast.makeText(context, "Нет метки!", Toast.LENGTH_SHORT).show()
-            Log.w("RFID SCANNER", e.message)
-        }
+    override fun onAccessScan(tag: String) {
+        over_rfid_in.setText(tag)
     }
 
 }

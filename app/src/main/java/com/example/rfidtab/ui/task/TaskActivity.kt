@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.rfidtab.R
 import com.example.rfidtab.ui.task.fragment.OnlineTaskFragment
 import com.example.rfidtab.ui.task.fragment.SavedTaskFragment
-import com.timelysoft.kainarcourierapp.adapter.viewpager.FragmentVPAdapter
+import com.example.rfidtab.adapter.viewpager.FragmentVPAdapter
 import kotlinx.android.synthetic.main.activity_task.*
 
 class TaskActivity : AppCompatActivity() {

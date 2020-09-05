@@ -18,6 +18,7 @@ import com.example.rfidtab.service.Status
 import com.example.rfidtab.service.db.entity.kitorder.KitOrderCardEntity
 import com.example.rfidtab.service.db.entity.kitorder.KitOrderEntity
 import com.example.rfidtab.service.db.entity.kitorder.KitOrderKitEntity
+import com.example.rfidtab.service.db.entity.kitorder.KitOrderSpecificationEntity
 import com.example.rfidtab.service.db.entity.task.TaskCardListEntity
 import com.example.rfidtab.service.db.entity.task.TaskResultEntity
 import com.example.rfidtab.service.db.entity.task.TaskWithCards
@@ -27,6 +28,7 @@ import com.example.rfidtab.service.model.enums.TaskTypeEnum
 import com.example.rfidtab.service.response.task.TaskResponse
 import com.example.rfidtab.ui.kitorder.KitOrderActivity
 import com.example.rfidtab.ui.kitorder.KitOrderViewModel
+import com.example.rfidtab.ui.task.MarkActivity
 import com.example.rfidtab.ui.task.TaskDetailActivity
 import com.example.rfidtab.ui.task.TaskViewModel
 import kotlinx.android.synthetic.main.alert_add.view.*
@@ -86,16 +88,28 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
     }
 
     override fun onItemClicked(model: TaskResponse) {
-        if (model.taskTypeId == TaskTypeEnum.kitForOder) {
-            val orderIntent = Intent(activity, KitOrderActivity::class.java)
-            orderIntent.putExtra("data", model)
-            orderIntent.putExtra("isOnline", true)
-            startActivity(orderIntent)
-        } else {
-            val intent = Intent(activity, TaskDetailActivity::class.java)
-            intent.putExtra("data", model)
-            intent.putExtra("isOnline", true)
-            startActivity(intent)
+        when (model.taskTypeId) {
+            //Переход на Комплектация в аренду
+            TaskTypeEnum.kitForOder -> {
+                val orderIntent = Intent(activity, KitOrderActivity::class.java)
+                orderIntent.putExtra("data", model)
+                orderIntent.putExtra("isOnline", true)
+                startActivity(orderIntent)
+            }
+            //Переход на Маркировка и инвенторизация
+            TaskTypeEnum.marking -> {
+                val intent = Intent(activity, MarkActivity::class.java)
+                intent.putExtra("data", model)
+                intent.putExtra("isOnline", true)
+                startActivity(intent)
+            }
+            //Переход на Комплектация на ремонт Инспекция
+            else -> {
+                val intent = Intent(activity, TaskDetailActivity::class.java)
+                intent.putExtra("data", model)
+                intent.putExtra("isOnline", true)
+                startActivity(intent)
+            }
         }
     }
 
@@ -107,14 +121,20 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
         val alertDialog = dialogBuilder.create()
 
         view.add_positive_btn.setOnClickListener {
-            if (model.taskTypeId != TaskTypeEnum.kitForOder) {
-                changeTaskStatus(model)
-                alertDialog.dismiss()
+            if (model.statusId == TaskStatusEnum.sentToExecutor) {
+                if (model.taskTypeId != TaskTypeEnum.kitForOder) {
+                    changeTaskStatus(model)
+                    alertDialog.dismiss()
+                } else {
+                    saveKitOrder(model.id)
+                    changeTaskStatus(model)
+                    alertDialog.dismiss()
+                }
             } else {
-                saveKitOrder(model.id)
-                changeTaskStatus(model)
+                toast("Уже принят на исполнение")
                 alertDialog.dismiss()
             }
+
         }
 
         view.add_negative_btn.setOnClickListener {
@@ -137,7 +157,6 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
             val msg = result.msg
             when (result.status) {
                 Status.SUCCESS -> {
-
                     toast("Вы взяли задание на исполнение")
                     saveItemToDb(model)
                 }
@@ -166,47 +185,69 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                     CoroutineScope(Dispatchers.IO).launch {
                         val entity = KitOrderEntity(
                             data!!.id,
+                            AppPreferences.userLogin,
                             data.mainReason,
                             data.tenantName,
                             data.createAt,
                             data.comment,
-                            data.statusTitle,
-                            data.statusId,
+                            TaskStatusEnum.takenForExecutionString,
+                            TaskStatusEnum.takenForExecution.toString(),
                             data.createdByFio,
                             data.executorFio
                         )
+
                         val listCard = ArrayList<KitOrderCardEntity>()
                         val listKit = ArrayList<KitOrderKitEntity>()
 
-                        data.kits.forEach {
+                        data.kits.forEachIndexed { indexKit, kitOrderKit ->
                             listKit.add(
                                 KitOrderKitEntity(
-                                    it.id,
+                                    kitOrderKit.id,
                                     taskId,
-                                    it.title
+                                    kitOrderKit.title
                                 )
                             )
 
-                            val childKitId = it.id
-                            it.cards.forEach {
+                            kitOrderKit.cards.forEachIndexed { indexCard, kitOrderCard ->
                                 listCard.add(
                                     KitOrderCardEntity(
-                                        it.id,
-                                        childKitId,
-                                        it.rfidTagNo,
-                                        it.pipeSerialNumber,
-                                        it.serialNoOfNipple,
-                                        it.couplingSerialNumber,
-                                        it.fullName,
-                                        it.comment
+                                        kitOrderCard.id,
+                                        kitOrderKit.id,
+                                        kitOrderCard.rfidTagNo,
+                                        kitOrderCard.pipeSerialNumber,
+                                        kitOrderCard.serialNoOfNipple,
+                                        kitOrderCard.couplingSerialNumber,
+                                        kitOrderCard.fullName,
+                                        kitOrderCard.comment,
+                                        false
                                     )
                                 )
+
+                            }
+                            if (data.kits[indexKit].cards.isEmpty()) {
+                                val spec = data.kits[indexKit].specification
+
+                                val kitOrderSpec = KitOrderSpecificationEntity(
+                                    spec.id,
+                                    kitOrderKit.id,
+                                    spec.outerDiameterOfThePipe,
+                                    spec.pipeWallThickness,
+                                    spec.odlockNipple,
+                                    spec.idlockNipple,
+                                    spec.pipeLength,
+                                    spec.shoulderAngle,
+                                    spec.turnkeyLengthNipple,
+                                    spec.turnkeyLengthCoupling,
+                                    spec.comment
+                                )
+                                kitOrderViewModel.insertKitOrderSpec(kitOrderSpec)
                             }
                         }
 
                         kitOrderViewModel.insertKitOrder(entity)
                         kitOrderViewModel.insertKitItem(listKit)
                         kitOrderViewModel.insertKitCards(listCard)
+
                     }
                 }
                 Status.ERROR -> {
@@ -221,51 +262,53 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                 }
             }
 
-
         })
     }
 
     private fun saveItemToDb(model: TaskResponse) {
         CoroutineScope(Dispatchers.IO).launch {
-            val cards = ArrayList<TaskCardListEntity>()
+            if (model.taskTypeId != TaskTypeEnum.kitForOder) {
+                val cards = ArrayList<TaskCardListEntity>()
 
-            model.cardList.forEachIndexed { index, taskCardList ->
-                val a = model.cardList[index]
-                cards.add(
-                    TaskCardListEntity(
-                        Random.nextInt(0, 1000),
-                        a.cardId,
-                        a.fullName,
-                        a.pipeSerialNumber,
-                        a.serialNoOfNipple,
-                        a.couplingSerialNumber,
-                        a.rfidTagNo,
-                        a.comment,
-                        a.accounting,
-                        a.commentProblemWithMark,
-                        a.taskId,
-                        a.taskTypeId
+                model.cardList.forEachIndexed { index, taskCardList ->
+                    val a = model.cardList[index]
+                    cards.add(
+                        TaskCardListEntity(
+                            Random.nextInt(0, 1000),
+                            a.cardId,
+                            a.fullName,
+                            a.pipeSerialNumber,
+                            a.serialNoOfNipple,
+                            a.couplingSerialNumber,
+                            a.rfidTagNo,
+                            a.comment,
+                            a.accounting,
+                            a.commentProblemWithMark,
+                            a.taskId,
+                            a.taskTypeId,
+                            false
+                        )
                     )
+                }
+
+                val item = TaskWithCards(
+                    TaskResultEntity(
+                        model.id,
+                        AppPreferences.userLogin,
+                        TaskStatusEnum.takenForExecution,
+                        model.taskTypeId,
+                        "Принято на исполнение",
+                        model.taskTypeTitle,
+                        model.createdByFio,
+                        model.executorFio,
+                        model.comment
+                    ), cards
                 )
-            }
+                viewModel.insertTaskToDb(item)
 
-            val item = TaskWithCards(
-                TaskResultEntity(
-                    model.id,
-                    AppPreferences.userLogin,
-                    TaskStatusEnum.takenForExecution,
-                    model.taskTypeId,
-                    "Принято на исполнение",
-                    model.taskTypeTitle,
-                    model.createdByFio,
-                    model.executorFio,
-                    model.comment
-                ), cards
-            )
-            viewModel.insertTaskToDb(item)
-
-            withContext(Dispatchers.Main) {
-                toast("Успешно сохранён!")
+                withContext(Dispatchers.Main) {
+                    toast("Успешно сохранён!")
+                }
             }
         }
     }

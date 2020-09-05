@@ -28,12 +28,13 @@
                     android:orientation="vertical"
                     app:layout_constraintTop_toTopOf="parent">
 
+
                     <TextView
-                        android:id="@+id/search_detail_pipe"
+                        android:id="@+id/search_detail_fullname"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginVertical="8dp"
-                        android:text="№ трубы: "
+                        tools:text="Наименование : "
                         android:textColor="@color/blackColor"
                         android:textSize="16sp" />
 
@@ -42,7 +43,16 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginVertical="8dp"
-                        android:text="№ ниппеля: "
+                        tools:text="№ ниппеля: "
+                        android:textColor="@color/blackColor"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/search_detail_pipe"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="8dp"
+                        tools:text="№ Трубы: "
                         android:textColor="@color/blackColor"
                         android:textSize="16sp" />
 
@@ -51,7 +61,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginVertical="8dp"
-                        android:text="№ муфты: "
+                        tools:text="№ муфты: "
                         android:textColor="@color/blackColor"
                         android:textSize="16sp" />
 
@@ -60,7 +70,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginVertical="8dp"
-                        android:text="№ RFID: 12424"
+                        tools:text="№ RFID: 12424"
                         android:textColor="@color/blackColor"
                         android:textSize="16sp" />
 
@@ -69,7 +79,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginVertical="8dp"
-                        android:text="Комментарии: 12424"
+                        tools:text="Комментарии: 12424"
                         android:textColor="@color/blackColor"
                         android:textSize="16sp" />
 

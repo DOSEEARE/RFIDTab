@@ -16,7 +16,9 @@ class SearchAdapter(
     GenericRecyclerAdapter<SearchCard>(items) {
 
     override fun bind(item: SearchCard, holder: ViewHolder) {
-        holder.itemView.search_item_title.text = "${holder.adapterPosition + 1}) ${item.fullName}"
+
+        holder.itemView.search_item_title.text =
+            "${holder.adapterPosition + 1})\n Серийный № трубы: ${item.pipeSerialNumber}\n Наименование: ${item.fullName}"
 
         holder.itemView.setOnClickListener {
             listener.onItemClicked(item)

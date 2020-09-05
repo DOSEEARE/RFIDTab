@@ -10,7 +10,7 @@ import java.io.Serializable
 @Entity
 data class KitOrderKitEntity(
     @PrimaryKey
-    @SerializedName("id") val id: Int,
-    @SerializedName("id") val taskId: Int,
-    @SerializedName("title") val title: String?
+    val id: Int,
+    val taskId: Int,
+    val title: String?
 ) : Serializable

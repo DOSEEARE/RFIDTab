@@ -15,7 +15,6 @@ object DataTransfer {
     }
 
     fun getBytesByHexString(string: String): ByteArray? {
-        //var string = string
         var stringLocal = string.replace(" ".toRegex(), "") // delete spaces
         val len = stringLocal.length
         if (len % 2 == 1) {

@@ -4,9 +4,7 @@ import androidx.lifecycle.LiveData
 import com.example.rfidtab.service.db.entity.kit.KitCommentEntity
 import com.example.rfidtab.service.db.entity.kit.KitItemEntity
 import com.example.rfidtab.service.db.entity.kit.KitRfidEntity
-import com.example.rfidtab.service.db.entity.kitorder.KitOrderCardEntity
-import com.example.rfidtab.service.db.entity.kitorder.KitOrderEntity
-import com.example.rfidtab.service.db.entity.kitorder.KitOrderKitEntity
+import com.example.rfidtab.service.db.entity.kitorder.*
 import com.example.rfidtab.service.db.entity.task.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -53,16 +51,34 @@ class RoomRepository(private val dao: RoomDao) {
         dao.insertKitOrderCards(list)
     }
 
+    fun findAddCardByKitId(kitId: Int): LiveData<List<KitOrderAddCardEntity>> {
+        return dao.findAddCardsByKitId(kitId)
+    }
+
+    fun insertKitOrderAddCard(entity: KitOrderAddCardEntity) {
+        CoroutineScope(Dispatchers.IO).launch {
+            dao.insertAddCard(entity)
+        }
+    }
+
+    fun insertKitOrderSpec(entity: KitOrderSpecificationEntity) {
+        dao.insertKitOrderSpec(entity)
+    }
+
     fun findKitItem(taskId: Int): LiveData<List<KitOrderKitEntity>> {
         return dao.findKitItem(taskId)
+    }
+
+    fun findKitOrderSpecByKitId(kitId: Int): LiveData<KitOrderSpecificationEntity> {
+        return dao.findKitOrderSpecByKitId(kitId)
     }
 
     fun findOrderCard(kitInt: Int): LiveData<List<KitOrderCardEntity>> {
         return dao.findKitOrderCard(kitInt)
     }
 
-    fun findKitOrder(): LiveData<List<KitOrderEntity>> {
-        return dao.findKitOrder()
+    fun findKitOrderByLogin(userLogin: String): LiveData<List<KitOrderEntity>> {
+        return dao.findKitOrderByLogin(userLogin)
     }
 
     fun findImagesById(id: Int): LiveData<List<CardImagesEntity>> {
@@ -117,13 +133,41 @@ class RoomRepository(private val dao: RoomDao) {
     }
 
     fun updateCard(cardId: Int, rfidTag: String) {
-        return dao.updateCard(cardId, rfidTag)
+        CoroutineScope(Dispatchers.IO).launch {
+            return@launch dao.updateCard(cardId, rfidTag)
+
+        }
     }
 
-    fun updateKitCard (cardId: Int, rfid: String){
+    fun kitOrderCardConfirm(cardId: Int, isConfirmed: Boolean) {
+        CoroutineScope(Dispatchers.IO).launch {
+            return@launch dao.kitOrderCardConfirm(cardId, isConfirmed)
+        }
+    }
+
+    fun updateKitCard(cardId: Int, rfid: String) {
         return dao.updateKitCard(cardId, rfid)
     }
+
     fun updateErrorComment(cardId: Int, comment: String) {
-        return dao.updateErrorComment(cardId, comment)
+        CoroutineScope(Dispatchers.IO).launch {
+            return@launch dao.updateErrorComment(cardId, comment)
+
+        }
+    }
+
+    fun updateConfirmTaskCard(cardId: Int, isConfirmed: Boolean) {
+        CoroutineScope(Dispatchers.IO).launch {
+            return@launch dao.updateConfirmTaskCard(cardId, isConfirmed)
+
+        }
+    }
+
+    fun getConfirmedCardsCount (taskId: Int) : LiveData <Int>{
+        return dao.getConfirmedCardsCount(taskId)
+    }
+
+    fun getUnConfirmedCardsCount (taskId: Int) : LiveData <Int>{
+        return dao.getUnConfirmedCardsCount(taskId)
     }
 }

@@ -8,6 +8,14 @@ object TaskStatusEnum {
     var createdEdited = 5
     var sentForRevision = 6
 
+
+    var sentToExecutorString = "Отправлено на исполнение"
+    var takenForExecutionString = "Принято на исполнение"
+    var savedToLocalString = "Результаты сохранены локально"
+    var doneString = "Выполнено полностью"
+    var createdEditedString = "Созданно"
+    var sentForRevisionString = "Отправленно на доработку"
+
 /*  1: Отправлено на исполнение
     2: Принято на исполнение
     3: Результаты сохранены локально (Отправить задание на проверку)

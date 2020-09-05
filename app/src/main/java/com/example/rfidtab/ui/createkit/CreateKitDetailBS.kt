@@ -1,12 +1,12 @@
 package com.example.rfidtab.ui.createkit
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import com.example.rfidtab.R
 import com.example.rfidtab.adapter.kit.CreateKitDetailAdapter
@@ -19,12 +19,11 @@ import com.example.rfidtab.service.db.entity.kit.KitItemEntity
 import com.example.rfidtab.service.db.entity.kit.KitRfidEntity
 import com.example.rfidtab.service.model.kit.CreateKitModel
 import com.example.rfidtab.service.model.kit.KitRfidCards
-import com.example.rfidtab.util.DataTransfer
+import com.example.rfidtab.util.scanrfid.RfidScannerListener
+import com.example.rfidtab.util.scanrfid.RfidScannerUtil
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.textfield.TextInputEditText
-import com.senter.support.openapi.StUhf
 import kotlinx.android.synthetic.main.alert_scan.view.*
 import kotlinx.android.synthetic.main.fragment_kit_add.*
 import kotlinx.coroutines.CoroutineScope
@@ -34,10 +33,12 @@ import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.random.Random
 
-class CreateKitDetailFragment(private val model: KitItemEntity) : BottomSheetDialogFragment(),
-    CreateKitDetailListener {
+class CreateKitDetailBS(private val model: KitItemEntity) : BottomSheetDialogFragment(),
+    CreateKitDetailListener, RfidScannerListener {
     private val viewModel: CreateKitViewModel by viewModel()
     private lateinit var adapter: CreateKitDetailAdapter
+    private lateinit var scanDialog: AlertDialog
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -105,35 +106,7 @@ class CreateKitDetailFragment(private val model: KitItemEntity) : BottomSheetDia
 
     private fun addRfidTags() {
         kit_detail_add_button.setOnClickListener {
-            val dialogBuilder = AlertDialog.Builder(requireContext())
-            val inflater = this.layoutInflater
-            val view = inflater.inflate(R.layout.alert_scan, null)
-            dialogBuilder.setView(view)
-            val alertDialog = dialogBuilder.create()
-
-            view.scan_scanner.setOnClickListener {
-                readTag(view.scan_result_et)
-            }
-
-            view.scan_access_btn.setOnClickListener {
-                val tag = view.scan_result_et.text.toString()
-                CoroutineScope(Dispatchers.IO).launch {
-                    viewModel.insertKitRfid(
-                        KitRfidEntity(
-                            model.kitId, Random.nextInt(0, 1000),
-                            tag
-                        )
-                    )
-                    withContext(Dispatchers.Main) {
-                        adapter.notifyDataSetChanged()
-                    }
-                }
-                alertDialog.dismiss()
-            }
-            view.scan_negative_btn.setOnClickListener {
-                alertDialog.dismiss()
-            }
-            alertDialog.show()
+            createScanDialog("")
         }
     }
 
@@ -146,72 +119,60 @@ class CreateKitDetailFragment(private val model: KitItemEntity) : BottomSheetDia
 
     }
 
-    // чтение RFID метки на кнопку скан
-    private fun readTag(resultView: TextInputEditText) {
-        var tag = String()
-        val bank = StUhf.Bank.TID
-        val ptr = 0
-        val cnt = 1
-        val pwd = "00000000"
-        val acsPass = StUhf.AccessPassword.getNewInstance(DataTransfer.getBytesByHexString(pwd))
+    private fun createScanDialog(accesTag: String) {
+        val dialogBuilder = AlertDialog.Builder(requireContext())
+        val inflater = this.layoutInflater
+        val view = inflater.inflate(R.layout.alert_scan, null)
+        dialogBuilder.setView(view)
+        scanDialog = dialogBuilder.create()
 
-        try {
-            val iso18k6c: StUhf.InterrogatorModelDs.UmdOnIso18k6cRead =
-                object : StUhf.InterrogatorModelDs.UmdOnIso18k6cRead() {
-                    override fun onFailed(error: StUhf.InterrogatorModelDs.UmdErrorCode) {
-                        activity!!.runOnUiThread {
-                            Toast.makeText(context, "Нет метки!!!", Toast.LENGTH_LONG)
-                                .show()
-                        }
-                    }
+        view.scan_result_et.setText(accesTag)
 
-                    override fun onTagRead(
-                        tagCount: Int,
-                        uii: StUhf.UII,
-                        data: ByteArray,
-                        frequencyPoint: StUhf.InterrogatorModelDs.UmdFrequencyPoint,
-                        antennaId: Int,
-                        readCount: Int
-                    ) {
-                        tag = DataTransfer.xGetString(uii.bytes)
+        view.scan_problem_checkbox.isVisible = false
 
-                        activity!!.runOnUiThread {
-                            if (tag.isNotEmpty()) {
-                                resultView.setText(tag)
-                            }
-                        }
-
-                    }
-                }
-
-            val uhf: StUhf =
-                StUhf.getUhfInstance(StUhf.InterrogatorModel.InterrogatorModelD1).apply {
-                    init()
-                }
-
-            uhf.getInterrogatorAs(StUhf.InterrogatorModelDs.InterrogatorModelD1::class.java)
-                .iso18k6cRead(
-                    acsPass,
-                    bank,
-                    ptr,
-                    cnt,
-                    iso18k6c
-                )
-
-        } catch (e: Exception) {
-            Toast.makeText(context, "Нет метки!", Toast.LENGTH_SHORT).show()
-            Log.w("RFID SCANNER", e.message)
+        view.scan_scanner.setOnClickListener {
+            scanDialog.dismiss()
+            RfidScannerUtil(this).run {
+                isCancelable = false
+                show(this@CreateKitDetailBS.childFragmentManager, "ShowScanning")
+            }
+            //  RfidScanner().scanRfidTag(view.scan_result_et, requireActivity())
+            //  readTag(view.scan_result_et)
         }
+
+        view.scan_access_btn.setOnClickListener {
+            val tag = view.scan_result_et.text.toString()
+            CoroutineScope(Dispatchers.IO).launch {
+                viewModel.insertKitRfid(
+                    KitRfidEntity(
+                        model.kitId, Random.nextInt(0, 1000),
+                        tag
+                    )
+                )
+                withContext(Dispatchers.Main) {
+                    adapter.notifyDataSetChanged()
+                }
+            }
+            scanDialog.dismiss()
+        }
+        view.scan_negative_btn.setOnClickListener {
+            scanDialog.dismiss()
+        }
+        scanDialog.show()
     }
 
-    override fun rfidItemClicked(rfid: KitRfidEntity, position: Int) {
+    //Удаление найденных меток
+    override fun rfidItemDelete(rfid: KitRfidEntity, position: Int) {
         CoroutineScope(Dispatchers.IO).launch {
             viewModel.deleteKitRfid(rfid.rfidId)
         }
         toast("Удалён!")
     }
 
-
-
+    //Пересоздание алерт при успешном скане
+    override fun onAccessScan(tag: String) {
+        scanDialog.dismiss()
+        createScanDialog(tag)
+    }
 
 }

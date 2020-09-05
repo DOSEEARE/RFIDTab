@@ -4,5 +4,4 @@ import com.example.rfidtab.service.db.entity.task.TaskResultEntity
 
 interface TaskSavedListener {
     fun onItemClicked(model: TaskResultEntity)
-    fun onItemDeleted(id: Int)
 }

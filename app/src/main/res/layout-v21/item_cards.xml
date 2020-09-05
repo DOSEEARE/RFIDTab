@@ -86,7 +86,32 @@
                 android:text="№ RFID: 12424"
                 android:textColor="@color/blackColor"
                 android:textSize="16sp" />
+            <TextView
+                android:id="@+id/card_problem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="8dp"
+                android:text="№ RFID: 12424"
+                android:textColor="@color/blackColor"
+                android:textSize="16sp" />
 
+            <TextView
+                android:id="@+id/card_comment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="8dp"
+                android:text="Комментарии: "
+                android:textColor="@color/blackColor"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/card_problem_mark"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="8dp"
+                android:text="Проблемы с меткой: "
+                android:textColor="@color/blackColor"
+                android:textSize="16sp" />
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

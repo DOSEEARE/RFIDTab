@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
@@ -32,14 +31,23 @@ import com.example.rfidtab.service.model.overlist.OverCards
 import com.example.rfidtab.service.model.overlist.TaskOverCards
 import com.example.rfidtab.service.response.task.TaskCardResponse
 import com.example.rfidtab.service.response.task.TaskResponse
-import com.example.rfidtab.ui.task.fragment.TaskAddOverFragment
-import com.example.rfidtab.util.DataTransfer
+import com.example.rfidtab.ui.task.fragment.TaskAddOverBS
 import com.example.rfidtab.util.MyUtil
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
-import com.senter.support.openapi.StUhf
-import kotlinx.android.synthetic.main.activity_task_detail_activity.*
+import com.example.rfidtab.util.scanrfid.RfidScannerListener
+import com.example.rfidtab.util.scanrfid.RfidScannerUtil
+import kotlinx.android.synthetic.main.activity_task_detail.*
+import kotlinx.android.synthetic.main.activity_task_detail.task_detail_createdby
+import kotlinx.android.synthetic.main.activity_task_detail.task_detail_executor
+import kotlinx.android.synthetic.main.activity_task_detail.task_detail_rv
+import kotlinx.android.synthetic.main.activity_task_detail.task_detail_save_btn
+import kotlinx.android.synthetic.main.activity_task_detail.task_detail_send_btn
+import kotlinx.android.synthetic.main.activity_task_detail.task_detail_status
+import kotlinx.android.synthetic.main.activity_task_detail.task_detail_type
+import kotlinx.android.synthetic.main.activity_task_mark_inventory.*
+import kotlinx.android.synthetic.main.activity_task_mark_inventory.task_detail_add_over
+import kotlinx.android.synthetic.main.activity_task_mark_inventory.task_detail_over_rv
 import kotlinx.android.synthetic.main.alert_add.view.*
+import kotlinx.android.synthetic.main.alert_scan.*
 import kotlinx.android.synthetic.main.alert_scan.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -54,7 +62,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.random.Random
 
-class TaskDetailActivity : AppCompatActivity(), TaskDetailListener {
+class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerListener {
     private lateinit var onlineData: TaskResponse
     private lateinit var savedData: TaskResultEntity
     private var cardList = ArrayList<TaskCardListEntity>()
@@ -62,13 +70,13 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener {
     private lateinit var filePath: File
     private var CAMERA_REQUEST_CODE = 1
     private var cardId = 0
+    private lateinit var currentCardEntity: TaskCardListEntity
 
-    private var tag: String = String()
-
+    private lateinit var scanDialog: AlertDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_task_detail_activity)
+        setContentView(R.layout.activity_task_detail)
         supportActionBar?.title = "Задание"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         MyUtil().askPermissionForCamera(this, CAMERA_REQUEST_CODE)
@@ -96,17 +104,11 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener {
             val model = intent.getParcelableExtra<TaskResultEntity>("data")
             savedData = model
 
-            //добавить излишное в inventory
-            when (savedData.taskTypeId) {
-                TaskTypeEnum.inventory -> {
-                    initOverCards()
-                    task_detail_add_over.visibility = View.VISIBLE
-                    task_detail_add_over.setOnClickListener {
-                        addOverCards()
-                    }
-                }
-                TaskTypeEnum.inspection -> {
-
+            if (savedData.taskTypeId == TaskTypeEnum.inventory) {
+                initOverCards()
+                task_detail_add_over.visibility = View.VISIBLE
+                task_detail_add_over.setOnClickListener {
+                    addOverCards()
                 }
             }
 
@@ -115,9 +117,16 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener {
             task_detail_executor.text = "Исполнитель: ${savedData.executorFio}"
             task_detail_status.text = "Статус: ${savedData.statusTitle}"
             task_detail_type.text = "Тип задания: ${savedData.taskTypeTitle}"
+
             viewModel.findCardsById(savedData.id).observe(this, Observer {
                 cardList = it as ArrayList<TaskCardListEntity>
                 task_detail_rv.adapter = TaskDetailSavedAdapter(this, savedData.taskTypeId, it)
+
+                viewModel.getConfirmedCardCount(savedData.id).observe(this, Observer { confirmed ->
+                    task_detail_counter.text = "Подтверждено $confirmed/${it.size}"
+
+                })
+
             })
 
         }
@@ -146,12 +155,7 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener {
 
         }
 
-    }
 
-    private fun initOverCards() {
-        viewModel.findOverCardById(savedData.id).observe(this, Observer {
-            task_detail_over_rv.adapter = TaskDetailOverAdapter(it as ArrayList<OverCardsEntity>)
-        })
     }
 
     private fun sendToCheck() {
@@ -163,6 +167,7 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener {
                     it.cardId,
                     it.taskTypeId,
                     it.rfidTagNo,
+                    accounting(it.isConfirmed),
                     it.comment,
                     it.commentProblemWithMark
                 )
@@ -224,7 +229,10 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener {
 
             sendOverCards()
             loadingHide()
+
         }
+
+
     }
 
     private fun sendCardsImages(id: Int) {
@@ -235,13 +243,13 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener {
                     //  val filePart = MultipartBody.Part.createFormData("file", file.name, RequestBody.create("image/*".toMediaTypeOrNull(), file))
                     val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
                     val filePart = MultipartBody.Part.createFormData("File", file.name, requestFile)
+
                     viewModel.sendImage(filePart, id).observe(this, Observer { result ->
                         val data = result.data
                         val msg = result.msg
                         when (result.status) {
                             Status.SUCCESS -> {
                                 loadingHide()
-                                toast("$data")
                                 CoroutineScope(Dispatchers.IO).launch {
                                     viewModel.deleteTaskById(savedData.id)
                                     viewModel.deleteCardsById(savedData.id)
@@ -249,15 +257,12 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener {
                             }
                             Status.ERROR -> {
                                 loadingHide()
-                                toast("$data")
                             }
                             Status.NETWORK -> {
                                 loadingHide()
-                                toast("$data")
                             }
                             else -> {
                                 loadingHide()
-                                toast("$data")
                             }
                         }
 
@@ -269,47 +274,68 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener {
 
     }
 
+    //Сканирование Rfid метки
     override fun scantBtnClicked(model: TaskCardListEntity) {
+        currentCardEntity = model
+        createScanDialog(model, "")
+    }
+
+    private fun createScanDialog(model: TaskCardListEntity, accessTag: String) {
         val dialogBuilder = AlertDialog.Builder(this)
         val inflater = this.layoutInflater
         val view = inflater.inflate(R.layout.alert_scan, null)
         dialogBuilder.setView(view)
-        val alertDialog = dialogBuilder.create()
+        scanDialog = dialogBuilder.create()
+
         view.scan_name.text = model.fullName
+
+        view.scan_result_et.setText(accessTag)
 
         //Сохранение карточки
         view.scan_access_btn.setOnClickListener {
-            if (tag.isNotEmpty()) {
-                CoroutineScope(Dispatchers.IO).launch {
-                    viewModel.updateCard(model.cardId, tag)
-                    //      tag = " "
-                    withContext(Dispatchers.Main) {
-                        toast("Успешно сохранен!")
-                        alertDialog.dismiss()
-                    }
+            if (accessTag.isNotEmpty()) {
+                if (MyUtil().equalsNoSpace(model.rfidTagNo!!, accessTag)) {
+                    viewModel.updateConfirmTaskCard(model.cardId, true)
+                    toast("Подтверждён!")
+                    scanDialog.dismiss()
+                } else {
+                    toast("Не совпадает!")
+                    scanDialog.dismiss()
                 }
+
             } else {
-                CoroutineScope(Dispatchers.IO).launch {
+                if (view.scan_comment_et.text.toString().isNotEmpty()) {
                     viewModel.updateErrorComment(model.cardId, view.scan_comment_et.text.toString())
-                    runOnUiThread {
-                        alertDialog.dismiss()
-                    }
+                    toast("Успешно сохранён!")
+                    scanDialog.dismiss()
+                } else {
+                    scan_comment_et.error = "Не может быть пустым"
                 }
             }
         }
 
         //Чтение со сканера
         view.scan_scanner.setOnClickListener {
-            readTag(view.scan_result_et, view.scan_comment_out)
+            RfidScannerUtil(this).run {
+                isCancelable = false
+                show(supportFragmentManager, "RfidScannerUtil")
+            }
+            //readTag(view.scan_result_et, view.scan_comment_out)
         }
 
         view.scan_negative_btn.setOnClickListener {
-            alertDialog.dismiss()
+            scanDialog.dismiss()
+        }
+        view.scan_problem_checkbox.setOnCheckedChangeListener { buttonView, isChecked ->
+            when (isChecked) {
+                true -> view.scan_comment_out.visibility = View.VISIBLE
+                false -> view.scan_comment_out.visibility = View.GONE
+            }
         }
 
-        alertDialog.show()
-    }
+        scanDialog.show()
 
+    }
     override fun cameraBtnClicked(model: TaskCardListEntity) {
         val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         MyUtil().createCardFolder()
@@ -409,7 +435,8 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener {
                         a.accounting,
                         a.commentProblemWithMark,
                         a.taskId,
-                        a.taskTypeId
+                        a.taskTypeId,
+                        false
                     )
                 )
             }
@@ -435,66 +462,28 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener {
         }
     }
 
-    // чтение RFID метки на кнопку скан
-    private fun readTag(resultView: TextInputEditText, commentView: TextInputLayout) {
-        val bank = StUhf.Bank.TID
-        val ptr = 0
-        val cnt = 1
-        val pwd = "00000000"
-        val acsPass = StUhf.AccessPassword.getNewInstance(DataTransfer.getBytesByHexString(pwd))
 
-        try {
-            val iso18k6c: StUhf.InterrogatorModelDs.UmdOnIso18k6cRead =
-                object : StUhf.InterrogatorModelDs.UmdOnIso18k6cRead() {
-                    override fun onFailed(error: StUhf.InterrogatorModelDs.UmdErrorCode) {
-                        runOnUiThread {
-                            Toast.makeText(applicationContext, "Нет метки!!!", Toast.LENGTH_LONG)
-                                .show()
-                            commentView.visibility = View.VISIBLE
-                        }
-                    }
-
-                    override fun onTagRead(
-                        tagCount: Int,
-                        uii: StUhf.UII,
-                        data: ByteArray,
-                        frequencyPoint: StUhf.InterrogatorModelDs.UmdFrequencyPoint,
-                        antennaId: Int,
-                        readCount: Int
-                    ) {
-                        tag = DataTransfer.xGetString(uii.bytes)
-
-                        if (tag.isNotEmpty()) {
-                            runOnUiThread {
-                                resultView.setText(tag)
-                            }
-                        }
-                    }
-                }
-
-            val uhf: StUhf =
-                StUhf.getUhfInstance(StUhf.InterrogatorModel.InterrogatorModelD1).apply {
-                    init()
-
-                }
-
-            uhf.getInterrogatorAs(StUhf.InterrogatorModelDs.InterrogatorModelD1::class.java)
-                .iso18k6cRead(
-                    acsPass,
-                    bank,
-                    ptr,
-                    cnt,
-                    iso18k6c
-                )
-
-        } catch (e: Exception) {
-            Toast.makeText(this, "Нет метки!", Toast.LENGTH_SHORT).show()
-            Log.w("RFID SCANNER", e.message)
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> onBackPressed()
         }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onAccessScan(tag: String) {
+        scanDialog.dismiss()
+        createScanDialog(currentCardEntity, tag)
+    }
+
+    private fun initOverCards() {
+        viewModel.findOverCardById(savedData.id).observe(this, Observer {
+            task_detail_over_rv.adapter = TaskDetailOverAdapter(it as ArrayList<OverCardsEntity>)
+        })
     }
 
     private fun addOverCards() {
-        val fragment = TaskAddOverFragment(savedData.id)
+        val fragment =
+            TaskAddOverBS(savedData.id)
         fragment.show(supportFragmentManager, "AddOverCard")
     }
 
@@ -502,8 +491,17 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener {
         if (savedData.taskTypeId == TaskTypeEnum.inventory) {
             val list = ArrayList<OverCards>()
             viewModel.findOverCardById(savedData.id).observe(this, Observer {
+
                 it.forEach {
-                    list.add(OverCards(it.pipeSerialNumber, it.serialNoOfNipple, it.couplingSerialNumber, it.rfidTagNo, it.comment))
+                    list.add(
+                        OverCards(
+                            it.pipeSerialNumber,
+                            it.serialNoOfNipple,
+                            it.couplingSerialNumber,
+                            it.rfidTagNo,
+                            it.comment
+                        )
+                    )
                 }
             })
 
@@ -511,7 +509,6 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener {
 
             viewModel.sendOverCards(model).observe(this, Observer { result ->
                 val data = result.data
-                val msg = result.msg
                 when (result.status) {
                     Status.SUCCESS -> {
                         toast("$data")
@@ -532,12 +529,12 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener {
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            android.R.id.home -> onBackPressed()
+    private fun accounting(isConfirm: Boolean): Int {
+        return if (isConfirm) {
+            1
+        } else {
+            0
         }
-        return super.onOptionsItemSelected(item)
     }
-
 
 }

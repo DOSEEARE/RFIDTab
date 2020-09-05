@@ -3,7 +3,9 @@ package com.example.rfidtab.service
 import com.example.rfidtab.service.model.AuthModel
 import com.example.rfidtab.service.model.CardModel
 import com.example.rfidtab.service.model.TaskStatusModel
+import com.example.rfidtab.service.model.confirm.ConfirmCardModel
 import com.example.rfidtab.service.model.kit.CreateKitModel
+import com.example.rfidtab.service.model.kitorder.KitOrderModel
 import com.example.rfidtab.service.model.overlist.TaskOverCards
 import com.example.rfidtab.service.model.search.SearchModel
 import com.example.rfidtab.service.response.AuthResponse
@@ -53,5 +55,10 @@ interface ApiService {
     @POST("kit/create")
     suspend fun createKit(@Body model: CreateKitModel): Response<String>
 
+    @POST("equipment/add-card/list")
+    suspend fun sendKitOrderCards(@Body model: KitOrderModel): Response<String>
+
+    @POST("equipment/confirmation")
+    suspend fun confirmCards(@Body model: ConfirmCardModel): Response<String>
 
 }

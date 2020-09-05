@@ -1,4 +1,4 @@
-package com.timelysoft.kainarcourierapp.adapter.viewpager
+package com.example.rfidtab.adapter.viewpager
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager

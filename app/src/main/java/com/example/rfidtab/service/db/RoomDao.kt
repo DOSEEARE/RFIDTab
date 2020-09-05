@@ -8,9 +8,7 @@ import androidx.room.Query
 import com.example.rfidtab.service.db.entity.kit.KitCommentEntity
 import com.example.rfidtab.service.db.entity.kit.KitItemEntity
 import com.example.rfidtab.service.db.entity.kit.KitRfidEntity
-import com.example.rfidtab.service.db.entity.kitorder.KitOrderCardEntity
-import com.example.rfidtab.service.db.entity.kitorder.KitOrderEntity
-import com.example.rfidtab.service.db.entity.kitorder.KitOrderKitEntity
+import com.example.rfidtab.service.db.entity.kitorder.*
 import com.example.rfidtab.service.db.entity.task.CardImagesEntity
 import com.example.rfidtab.service.db.entity.task.OverCardsEntity
 import com.example.rfidtab.service.db.entity.task.TaskCardListEntity
@@ -47,16 +45,28 @@ interface RoomDao {
     fun insertKitItem(entity: List<KitOrderKitEntity>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertAddCard(entity: KitOrderAddCardEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertKitOrderCards(list: List<KitOrderCardEntity>)
+
+    @Query("SELECT * FROM KitOrderAddCardEntity WHERE KitOrderAddCardEntity.kitId=:kitId")
+    fun findAddCardsByKitId(kitId: Int): LiveData<List<KitOrderAddCardEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertKitOrderSpec(entity: KitOrderSpecificationEntity)
 
     @Query("SELECT * FROM KitOrderKitEntity WHERE KitOrderKitEntity.taskId=:taskId")
     fun findKitItem(taskId: Int): LiveData<List<KitOrderKitEntity>>
 
+    @Query("SELECT * FROM KitOrderSpecificationEntity WHERE KitOrderSpecificationEntity.kitId=:kitId")
+    fun findKitOrderSpecByKitId(kitId: Int): LiveData<KitOrderSpecificationEntity>
+
     @Query("SELECT * FROM KitOrderCardEntity WHERE KitOrderCardEntity.kitId=:kitId")
     fun findKitOrderCard(kitId: Int): LiveData<List<KitOrderCardEntity>>
 
-    @Query("SELECT * FROM KitOrderEntity")
-    fun findKitOrder(): LiveData<List<KitOrderEntity>>
+    @Query("SELECT * FROM KitOrderEntity WHERE KitOrderEntity.userLogin=:userLogin")
+    fun findKitOrderByLogin(userLogin: String): LiveData<List<KitOrderEntity>>
 
     @Query("SELECT * FROM TaskResultEntity WHERE TaskResultEntity.userLogin=:userLogin")
     fun findTasksByLogin(userLogin: String): LiveData<List<TaskResultEntity>>
@@ -97,9 +107,22 @@ interface RoomDao {
     @Query("UPDATE TaskCardListEntity SET rfidTagNo=:rfid WHERE cardId =:cardId")
     fun updateCard(cardId: Int, rfid: String)
 
+    @Query("UPDATE KitOrderCardEntity SET isConfirmed=:isConfirmed WHERE id =:cardId")
+    fun kitOrderCardConfirm(cardId: Int, isConfirmed: Boolean)
+
+
     @Query("UPDATE KitOrderCardEntity SET rfidTagNo=:rfid WHERE id =:cardId")
     fun updateKitCard(cardId: Int, rfid: String)
 
     @Query("UPDATE TaskCardListEntity SET commentProblemWithMark=:errorComment WHERE cardId =:cardId")
     fun updateErrorComment(cardId: Int, errorComment: String)
+
+    @Query("UPDATE TaskCardListEntity SET isConfirmed=:isConfirmed WHERE cardId =:cardId")
+    fun updateConfirmTaskCard(cardId: Int, isConfirmed: Boolean)
+
+    @Query("SELECT COUNT(isConfirmed) FROM TaskCardListEntity WHERE isConfirmed = 1 AND taskId = :taskId")
+    fun getConfirmedCardsCount(taskId: Int):LiveData <Int>
+
+    @Query("SELECT COUNT(isConfirmed) FROM TaskCardListEntity WHERE isConfirmed = 0 AND taskId = :taskId")
+    fun getUnConfirmedCardsCount(taskId: Int): LiveData <Int>
 }

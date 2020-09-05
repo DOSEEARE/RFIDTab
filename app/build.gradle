@@ -95,15 +95,19 @@ dependencies {
     // сладер
 //    implementation 'io.apptik.widget:multislider-holo:1.3'
     // implementation 'com.github.lamphuong223:range-seekbar:1.0.1'
- 
+
     // Room
     implementation "androidx.room:room-runtime:2.2.5"
     kapt "androidx.room:room-compiler:2.2.5"
     implementation "androidx.room:room-ktx:2.2.5"
 
+
+    //local RFID SDK
     implementation files('libs\\SenterOpenApi_IoT_1.2.3.74_Common.jar')
     implementation files('libs\\SenterOpenApi_IoT_1.2.3.74_Function_KeyManager.jar')
     implementation files('libs\\SenterOpenApi_IoT_1.2.3.74_Function_UltraHighFrequency.jar')
     implementation files('libs\\jdom.jar')
 
+    //Lottie Animation
+    implementation 'com.airbnb.android:lottie:3.4.1'
 }

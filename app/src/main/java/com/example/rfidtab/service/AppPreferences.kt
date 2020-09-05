@@ -33,17 +33,11 @@ object AppPreferences {
         set(value) = preferences.edit {
             it.putString("userLogin", value)
         }
-    
+
     var isLogined: Boolean
         get() = preferences.getBoolean("isLogined", false)
         set(value) = preferences.edit {
             it.putBoolean("isLogined", value)
-        }
-
-    var isOnline: Boolean
-        get() = preferences.getBoolean("isOnline", false)
-        set(value) = preferences.edit {
-            it.putBoolean("isOnline", value)
         }
 
     var name: String

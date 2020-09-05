@@ -4,14 +4,15 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class KitOrderCardEntity(
+data class  KitOrderCardEntity(
     @PrimaryKey
     val id: Int,
     val kitId: Int,
     val rfidTagNo: String?,
-    val pipeSerialNumber: Int,
-    val serialNoOfNipple: Int,
-    val couplingSerialNumber: Int,
+    val pipeSerialNumber: Long?,
+    val serialNoOfNipple: Long?,
+    val couplingSerialNumber: Long? ,
     val fullName: String?,
-    val comment: String?
+    val comment: String?,
+    val isConfirmed: Boolean
 )

@@ -26,4 +26,5 @@
     <string name="create_kit">Создание комплекта для постановщика задач:</string>
     <string name="add_couple">Добавить № муфты</string>
     <string name="add_number">Добавить серийный №</string>
+    <string name="add_about_card">Добавление данных о карте</string>
 </resources>

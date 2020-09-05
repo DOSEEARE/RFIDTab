@@ -1,6 +1,5 @@
 package com.example.rfidtab.ui.task.fragment
 
-import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -21,11 +20,8 @@ import com.example.rfidtab.ui.kitorder.KitOrderActivity
 import com.example.rfidtab.ui.kitorder.KitOrderViewModel
 import com.example.rfidtab.ui.task.TaskDetailActivity
 import com.example.rfidtab.ui.task.TaskViewModel
+import com.example.rfidtab.ui.task.MarkActivity
 import kotlinx.android.synthetic.main.fragment_saved_tasks.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SavedTaskFragment : Fragment(), TaskSavedListener,
@@ -52,49 +48,42 @@ class SavedTaskFragment : Fragment(), TaskSavedListener,
                 saved_task_rv.adapter = taskAdapter
             })
 
-        kitOrderViewModel.findKitOrder().observe(viewLifecycleOwner, Observer {
-            saved_task_kit_rv.adapter =
-                TaskKitSavedAdapter(
-                    this,
-                    it as ArrayList<KitOrderEntity>
-                )
-        })
+        kitOrderViewModel.findKitOrderByLogin(AppPreferences.userLogin!!)
+            .observe(viewLifecycleOwner, Observer {
+                saved_task_kit_rv.adapter =
+                    TaskKitSavedAdapter(
+                        this,
+                        it as ArrayList<KitOrderEntity>
+                    )
+            })
 
     }
 
     override fun onItemClicked(model: TaskResultEntity) {
-        if (model.taskTypeId == TaskTypeEnum.kitForOder) {
-            val orderIntent = Intent(activity, KitOrderActivity::class.java)
-            orderIntent.putExtra("data", model)
-            orderIntent.putExtra("isOnline", false)
-            startActivity(orderIntent)
-        } else {
-            val intent = Intent(activity, TaskDetailActivity::class.java)
-            intent.putExtra("data", model)
-            intent.putExtra("isOnline", false)
-            startActivity(intent)
-    }
-}
-
-    override fun onItemDeleted(id: Int) {
-        val builder = AlertDialog.Builder(context)
-        builder.setTitle("Удалить задание?")
-
-        builder.setPositiveButton("Да, удалить") { dialog, which ->
-            CoroutineScope(Dispatchers.IO).launch {
-                viewModel.deleteTaskById(id)
-                viewModel.deleteCardsById(id)
-                withContext(Dispatchers.Main) {
-                    initViews()
-                }
+        when (model.taskTypeId) {
+            //Переход на Комплектация в аренду
+            TaskTypeEnum.kitForOder -> {
+                val orderIntent = Intent(activity, KitOrderActivity::class.java)
+                orderIntent.putExtra("data", model)
+                orderIntent.putExtra("isOnline", false)
+                startActivity(orderIntent)
+            }
+            //Переход на Маркировка и инвенторизация
+            TaskTypeEnum.marking -> {
+                val intent = Intent(activity, MarkActivity::class.java)
+                intent.putExtra("data", model)
+                intent.putExtra("isOnline", false)
+                startActivity(intent)
+            }
+            //Переход на Комплектация на ремонт Инспекция
+            else -> {
+                val intent = Intent(activity, TaskDetailActivity::class.java)
+                intent.putExtra("data", model)
+                intent.putExtra("isOnline", false)
+                startActivity(intent)
+            }
         }
     }
-
-    builder.setNegativeButton("Нет") { dialog, which ->
-        dialog.dismiss()
-    }
-    builder.show()
-}
 
     override fun onKitItemClicked(model: KitOrderEntity) {
         val intent = Intent(activity, KitOrderActivity::class.java)

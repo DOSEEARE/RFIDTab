@@ -7,6 +7,7 @@ import com.example.rfidtab.service.Resource
 import com.example.rfidtab.service.db.entity.task.*
 import com.example.rfidtab.service.model.CardModel
 import com.example.rfidtab.service.model.TaskStatusModel
+import com.example.rfidtab.service.model.confirm.ConfirmCardModel
 import com.example.rfidtab.service.model.overlist.TaskOverCards
 import com.example.rfidtab.service.response.task.TaskCardResponse
 import com.example.rfidtab.service.response.task.TaskResponse
@@ -78,4 +79,19 @@ class TaskViewModel(application: Application) : BaseViewModel(application) {
         return db.updateErrorComment(cardId, comment)
     }
 
+    fun updateConfirmTaskCard(cardId: Int, isConfirmed: Boolean) {
+        return db.updateConfirmTaskCard(cardId, isConfirmed)
+    }
+
+    fun getConfirmedCardCount(taskId: Int): LiveData <Int> {
+        return db.getConfirmedCardsCount(taskId)
+    }
+
+    fun getUnConfirmedCardCount(taskId: Int): LiveData <Int> {
+        return db.getUnConfirmedCardsCount(taskId)
+    }
+
+    fun confirmCards (model : ConfirmCardModel) :LiveData<Resource<String>>{
+        return network.confirmCards(model)
+    }
 }

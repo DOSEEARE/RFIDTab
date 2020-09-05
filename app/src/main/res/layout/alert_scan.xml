@@ -54,15 +54,24 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
+        <CheckBox
+            android:id="@+id/scan_problem_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/marginHorizontal"
+            android:text="Проблема с меткой"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/scan_edit_out" />
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/scan_comment_out"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:visibility="gone"
             android:layout_marginTop="@dimen/marginHorizontal"
             app:layout_constraintEnd_toStartOf="@id/scan_scanner"
             app:layout_constraintStart_toStartOf="parent"
-            android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@id/scan_edit_out">
+            app:layout_constraintTop_toBottomOf="@id/scan_problem_checkbox">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/scan_comment_et"

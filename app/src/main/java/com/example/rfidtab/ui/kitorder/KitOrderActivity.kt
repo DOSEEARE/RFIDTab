@@ -2,6 +2,7 @@ package com.example.rfidtab.ui.kitorder
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -16,11 +17,16 @@ import com.example.rfidtab.service.Status
 import com.example.rfidtab.service.db.entity.kitorder.KitOrderEntity
 import com.example.rfidtab.service.db.entity.kitorder.KitOrderKitEntity
 import com.example.rfidtab.service.model.TaskStatusModel
+import com.example.rfidtab.service.model.confirm.ConfirmCardModel
+import com.example.rfidtab.service.model.confirm.ConfirmCards
 import com.example.rfidtab.service.model.enums.TaskStatusEnum
 import com.example.rfidtab.service.model.enums.TaskTypeEnum
+import com.example.rfidtab.service.model.kitorder.KitOrderCards
+import com.example.rfidtab.service.model.kitorder.KitOrderModel
 import com.example.rfidtab.service.response.kitorder.KitOrderKit
 import com.example.rfidtab.service.response.task.TaskResponse
 import com.example.rfidtab.ui.task.TaskViewModel
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_kit_order.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -86,34 +92,121 @@ class KitOrderActivity : AppCompatActivity(),
                 kit_order_kits_rv.adapter =
                     KitOrderSavedAdapter(this, it as ArrayList<KitOrderKitEntity>)
             })
-
+//
             kit_order_send_btn.setOnClickListener {
-                taskViewModel.taskStatusChange(
-                    TaskStatusModel(
-                        savedData.id,
-                        TaskTypeEnum.kitForOder,
-                        TaskStatusEnum.savedToLocal
-                    )
-                ).observe(this, Observer { result ->
-                    val data = result.data
-                    when (result.status) {
-                        Status.SUCCESS -> {
-                            toast("Успешно отправлен!")
-                        }
-                        Status.ERROR -> {
-                            toast("Проблемы с интернетом!")
-                        }
-                        Status.NETWORK -> {
-                            toast("Проблемы с интернетом!")
-                        }
-                        else -> {
-                            toast("Неизвестная ошибка!")
+                kitOrderViewModel.findKitItem(savedData.id).observe(this, Observer {
 
-                        }
+                    it.forEachIndexed { index, kit ->
+                        var model: KitOrderModel
+                        val cardList = ArrayList<KitOrderCards>()
+
+                        kitOrderViewModel.findAddCardByKitId(kit.id)
+                            .observe(this, Observer { card ->
+                                card.forEach {
+                                    cardList.add(
+                                        KitOrderCards(
+                                            it.pipeSerialNumber,
+                                            it.couplingSerialNumber,
+                                            it.serialNoOfNipple,
+                                            it.rfidTagNo
+                                        )
+                                    )
+                                }
+                            })
+                        model = KitOrderModel(savedData.id, cardList)
+                        kitOrderViewModel.sendKitOrderCards(model)
+                            .observe(this, Observer { result ->
+                                val data = result.data
+                                when (result.status) {
+                                    Status.SUCCESS -> {
+                                        toast("Успешно отправлен!")
+                                    }
+                                    Status.ERROR -> {
+                                        toast("Карточка уже в комплекте!")
+                                    }
+                                    Status.NETWORK -> {
+                                        toast("Карточка уже в комплекте!")
+                                    }
+                                    else -> {
+                                        toast("Неизвестная ошибка!")
+
+                                    }
+                                }
+
+                            })
+
+                        kitOrderViewModel.findKitCards(kit.id).observe(this, Observer { card ->
+                            val body: ConfirmCardModel
+                            val confirmCard = ArrayList<ConfirmCards>()
+
+                            card.forEach {
+                                cardList.add(
+                                    KitOrderCards(
+                                        it.pipeSerialNumber,
+                                        it.couplingSerialNumber,
+                                        it.serialNoOfNipple,
+                                        it.rfidTagNo
+                                    )
+                                )
+                                if (it.isConfirmed) {
+                                    confirmCard.add(ConfirmCards(it.rfidTagNo))
+                                }
+                            }
+
+                            body = ConfirmCardModel(savedData.id, confirmCard)
+
+                            kitOrderViewModel.confirmCards(body).observe(this, Observer { result ->
+                                val data = result.data
+                                when (result.status) {
+                                    Status.SUCCESS -> {
+                                        //Измнетть статус задании
+                                        taskViewModel.taskStatusChange(
+                                            TaskStatusModel(
+                                                savedData.id,
+                                                TaskTypeEnum.kitForOder,
+                                                TaskStatusEnum.savedToLocal
+                                            )
+                                        ).observe(this, Observer { result ->
+                                            when (result.status) {
+                                                Status.SUCCESS -> {
+                                                    toast("Успешно отправлен!")
+                                                }
+                                                Status.ERROR -> {
+                                                    toast("Проблемы с интернетом!")
+                                                }
+                                                Status.NETWORK -> {
+                                                    toast("Проблемы с интернетом!")
+                                                }
+                                                else -> {
+                                                    toast("Неизвестная ошибка!")
+
+                                                }
+                                            }
+                                        })
+
+                                        toast("Подверждены!!")
+                                    }
+                                    Status.ERROR -> {
+                                        toast("Карточка уже в комплекте!")
+                                    }
+                                    Status.NETWORK -> {
+                                        toast("Карточка уже в комплекте!")
+                                    }
+                                    else -> {
+                                        toast("Неизвестная ошибка!")
+
+                                    }
+                                }
+
+
+                            })
+
+                        })
                     }
-                })
-            }
 
+                })
+
+            }
 
         }
 
@@ -127,6 +220,8 @@ class KitOrderActivity : AppCompatActivity(),
     }
 
     override fun onOnlineKitClicked(model: KitOrderKit) {
+        val json = Gson().toJson(model)
+        Log.e("kow", json)
         val detailIntent = Intent(this, KitOrderDetailActivity::class.java)
         detailIntent.putExtra("data", model)
         detailIntent.putExtra("isOnline", true)

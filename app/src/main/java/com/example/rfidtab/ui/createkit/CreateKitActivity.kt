@@ -40,6 +40,8 @@ class CreateKitActivity : AppCompatActivity(), CreateKitListener {
             dialogBuilder.setView(view)
             val alertDialog = dialogBuilder.create()
 
+
+
             view.kit_item_access.setOnClickListener {
                 val text = view.kit_item_et.text.toString()
                 CoroutineScope(Dispatchers.IO).launch {
@@ -82,7 +84,7 @@ class CreateKitActivity : AppCompatActivity(), CreateKitListener {
     }
 
     override fun kitItemClicked(model: KitItemEntity) {
-        val fm = CreateKitDetailFragment(model)
+        val fm = CreateKitDetailBS(model)
         fm.show(supportFragmentManager, "CreateKitDetailFragment")
     }
 

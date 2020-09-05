@@ -22,6 +22,7 @@
         <activity android:name=".ui.kitorder.KitOrderDetailActivity" />
         <activity android:name=".ui.search.SearchActivity" />
         <activity android:name=".ui.createkit.CreateKitActivity" />
+        <activity android:name=".ui.task.MarkActivity" />
         <activity
             android:name=".ui.task.CardDetailActivity"
             android:screenOrientation="portrait" />

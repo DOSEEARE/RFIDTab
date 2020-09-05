@@ -7,9 +7,9 @@ import java.io.Serializable
 class TaskCardResponse(
     @SerializedName("id") val cardId: Int,
     @SerializedName("fullName") val fullName: String?,
-    @SerializedName("pipeSerialNumber") val pipeSerialNumber: Int,
-    @SerializedName("serialNoOfNipple") val serialNoOfNipple: Int,
-    @SerializedName("couplingSerialNumber") val couplingSerialNumber: Int,
+    @SerializedName("pipeSerialNumber") val pipeSerialNumber: Long,
+    @SerializedName("serialNoOfNipple") val serialNoOfNipple: Long,
+    @SerializedName("couplingSerialNumber") val couplingSerialNumber: Long,
     @SerializedName("rfidTagNo") val rfidTagNo: String = " ",
     @SerializedName("comment") val comment: String = " ",
     @SerializedName("accounting") val accounting: Int,

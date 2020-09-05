@@ -16,7 +16,7 @@ class CreateKitDetailAdapter(
 
     override fun bind(item: KitRfidEntity, holder: ViewHolder) {
         holder.itemView.kit_detail_delete.setOnClickListener {
-            listener.rfidItemClicked(item, holder.adapterPosition)
+            listener.rfidItemDelete(item, holder.adapterPosition)
         }
         holder.itemView.kit_detail_rfid.text = item.rfid
 

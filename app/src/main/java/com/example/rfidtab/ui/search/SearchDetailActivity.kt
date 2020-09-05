@@ -13,18 +13,18 @@ class SearchDetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_kit_order)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = "Идентификация метки"
         setContentView(R.layout.activity_search_detail)
 
         data = intent.getSerializableExtra("data") as SearchCard
 
-        search_detail_pipe.text = "№ Трубы ${data.fullName}"
-        search_detail_nipple.text = "№ Ниппель ${data.serialNoOfNipple}"
-        search_detail_bond.text = "№ Муфта ${data.couplingSerialNumber}"
-        search_detail_rfid.text = "Rfid ${data.rfidTagNo}"
-        search_detail_comment.text = "Комментарии ${data.comment}"
+        search_detail_fullname.text = "Наименование: ${data.fullName}"
+        search_detail_nipple.text = "№ Ниппель: ${data.serialNoOfNipple}"
+        search_detail_bond.text = "№ Муфта: ${data.couplingSerialNumber}"
+        search_detail_pipe.text = "№ Трубы: ${data.pipeSerialNumber}"
+        search_detail_rfid.text = "Rfid: ${data.rfidTagNo}"
+        search_detail_comment.text = "Комментарии: ${data.comment}"
 
         if (!data.imagesLink.isNullOrEmpty()) {
             search_detail_rv.adapter =
@@ -39,4 +39,5 @@ class SearchDetailActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
+
 }
