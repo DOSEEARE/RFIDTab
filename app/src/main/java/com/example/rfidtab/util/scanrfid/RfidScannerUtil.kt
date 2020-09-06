@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.example.rfidtab.R
 import com.example.rfidtab.util.DataTransfer
@@ -90,6 +91,66 @@ class RfidScannerUtil(val onScanListener: RfidScannerListener) : DialogFragment(
         } catch (e: Exception) {
             dismiss()
             Toast.makeText(context, "Ошибка сканера", Toast.LENGTH_SHORT).show()
+            Log.w("RFID SCANNER", e.message)
+        }
+    }
+
+
+    fun scanRfidTag(context: Fragment) {
+        var tag = String()
+        val bank = StUhf.Bank.TID
+        val ptr = 0
+        val cnt = 1
+        val pwd = "00000000"
+        val acsPass = StUhf.AccessPassword.getNewInstance(
+            DataTransfer.getBytesByHexString(pwd)
+        )
+
+        try {
+            CoroutineScope(Dispatchers.IO).launch {
+                while (tag.isEmpty()) {
+                    val iso18k6c: StUhf.InterrogatorModelDs.UmdOnIso18k6cRead =
+                        object : StUhf.InterrogatorModelDs.UmdOnIso18k6cRead() {
+                            override fun onFailed(error: StUhf.InterrogatorModelDs.UmdErrorCode) {
+
+                            }
+
+                            override fun onTagRead(
+                                tagCount: Int,
+                                uii: StUhf.UII,
+                                data: ByteArray,
+                                frequencyPoint: StUhf.InterrogatorModelDs.UmdFrequencyPoint,
+                                antennaId: Int,
+                                readCount: Int
+                            ) {
+                                tag = DataTransfer.xGetString(uii.bytes)
+                                context.activity?.runOnUiThread {
+                                    if (tag.isNotEmpty()) {
+                                        onScanListener.onAccessScan(tag)
+                                        dismiss()
+                                    }
+                                }
+                            }
+                        }
+
+                    val uhf: StUhf =
+                        StUhf.getUhfInstance(StUhf.InterrogatorModel.InterrogatorModelD1).apply {
+                            init()
+                        }
+
+                    uhf.getInterrogatorAs(StUhf.InterrogatorModelDs.InterrogatorModelD1::class.java)
+                        .iso18k6cRead(
+                            acsPass,
+                            bank,
+                            ptr,
+                            cnt,
+                            iso18k6c
+                        )
+                }
+            }
+        } catch (e: Exception) {
+            dismiss()
+            Toast.makeText(context.requireContext(), "Ошибка сканера", Toast.LENGTH_SHORT).show()
             Log.w("RFID SCANNER", e.message)
         }
     }

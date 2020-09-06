@@ -6,9 +6,9 @@ import java.io.Serializable
 data class KitOrderCard (
 	@SerializedName("id") val id : Int,
 	@SerializedName("rfidTagNo") val rfidTagNo : String?,
-	@SerializedName("pipeSerialNumber") val pipeSerialNumber : Long,
-	@SerializedName("serialNoOfNipple") val serialNoOfNipple : Long,
-	@SerializedName("couplingSerialNumber") val couplingSerialNumber : Long,
+	@SerializedName("pipeSerialNumber") val pipeSerialNumber : Int,
+	@SerializedName("serialNoOfNipple") val serialNoOfNipple : Int,
+	@SerializedName("couplingSerialNumber") val couplingSerialNumber : Int,
 	@SerializedName("fullName") val fullName : String?,
 	@SerializedName("imagesLink") val imagesLink : List<String?>,
 	@SerializedName("comment") val comment : String?

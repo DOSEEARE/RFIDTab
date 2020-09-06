@@ -37,6 +37,7 @@ class KitCardSavedAdapter(
 
 
         holder.itemView.card_confirm_problem_mark.visibility = View.GONE
+
         holder.itemView.card_scan_btn.setOnClickListener {
             listener.scanBtnClicked(item)
         }

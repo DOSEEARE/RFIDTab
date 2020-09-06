@@ -22,6 +22,17 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Подтверждён" />
 
+        <TextView
+            android:id="@+id/card_warning_photo"
+            android:layout_width="match_parent"
+            android:visibility="gone"
+            android:gravity="center"
+            android:background="@android:color/holo_red_dark"
+            android:textColor="@color/whiteColor"
+            android:layout_height="wrap_content"
+            android:text="Фото обязательно !"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/card_scan_btn"
             android:layout_width="wrap_content"

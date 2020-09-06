@@ -53,24 +53,25 @@ class KitOrderAddCardBS(val kitId: Int) : BottomSheetDialogFragment(), RfidScann
                 dismiss()
             }
 
-            add_save_btn.setOnClickListener {
-              add_rfid_in.text.toString()
-                val rfid = add_rfid_in.text.toString()
-                val pipe = add_pipe_in?.text.toString().toLongOrNull()
-                val nipple = add_nipple_in?.text.toString().toLongOrNull()
-                val couple = add_couple_in?.text.toString().toLongOrNull()
-                val comment = add_comment_in.text.toString()
+        }
 
-                val model = KitOrderAddCardEntity(Random.nextInt(0, 100), kitId, pipe, nipple, couple, rfid, comment)
+        add_save_btn.setOnClickListener {
+            add_rfid_in.text.toString()
+            val rfid = add_rfid_in.text.toString()
+            val pipe = add_pipe_in?.text.toString().toIntOrNull()
+            val nipple = add_nipple_in?.text.toString().toIntOrNull()
+            val couple = add_couple_in?.text.toString().toIntOrNull()
+            val comment = add_comment_in.text.toString()
 
-                kitOrderViewModel.insertKitOrderAddCard(model)
-                toast("Сохранён")
-                dismiss()
-            }
+            val model = KitOrderAddCardEntity(Random.nextInt(0, 100), kitId, pipe, nipple, couple, rfid, comment)
+
+            kitOrderViewModel.insertKitOrderAddCard(model)
+            toast("Сохранён")
+            dismiss()
         }
 
         add_scan_btn.setOnClickListener {
-            RfidScannerUtil(this).scanRfidTag(requireActivity())
+            RfidScannerUtil(this).show(childFragmentManager, "KitOrderAddCardsBS")
         }
 
     }

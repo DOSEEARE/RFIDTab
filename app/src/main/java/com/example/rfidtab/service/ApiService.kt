@@ -26,7 +26,6 @@ interface ApiService {
     @POST("inventory/add-over")
     suspend fun overCards(@Body model: TaskOverCards): Response<String>
 
-    @Headers("Content-Type: multipart/form-data")
     @Multipart
     @POST("card/file/{id}")
     suspend fun sendImage(

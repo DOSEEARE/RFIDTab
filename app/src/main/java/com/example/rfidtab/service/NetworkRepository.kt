@@ -153,7 +153,6 @@ class NetworkRepository {
         try {
 
             val response = RetrofitClient.apiService().task(withCards)
-            val code = response.code()
             when {
                 response.isSuccessful -> { emit(Resource.success(response.body()))
                 }

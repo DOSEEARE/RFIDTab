@@ -49,9 +49,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.util.*
@@ -171,8 +168,6 @@ class MarkActivity : AppCompatActivity(), TaskDetailListener, RfidScannerListene
                         )
                         viewModel.changeCard(model)
                             .observe(this@MarkActivity, Observer { result ->
-                                val data = result.data
-                                val msg = result.msg
                                 when (result.status) {
                                     Status.SUCCESS -> {
                                         toast("Успешно!")
@@ -189,9 +184,6 @@ class MarkActivity : AppCompatActivity(), TaskDetailListener, RfidScannerListene
                                     }
                                 }
                             })
-
-                        // here motherfucker
-                        sendCardsImages(it.cardId)
 
                     }
                     // После цикла измнение статуса
@@ -231,45 +223,6 @@ class MarkActivity : AppCompatActivity(), TaskDetailListener, RfidScannerListene
                 }
             }
         }
-    }
-
-    private fun sendCardsImages(id: Int) {
-        viewModel.findImagesById(id).observe(this, Observer {
-            if (it.isNotEmpty()) {
-                it.forEach {
-                    val file = File(it.imagePath)
-                    //  val filePart = MultipartBody.Part.createFormData("file", file.name, RequestBody.create("image/*".toMediaTypeOrNull(), file))
-                    val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
-                    val filePart = MultipartBody.Part.createFormData("File", file.name, requestFile)
-
-                    viewModel.sendImage(filePart, id).observe(this, Observer { result ->
-                        val data = result.data
-                        val msg = result.msg
-                        when (result.status) {
-                            Status.SUCCESS -> {
-                                loadingHide()
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    viewModel.deleteTaskById(savedData.id)
-                                    viewModel.deleteCardsById(savedData.id)
-                                }
-                            }
-                            Status.ERROR -> {
-                                loadingHide()
-                            }
-                            Status.NETWORK -> {
-                                loadingHide()
-                            }
-                            else -> {
-                                loadingHide()
-                            }
-                        }
-
-
-                    })
-                }
-            }
-        })
-
     }
 
     //Сканирование Rfid метки
@@ -380,7 +333,6 @@ class MarkActivity : AppCompatActivity(), TaskDetailListener, RfidScannerListene
                 TaskStatusEnum.takenForExecution
             )
         ).observe(this, Observer { result ->
-            val data = result.data
             val msg = result.msg
             when (result.status) {
                 Status.SUCCESS -> {
@@ -425,7 +377,8 @@ class MarkActivity : AppCompatActivity(), TaskDetailListener, RfidScannerListene
                         a.commentProblemWithMark,
                         a.taskId,
                         a.taskTypeId,
-                        false
+                        false,
+                        a.cardImgRequired
                     )
                 )
             }

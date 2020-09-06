@@ -3,12 +3,14 @@ package com.example.rfidtab.adapter.taskDetail
 import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.example.rfidtab.R
 import com.example.rfidtab.base.GenericRecyclerAdapter
 import com.example.rfidtab.base.ViewHolder
 import com.example.rfidtab.service.db.entity.task.TaskCardListEntity
 import com.example.rfidtab.service.model.enums.TaskTypeEnum
+import kotlinx.android.synthetic.main.item_cards.view.*
 import kotlinx.android.synthetic.main.item_cards.view.card_bond
 import kotlinx.android.synthetic.main.item_cards.view.card_camera_btn
 import kotlinx.android.synthetic.main.item_cards.view.card_name
@@ -44,12 +46,23 @@ class TaskDetailSavedAdapter(
             listener.cardClicked(item)
         }
 
-        if (taskTypeId == TaskTypeEnum.inspection) {
-            holder.itemView.card_camera_btn.setOnClickListener {
-                listener.cameraBtnClicked(item)
+        when (taskTypeId) {
+            TaskTypeEnum.inspection -> {
+                holder.itemView.card_camera_btn.setOnClickListener {
+                    listener.cameraBtnClicked(item)
+                }
             }
-        } else {
-            holder.itemView.card_camera_btn.visibility = View.GONE
+            TaskTypeEnum.kitForFix -> {
+                holder.itemView.card_camera_btn.setOnClickListener {
+                    listener.cameraBtnClicked(item)
+                }
+                holder.itemView.card_camera_btn.isVisible = true
+                if (item.isImageRequired)
+                    holder.itemView.card_warning_photo.isVisible = true
+            }
+            else -> {
+                holder.itemView.card_camera_btn.isVisible = false
+            }
         }
 
         if (item.isConfirmed) {

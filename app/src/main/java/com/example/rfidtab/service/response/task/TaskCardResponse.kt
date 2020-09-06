@@ -16,5 +16,6 @@ class TaskCardResponse(
     @SerializedName("commentProblemWithMark") val commentProblemWithMark: String?,
     @SerializedName("images") val images: List<String?>,
     @SerializedName("taskId") val taskId: Int,
-    @SerializedName("taskTypeId") val taskTypeId: Int
+    @SerializedName("taskTypeId") val taskTypeId: Int,
+    @SerializedName("cardImgRequired") val cardImgRequired: Boolean
 ) : Serializable

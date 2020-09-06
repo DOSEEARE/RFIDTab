@@ -286,7 +286,8 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                             a.commentProblemWithMark,
                             a.taskId,
                             a.taskTypeId,
-                            false
+                            false,
+                            a.cardImgRequired
                         )
                     )
                 }

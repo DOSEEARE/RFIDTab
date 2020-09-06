@@ -22,5 +22,6 @@ data class TaskCardListEntity(
     @SerializedName("commentProblemWithMark") val commentProblemWithMark: String?,
     @SerializedName("taskId") val taskId: Int,
     @SerializedName("taskTypeId") val taskTypeId: Int,
-    val isConfirmed : Boolean
+    val isConfirmed : Boolean,
+    val isImageRequired : Boolean
 ) : Parcelable

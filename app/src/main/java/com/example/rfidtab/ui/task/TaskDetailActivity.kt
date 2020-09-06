@@ -55,6 +55,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
@@ -173,8 +174,6 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
                 )
                 viewModel.changeCard(model)
                     .observe(this@TaskDetailActivity, Observer { result ->
-                        val data = result.data
-                        val msg = result.msg
                         when (result.status) {
                             Status.SUCCESS -> {
                                 toast("Успешно!")
@@ -240,13 +239,11 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
             if (it.isNotEmpty()) {
                 it.forEach {
                     val file = File(it.imagePath)
-                    //  val filePart = MultipartBody.Part.createFormData("file", file.name, RequestBody.create("image/*".toMediaTypeOrNull(), file))
+                  val filePart = MultipartBody.Part.createFormData("image", file.name, RequestBody.create("image/*".toMediaTypeOrNull(), file))
                     val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
-                    val filePart = MultipartBody.Part.createFormData("File", file.name, requestFile)
+                        //        val filePart = MultipartBody.Part.createFormData("File", file.name, requestFile)
 
                     viewModel.sendImage(filePart, id).observe(this, Observer { result ->
-                        val data = result.data
-                        val msg = result.msg
                         when (result.status) {
                             Status.SUCCESS -> {
                                 loadingHide()
@@ -309,7 +306,7 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
                     toast("Успешно сохранён!")
                     scanDialog.dismiss()
                 } else {
-                    scan_comment_et.error = "Не может быть пустым"
+                    view.scan_comment_et.error = "Не может быть пустым"
                 }
             }
         }
@@ -345,8 +342,7 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
         )
         cardId = model.cardId
 
-        val uri =
-            FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", filePath)
+        val uri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", filePath)
         //      val uri = Uri.fromFile(filePath)
 
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
@@ -364,7 +360,6 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == CAMERA_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-
                 toast("Фото сделан")
                 CoroutineScope(Dispatchers.IO).launch {
                     viewModel.insertImage(
@@ -436,7 +431,8 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
                         a.commentProblemWithMark,
                         a.taskId,
                         a.taskTypeId,
-                        false
+                        false,
+                        a.cardImgRequired
                     )
                 )
             }
@@ -503,28 +499,26 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
                         )
                     )
                 }
-            })
-
-            val model = TaskOverCards(savedData.id, list)
-
-            viewModel.sendOverCards(model).observe(this, Observer { result ->
-                val data = result.data
-                when (result.status) {
-                    Status.SUCCESS -> {
-                        toast("$data")
+                val model = TaskOverCards(savedData.id, list)
+                viewModel.sendOverCards(model).observe(this, Observer { result ->
+                    val data = result.data
+                    when (result.status) {
+                        Status.SUCCESS -> {
+                            toast("$data")
+                        }
+                        Status.ERROR -> {
+                            toast("$data")
+                        }
+                        Status.NETWORK -> {
+                            toast("$data")
+                        }
+                        else -> {
+                            toast("$data")
+                        }
                     }
-                    Status.ERROR -> {
-                        toast("$data")
-                    }
-                    Status.NETWORK -> {
-                        toast("$data")
-                    }
-                    else -> {
-                        toast("$data")
-                    }
-                }
 
 
+                })
             })
         }
     }

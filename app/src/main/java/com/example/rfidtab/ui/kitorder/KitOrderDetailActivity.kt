@@ -85,11 +85,9 @@ class KitOrderDetailActivity : AppCompatActivity(), KitCardSavedListener, RfidSc
             kit_order_detail_title.text = "Титул: ${savedData.title}"
 
             kitOrderViewModel.findKitCards(savedData.id).observe(this, Observer {
-                kit_order_detail_rv.adapter =
-                    KitCardSavedAdapter(this, it as ArrayList<KitOrderCardEntity>)
+                kit_order_detail_rv.adapter = KitCardSavedAdapter(this, it as ArrayList<KitOrderCardEntity>)
 
-                kit_order_detail_title.text = "Количество оборудований: ${it.size}"
-
+                kit_order_detail_title.text = "Количество единиц оборудования: ${it.size}"
 
                 if (it.isEmpty()) {
                     kitOrderViewModel.findKitOrderSpecByKitId(savedData.id).observe(this, Observer {
