@@ -47,7 +47,6 @@ import kotlinx.android.synthetic.main.activity_task_mark_inventory.*
 import kotlinx.android.synthetic.main.activity_task_mark_inventory.task_detail_add_over
 import kotlinx.android.synthetic.main.activity_task_mark_inventory.task_detail_over_rv
 import kotlinx.android.synthetic.main.alert_add.view.*
-import kotlinx.android.synthetic.main.alert_scan.*
 import kotlinx.android.synthetic.main.alert_scan.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -72,7 +71,6 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
     private var CAMERA_REQUEST_CODE = 1
     private var cardId = 0
     private lateinit var currentCardEntity: TaskCardListEntity
-
     private lateinit var scanDialog: AlertDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -160,17 +158,19 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
     }
 
     private fun sendToCheck() {
+        var cardListIndex = 0
         task_detail_send_btn.setOnClickListener {
             loadingShow()
             //Изменение карточек по циклу
-            cardList.forEach {
+            cardList.forEach { card ->
+                cardListIndex++
                 val model = CardModel(
-                    it.cardId,
-                    it.taskTypeId,
-                    it.rfidTagNo,
-                    accounting(it.isConfirmed),
-                    it.comment,
-                    it.commentProblemWithMark
+                    card.cardId,
+                    card.taskTypeId,
+                    card.rfidTagNo,
+                    accounting(card.isConfirmed, card.commentProblemWithMark),
+                    card.comment,
+                    card.commentProblemWithMark
                 )
                 viewModel.changeCard(model)
                     .observe(this@TaskDetailActivity, Observer { result ->
@@ -191,41 +191,43 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
                         }
                     })
 
-                // here motherfucker
-                sendCardsImages(it.cardId)
+                sendCardsImages(card.cardId)
+                if (cardListIndex - 1 == cardList.size - 1) {
+                    viewModel.taskStatusChange(
+                        TaskStatusModel(
+                            savedData.id,
+                            savedData.taskTypeId,
+                            TaskStatusEnum.savedToLocal
+                        )
+                    ).observe(this, Observer { result ->
+                        val data = result.data
+                        when (result.status) {
+                            Status.SUCCESS -> {
+                                toast("$data")
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    viewModel.deleteTaskById(savedData.id)
+                                    viewModel.deleteCardsById(savedData.id)
+                                }
+                                startActivity(Intent(this, TaskActivity::class.java))
+                                finish()
+                            }
+                            Status.ERROR -> {
+                                toast("$data")
+                            }
+                            Status.NETWORK -> {
+                                toast("$data")
+                            }
+                            else -> {
+                                toast("$data")
+                            }
+                        }
+
+                    })
+
+                }
 
             }
             // После цикла измнение статуса
-            viewModel.taskStatusChange(
-                TaskStatusModel(
-                    savedData.id,
-                    savedData.taskTypeId,
-                    TaskStatusEnum.savedToLocal
-                )
-            ).observe(this, Observer { result ->
-                val data = result.data
-                val msg = result.msg
-                when (result.status) {
-                    Status.SUCCESS -> {
-                        toast("$data")
-                        CoroutineScope(Dispatchers.IO).launch {
-                            viewModel.deleteTaskById(savedData.id)
-                            viewModel.deleteCardsById(savedData.id)
-                        }
-                    }
-                    Status.ERROR -> {
-                        toast("$data")
-                    }
-                    Status.NETWORK -> {
-                        toast("$data")
-                    }
-                    else -> {
-                        toast("$data")
-                    }
-                }
-
-            })
-
             sendOverCards()
             loadingHide()
 
@@ -323,6 +325,7 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
         view.scan_negative_btn.setOnClickListener {
             scanDialog.dismiss()
         }
+        //тагскан
         view.scan_problem_checkbox.setOnCheckedChangeListener { buttonView, isChecked ->
             when (isChecked) {
                 true -> view.scan_comment_out.visibility = View.VISIBLE
@@ -523,8 +526,8 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
         }
     }
 
-    private fun accounting(isConfirm: Boolean): Int {
-        return if (isConfirm) {
+    private fun accounting(isConfirm: Boolean, problemComment: String?): Int {
+        return if (isConfirm || problemComment != null) {
             1
         } else {
             0

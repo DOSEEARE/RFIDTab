@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".ui.task.TaskDetailActivity">
 
-
     <TextView
         android:id="@+id/task_detail_counter"
         android:layout_width="match_parent"
@@ -20,6 +19,8 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/marginHorizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/task_detail_counter">
 
         <LinearLayout
@@ -150,7 +151,7 @@
                         android:layout_marginHorizontal="@dimen/marginHorizontal"
                         android:layout_marginBottom="8dp"
                         android:background="@drawable/bg_main_button"
-                        android:text="Отправить задание в приложение"
+                        android:text="Отправить задание в веб приложение"
                         android:textColor="@color/whiteColor"
                         app:layout_constraintBottom_toBottomOf="parent" />
 

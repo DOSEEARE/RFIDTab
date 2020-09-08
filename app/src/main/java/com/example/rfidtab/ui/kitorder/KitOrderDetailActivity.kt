@@ -28,7 +28,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.lang.Exception
 
 class KitOrderDetailActivity : AppCompatActivity(), KitCardSavedListener, RfidScannerListener {
-    private val taskViewModel: TaskViewModel by viewModel()
     private val kitOrderViewModel: KitOrderViewModel by viewModel()
     private lateinit var scanDialog: AlertDialog
 
@@ -50,7 +49,6 @@ class KitOrderDetailActivity : AppCompatActivity(), KitCardSavedListener, RfidSc
 
         if (isOnline) {
             onlineData = intent.getSerializableExtra("data") as KitOrderKit
-
 
             if (onlineData.cards.isNotEmpty()) {
                 kit_order_spec_card.visibility = View.GONE
@@ -77,7 +75,6 @@ class KitOrderDetailActivity : AppCompatActivity(), KitCardSavedListener, RfidSc
                     "Толщина стенки трубы: ${onlineData.specification.pipeWallThickness}"
                 kit_order_spec_id_nipple.text =
                     "I.D замка ниппель: ${onlineData.specification.idlockNipple}"
-
             }
 
         } else {
@@ -90,26 +87,25 @@ class KitOrderDetailActivity : AppCompatActivity(), KitCardSavedListener, RfidSc
                 kit_order_detail_title.text = "Количество единиц оборудования: ${it.size}"
 
                 if (it.isEmpty()) {
-                    kitOrderViewModel.findKitOrderSpecByKitId(savedData.id).observe(this, Observer {
-                        kit_order_spec_angle_plait.text = "Угол заплётчика: ${it.shoulderAngle}"
+                    kitOrderViewModel.findKitOrderSpecByKitId(savedData.id).observe(this, Observer { spec ->
+                        kit_order_spec_angle_plait.text = "Угол заплётчика: ${spec.shoulderAngle}"
                         kit_order_spec_long_couple.text =
-                            "Длина под ключ муфта: ${it.turnkeyLengthCoupling}"
+                            "Длина под ключ муфта: ${spec.turnkeyLengthCoupling}"
                         kit_order_spec_long_nipple.text =
-                            "Длина под ключ ниппель: ${it.turnkeyLengthNipple}"
-                        kit_order_spec_long_pipe.text = "Длина трубы: ${it.pipeLength}"
-                        kit_order_spec_od_nipple.text = "O.D замка ниппеля: ${it.odlockNipple}"
+                            "Длина под ключ ниппель: ${spec.turnkeyLengthNipple}"
+                        kit_order_spec_long_pipe.text = "Длина трубы: ${spec.pipeLength}"
+                        kit_order_spec_od_nipple.text = "O.D замка ниппеля: ${spec.odlockNipple}"
                         kit_order_spec_diameter_pipe.text =
-                            "Наружный диаметр трубы: ${it.outerDiameterOfThePipe}"
+                            "Наружный диаметр трубы: ${spec.outerDiameterOfThePipe}"
                         kit_order_spec_pipe_wall.text =
-                            "Толщина стенки трубы: ${it.pipeWallThickness}"
-                        kit_order_spec_id_nipple.text = "I.D замка ниппель: ${it.idlockNipple}"
+                            "Толщина стенки трубы: ${spec.pipeWallThickness}"
+                        kit_order_spec_id_nipple.text = "I.D замка ниппель: ${spec.idlockNipple}"
 
                         kitOrderViewModel.findAddCardByKitId(savedData.id).observe(this, Observer {
                             kit_order_added_rv.adapter =
                                 KitDetailAddCardAdapter(it as ArrayList<KitOrderAddCardEntity>)
                         })
                         addCardsToKit(savedData.id)
-
                     })
                 }else{
                     kit_order_add_btn.isVisible = false
@@ -143,6 +139,8 @@ class KitOrderDetailActivity : AppCompatActivity(), KitCardSavedListener, RfidSc
 
         view.scan_name.text = model.fullName
 
+        view.scan_problem_checkbox.isVisible = false
+
         view.scan_result_et.setText(accessTag)
         //Сохранение карточки
         view.scan_access_btn.setOnClickListener {
@@ -157,8 +155,15 @@ class KitOrderDetailActivity : AppCompatActivity(), KitCardSavedListener, RfidSc
                         toast("Не совпадает!")
                         scanDialog.dismiss()
                     }
-                    // kitOrderViewModel.updateKitCard(model.id, accessTag)
-                    // kitOrderViewModel.deleteKitTaskById(model.id)
+
+                }else{
+                    if (view.scan_comment_et.text.toString().isNotEmpty()) {
+                    //    viewModel.updateErrorComment(model.cardId, view.scan_comment_et.text.toString())
+                        toast("Успешно сохранён!")
+                        scanDialog.dismiss()
+                    } else {
+                        view.scan_comment_et.error = "Не может быть пустым"
+                    }
                 }
             }catch (e : Exception){
                 toast(" ")

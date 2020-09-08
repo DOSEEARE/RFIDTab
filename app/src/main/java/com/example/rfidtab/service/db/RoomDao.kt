@@ -117,6 +117,9 @@ interface RoomDao {
     @Query("UPDATE TaskCardListEntity SET commentProblemWithMark=:errorComment WHERE cardId =:cardId")
     fun updateErrorComment(cardId: Int, errorComment: String)
 
+   /* @Query("UPDATE KitOrderCardEntity SET commentProblemWithMark=:errorComment WHERE cardId =:cardId")
+    fun updateKitErrorComment(cardId: Int, errorComment: String)*/
+
     @Query("UPDATE TaskCardListEntity SET isConfirmed=:isConfirmed WHERE cardId =:cardId")
     fun updateConfirmTaskCard(cardId: Int, isConfirmed: Boolean)
 

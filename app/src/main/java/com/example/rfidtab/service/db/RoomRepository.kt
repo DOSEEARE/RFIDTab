@@ -111,7 +111,9 @@ class RoomRepository(private val dao: RoomDao) {
     }
 
     fun deleteKitTaskById(id: Int) {
-        return dao.deleteKitTaskById(id)
+        CoroutineScope(Dispatchers.IO).launch {
+            return@launch dao.deleteKitTaskById(id)
+        }
     }
 
     fun deleteCardsById(id: Int) {

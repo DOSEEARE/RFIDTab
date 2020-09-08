@@ -23,8 +23,12 @@ class KitOrderViewModel(application: Application) : BaseViewModel(application) {
         db.insertKitOrder(entity)
     }
 
-    fun deleteKitTaskById(id: Int) {
+/*    fun deleteKitTaskById(id: Int) {
         db.deleteKitItem(id)
+    }*/
+
+    fun deleteKitTaskById(id : Int){
+        db.deleteKitTaskById(id)
     }
 
     fun insertKitItem(entity: List<KitOrderKitEntity>) {
