@@ -110,9 +110,12 @@ class KitOrderActivity : AppCompatActivity(),
                                     kitOrderViewModel.findAddCardByKitId(kit.id)
                                         .observe(this, Observer { addedCards ->
                                             addedCards.forEach {
-                                                createdCards.add(KitOrderCards(it.pipeSerialNumber, it.couplingSerialNumber, it.serialNoOfNipple, it.rfidTagNo))
+                                                createdCards.add(KitOrderCards(it.pipeSerialNumber, it.couplingSerialNumber, it.serialNoOfNipple, it.rfidTagNo, 0))
                                             }
+
                                             model = KitOrderModel(kit.id, createdCards)
+                                            val modelJson = Gson().toJson(model)
+                                            Log.e("METKA", modelJson)
                                             kitOrderViewModel.sendKitOrderCards(model).observe(this, Observer { result ->
                                                 when (result.status) {
                                                     Status.SUCCESS -> {

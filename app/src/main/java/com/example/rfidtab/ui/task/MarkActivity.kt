@@ -307,7 +307,7 @@ class MarkActivity : AppCompatActivity(), TaskDetailListener, RfidScannerListene
         if (requestCode == CAMERA_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
 
-                toast("Фото сделан")
+                toast("Фото добавлено!")
                 CoroutineScope(Dispatchers.IO).launch {
                     viewModel.insertImage(
                         CardImagesEntity(

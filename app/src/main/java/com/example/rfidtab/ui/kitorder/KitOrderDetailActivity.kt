@@ -18,14 +18,12 @@ import com.example.rfidtab.service.db.entity.kitorder.KitOrderCardEntity
 import com.example.rfidtab.service.db.entity.kitorder.KitOrderKitEntity
 import com.example.rfidtab.service.response.kitorder.KitOrderCard
 import com.example.rfidtab.service.response.kitorder.KitOrderKit
-import com.example.rfidtab.ui.task.TaskViewModel
 import com.example.rfidtab.util.MyUtil
 import com.example.rfidtab.util.scanrfid.RfidScannerListener
 import com.example.rfidtab.util.scanrfid.RfidScannerUtil
 import kotlinx.android.synthetic.main.activity_kit_detail_order.*
 import kotlinx.android.synthetic.main.alert_scan.view.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.lang.Exception
 
 class KitOrderDetailActivity : AppCompatActivity(), KitCardSavedListener, RfidScannerListener {
     private val kitOrderViewModel: KitOrderViewModel by viewModel()

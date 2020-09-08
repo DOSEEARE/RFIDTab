@@ -6,5 +6,6 @@ class KitOrderCards(
     @SerializedName("pipeSerialNumber") val pipeSerialNumber: Int?,
     @SerializedName("couplingSerialNumber") val couplingSerialNumber: Int?,
     @SerializedName("serialNoOfNipple") val serialNoOfNipple: Int?,
-    @SerializedName("rfidTagNo") val rfidTagNo: String?
+    @SerializedName("rfidTagNo") val rfidTagNo: String?,
+    val accounting : Int
 )

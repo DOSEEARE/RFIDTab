@@ -58,12 +58,13 @@ class KitOrderAddCardBS(val kitId: Int) : BottomSheetDialogFragment(), RfidScann
         add_save_btn.setOnClickListener {
             add_rfid_in.text.toString()
             val rfid = add_rfid_in.text.toString()
-            val pipe = add_pipe_in?.text.toString().toIntOrNull()
-            val nipple = add_nipple_in?.text.toString().toIntOrNull()
-            val couple = add_couple_in?.text.toString().toIntOrNull()
+
+            val pipe = add_pipe_in?.text.toString().toInt()
+            val nipple = add_nipple_in?.text.toString().toInt()
+            val couple = add_couple_in?.text.toString().toInt()
             val comment = add_comment_in.text.toString()
 
-            val model = KitOrderAddCardEntity(Random.nextInt(0, 100), kitId, pipe, nipple, couple, rfid, comment)
+            val model = KitOrderAddCardEntity(Random.nextInt(0, 100), kitId, pipe, nipple, couple, rfid, 0, comment)
 
             kitOrderViewModel.insertKitOrderAddCard(model)
             toast("Сохранён")

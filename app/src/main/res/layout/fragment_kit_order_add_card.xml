@@ -116,6 +116,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="№ Трубы"
+                    android:text="0"
                     android:inputType="number"
                     android:textColor="@color/blackColor" />
 
@@ -152,6 +153,7 @@
                     android:layout_height="wrap_content"
                     android:inputType="number"
                     android:hint="№ ниппеля"
+                    android:text="0"
                     android:textColor="@color/blackColor" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -187,6 +189,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="№ Муфты"
+                    android:text="0"
                     android:inputType="number"
                     android:textColor="@color/blackColor" />
 

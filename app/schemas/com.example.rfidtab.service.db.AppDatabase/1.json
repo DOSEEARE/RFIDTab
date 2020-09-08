@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "b79c5b9827ab84225f6c481ec1ca0776",
+    "identityHash": "52eadfffd153988142c6817da799de20",
     "entities": [
       {
         "tableName": "TaskResultEntity",
@@ -604,7 +604,7 @@
       },
       {
         "tableName": "KitOrderAddCardEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `kitId` INTEGER NOT NULL, `pipeSerialNumber` INTEGER, `serialNoOfNipple` INTEGER, `couplingSerialNumber` INTEGER, `rfidTagNo` TEXT, `comment` TEXT, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `kitId` INTEGER NOT NULL, `pipeSerialNumber` INTEGER, `serialNoOfNipple` INTEGER, `couplingSerialNumber` INTEGER, `rfidTagNo` TEXT, `accounting` INTEGER NOT NULL, `comment` TEXT, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -643,6 +643,12 @@
             "notNull": false
           },
           {
+            "fieldPath": "accounting",
+            "columnName": "accounting",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
             "fieldPath": "comment",
             "columnName": "comment",
             "affinity": "TEXT",
@@ -662,7 +668,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b79c5b9827ab84225f6c481ec1ca0776')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '52eadfffd153988142c6817da799de20')"
     ]
   }
 }

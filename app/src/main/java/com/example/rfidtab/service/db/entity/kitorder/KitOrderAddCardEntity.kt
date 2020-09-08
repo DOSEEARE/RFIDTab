@@ -14,5 +14,6 @@ class KitOrderAddCardEntity(
     @SerializedName("serialNoOfNipple") val serialNoOfNipple: Int?,
     @SerializedName("couplingSerialNumber") val couplingSerialNumber: Int?,
     @SerializedName("rfidTagNo") val rfidTagNo: String?,
+    val accounting: Int = 0,
     @SerializedName("comment") val comment: String?
 )

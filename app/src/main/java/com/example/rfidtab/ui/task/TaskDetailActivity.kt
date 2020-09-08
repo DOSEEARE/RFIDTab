@@ -363,7 +363,7 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == CAMERA_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                toast("Фото сделан")
+                toast("Фото добавлено!")
                 CoroutineScope(Dispatchers.IO).launch {
                     viewModel.insertImage(
                         CardImagesEntity(
@@ -503,6 +503,7 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
                     )
                 }
                 val model = TaskOverCards(savedData.id, list)
+
                 viewModel.sendOverCards(model).observe(this, Observer { result ->
                     val data = result.data
                     when (result.status) {
