@@ -13,5 +13,10 @@ class KitOrderResponse(
     @SerializedName("statusId") val statusId: String?,
     @SerializedName("createdByFio") val createdByFio: String?,
     @SerializedName("executorFio") val executorFio: String?,
+    @SerializedName("kitCount") val kitCount: String?,
+    @SerializedName("kitType") val kitType: String?,
+    @SerializedName("cardCount") val cardCount: String?,
+    @SerializedName("kitCardCount") val kitCardCount: String?,
     @SerializedName("cardList") val cardList: List<KitOrderCard>
+
 )

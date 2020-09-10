@@ -51,8 +51,8 @@ class TaskViewModel(application: Application) : BaseViewModel(application) {
         return db.findTasksByLogin(userLogin)
     }
 
-    fun findImagesById(id: Int): LiveData<List<CardImagesEntity>> {
-        return db.findImagesById(id)
+    fun findImagesById(cardId: Int, taskId: Int): LiveData<List<CardImagesEntity>> {
+        return db.findImagesById(cardId, taskId)
     }
 
     fun findOverCardById(id: Int): LiveData<List<OverCardsEntity>> {
@@ -67,6 +67,9 @@ class TaskViewModel(application: Application) : BaseViewModel(application) {
         return db.deleteCardsById(id)
     }
 
+    fun deleteCardImageById (cardId: Int){
+        return db.deleteCardImageById(cardId)
+    }
     fun findCardsById(id: Int): LiveData<List<TaskCardListEntity>> {
         return db.findCardsById(id)
     }

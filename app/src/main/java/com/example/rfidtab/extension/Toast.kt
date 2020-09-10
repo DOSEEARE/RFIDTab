@@ -6,7 +6,7 @@ import androidx.fragment.app.Fragment
 
 fun Fragment.toast(text: String? = "") {
     try {
-        Toast.makeText(this.context, text, Toast.LENGTH_LONG).show()
+        Toast.makeText(this.context, text, Toast.LENGTH_SHORT).show()
     } catch (e: Exception) {
     }
 

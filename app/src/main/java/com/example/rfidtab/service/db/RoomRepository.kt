@@ -81,8 +81,8 @@ class RoomRepository(private val dao: RoomDao) {
         return dao.findKitOrderByLogin(userLogin)
     }
 
-    fun findImagesById(id: Int): LiveData<List<CardImagesEntity>> {
-        return dao.findImagesById(id)
+    fun findImagesById(cardId: Int, taskId: Int): LiveData<List<CardImagesEntity>> {
+        return dao.findImagesById(cardId, taskId)
     }
 
     fun findOverCardById(id: Int): LiveData<List<OverCardsEntity>> {
@@ -108,6 +108,12 @@ class RoomRepository(private val dao: RoomDao) {
 
     fun deleteTaskById(id: Int) {
         return dao.deleteTaskById(id)
+    }
+
+    fun deleteCardImageById(cardId : Int){
+        CoroutineScope(Dispatchers.IO).launch {
+           return@launch dao.deleteCardImageById(cardId)
+        }
     }
 
     fun deleteKitTaskById(id: Int) {

@@ -20,8 +20,8 @@ class KitDetailAddCardAdapter(
         holder.itemView.card_over_pipe.text = "№ трубы: ${item.pipeSerialNumber}"
         holder.itemView.card_over_nipple.text = "№ ниппеля: ${item.serialNoOfNipple}"
         holder.itemView.card_over_bond.text = "№ муфты: ${item.couplingSerialNumber}"
+        holder.itemView.card_over_comment.text ="комментарии: ${item.comment}"
         holder.itemView.card_over_count.visibility = View.GONE
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {

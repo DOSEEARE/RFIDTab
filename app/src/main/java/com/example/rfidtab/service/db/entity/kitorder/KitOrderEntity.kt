@@ -17,5 +17,8 @@ class KitOrderEntity(
     @SerializedName("statusTitle") val statusTitle: String?,
     @SerializedName("statusId") val statusId: String?,
     @SerializedName("createdByFio") val createdByFio: String?,
-    @SerializedName("executorFio") val executorFio: String?
+    @SerializedName("executorFio") val executorFio: String?,
+    @SerializedName("kitCount") val kitCount: String?,
+    @SerializedName("cardCount") val cardCount: String?,
+    @SerializedName("kitCardCount") val kitCardCount: String?
 ) : Serializable

@@ -39,7 +39,7 @@ class CardDetailActivity : AppCompatActivity(), CardDetailListener {
     }
 
     private fun initImagesRv() {
-        viewModel.findImagesById(model.cardId).observe(this, Observer {
+        viewModel.findImagesById(model.cardId, model.taskId).observe(this, Observer {
             val adapter = CardDetailAdapter(this, this, it as ArrayList<CardImagesEntity>)
             if (adapter.itemCount != 0) {
                 card_detail_rv.adapter = adapter

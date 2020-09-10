@@ -53,7 +53,7 @@ class KitOrderDetailActivity : AppCompatActivity(), KitCardSavedListener, RfidSc
                 kit_order_detail_rv.adapter =
                     KitCardOnlineAdapter(onlineData.cards as ArrayList<KitOrderCard>)
 
-                kit_order_detail_title.text = "Количество единиц оборудования: ${onlineData.cards.size}"
+                kit_order_count_card.isVisible = false
 
             } else {
                 kit_order_rv_card.visibility = View.GONE
@@ -77,7 +77,6 @@ class KitOrderDetailActivity : AppCompatActivity(), KitCardSavedListener, RfidSc
 
         } else {
             savedData = intent.getSerializableExtra("data") as KitOrderKitEntity
-            kit_order_detail_title.text = "Титул: ${savedData.title}"
 
             kitOrderViewModel.findKitCards(savedData.id).observe(this, Observer {
                 kit_order_detail_rv.adapter = KitCardSavedAdapter(this, it as ArrayList<KitOrderCardEntity>)
@@ -86,6 +85,7 @@ class KitOrderDetailActivity : AppCompatActivity(), KitCardSavedListener, RfidSc
 
                 if (it.isEmpty()) {
                     kitOrderViewModel.findKitOrderSpecByKitId(savedData.id).observe(this, Observer { spec ->
+
                         kit_order_spec_angle_plait.text = "Угол заплётчика: ${spec.shoulderAngle}"
                         kit_order_spec_long_couple.text =
                             "Длина под ключ муфта: ${spec.turnkeyLengthCoupling}"
@@ -98,6 +98,7 @@ class KitOrderDetailActivity : AppCompatActivity(), KitCardSavedListener, RfidSc
                         kit_order_spec_pipe_wall.text =
                             "Толщина стенки трубы: ${spec.pipeWallThickness}"
                         kit_order_spec_id_nipple.text = "I.D замка ниппель: ${spec.idlockNipple}"
+                       kit_order_detail_title.text = "Количество единиц оборудования: ${spec.cardCount}"
 
                         kitOrderViewModel.findAddCardByKitId(savedData.id).observe(this, Observer {
                             kit_order_added_rv.adapter =
@@ -154,15 +155,15 @@ class KitOrderDetailActivity : AppCompatActivity(), KitCardSavedListener, RfidSc
                         scanDialog.dismiss()
                     }
 
-                }else{
+                }/*else{
                     if (view.scan_comment_et.text.toString().isNotEmpty()) {
-                    //    viewModel.updateErrorComment(model.cardId, view.scan_comment_et.text.toString())
+                        kitOrderViewModel.updateErrorComment(model.cardId, view.scan_comment_et.text.toString())
                         toast("Успешно сохранён!")
                         scanDialog.dismiss()
                     } else {
                         view.scan_comment_et.error = "Не может быть пустым"
                     }
-                }
+                }*/
             }catch (e : Exception){
                 toast(" ")
             }

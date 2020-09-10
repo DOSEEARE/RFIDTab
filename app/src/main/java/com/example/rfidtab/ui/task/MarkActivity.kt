@@ -160,6 +160,7 @@ class MarkActivity : AppCompatActivity(), TaskDetailListener, RfidScannerListene
                     cardList.forEach {
                         val model = CardModel(
                             it.cardId,
+                            savedData.id,
                             it.taskTypeId,
                             it.rfidTagNo,
                             1,
@@ -279,20 +280,7 @@ class MarkActivity : AppCompatActivity(), TaskDetailListener, RfidScannerListene
     }
 
     override fun cameraBtnClicked(model: TaskCardListEntity) {
-        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        MyUtil().createCardFolder()
-        filePath = File(
-            Environment.getExternalStorageDirectory().path + "/RFID cards",
-            "/card ${Calendar.getInstance().time}.jpg"
-        )
-        cardId = model.cardId
-
-        val uri =
-            FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", filePath)
-        //      val uri = Uri.fromFile(filePath)
-
-        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
-        startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE)
+        //todo samsy
     }
 
     //detail card
@@ -300,27 +288,6 @@ class MarkActivity : AppCompatActivity(), TaskDetailListener, RfidScannerListene
         val intent = Intent(this, CardDetailActivity::class.java)
         intent.putExtra("model", model)
         startActivity(intent)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == CAMERA_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-
-                toast("Фото добавлено!")
-                CoroutineScope(Dispatchers.IO).launch {
-                    viewModel.insertImage(
-                        CardImagesEntity(
-                            Random.nextInt(1, 1000),
-                            cardId,
-                            filePath.absolutePath
-                        )
-                    )
-                }
-            } else {
-                toast("Доступ к камере запрещён")
-            }
-        }
     }
 
     //изменить статус

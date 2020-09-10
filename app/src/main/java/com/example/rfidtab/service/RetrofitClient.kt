@@ -27,9 +27,9 @@ object RetrofitClient {
     private val client =
         OkHttpClient().newBuilder()
             .addInterceptor(authInterceptor)
-            .connectTimeout(15, TimeUnit.SECONDS)
-            .readTimeout(15, TimeUnit.SECONDS)
-            .writeTimeout(15, TimeUnit.SECONDS)
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
             .build()
 
     private fun retrofit(baseUrl: String = "http://78.139.104.111:5902/api/") =

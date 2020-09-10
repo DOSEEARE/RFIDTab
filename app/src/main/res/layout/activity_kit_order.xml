@@ -73,6 +73,30 @@
                     app:layout_constraintTop_toTopOf="parent"
                     android:text="Тип: Комплектация на аренду" />
 
+                <TextView
+                    android:id="@+id/kit_comment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="8dp"
+                    android:textColor="@color/blue"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:text="Тип: Комплектация на аренду" />
+
+                <TextView
+                    android:id="@+id/kit_card_counter"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="8dp"
+                    android:textColor="@color/blue"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:text="Всего количество единиц оборудования:" />
+
             </LinearLayout>
 
 

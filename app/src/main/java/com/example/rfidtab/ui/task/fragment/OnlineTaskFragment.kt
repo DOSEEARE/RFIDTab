@@ -1,5 +1,6 @@
 package com.example.rfidtab.ui.task.fragment
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -38,6 +39,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.random.Random
 
 class OnlineTaskFragment : Fragment(), TaskOnlineListener {
@@ -176,6 +179,7 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
         })
     }
 
+    @SuppressLint("NewApi")
     private fun saveKitOrder(taskId: Int) {
         kitOrderViewModel.kitOrder(taskId).observe(viewLifecycleOwner, Observer { result ->
             val data = result.data
@@ -193,7 +197,10 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                             TaskStatusEnum.takenForExecutionString,
                             TaskStatusEnum.takenForExecution.toString(),
                             data.createdByFio,
-                            data.executorFio
+                            data.executorFio,
+                            data.kitCount,
+                            allCardCount(data.kitType, data.kitCardCount),
+                            data.kitCardCount
                         )
 
                         val listCard = ArrayList<KitOrderCardEntity>()
@@ -226,21 +233,27 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                             }
                             if (data.kits[indexKit].cards.isEmpty()) {
                                 val spec = data.kits[indexKit].specification
+                                val kitCardCount: String = data.kitCardCount?.split(",")!![indexKit]
 
-                                val kitOrderSpec = KitOrderSpecificationEntity(
-                                    spec.id,
-                                    kitOrderKit.id,
-                                    spec.outerDiameterOfThePipe,
-                                    spec.pipeWallThickness,
-                                    spec.odlockNipple,
-                                    spec.idlockNipple,
-                                    spec.pipeLength,
-                                    spec.shoulderAngle,
-                                    spec.turnkeyLengthNipple,
-                                    spec.turnkeyLengthCoupling,
-                                    spec.comment
-                                )
-                                kitOrderViewModel.insertKitOrderSpec(kitOrderSpec)
+                                if (!Objects.isNull(spec)) {
+                                    val kitOrderSpec = KitOrderSpecificationEntity(
+                                        spec.id,
+                                        kitOrderKit.id,
+                                        spec.outerDiameterOfThePipe,
+                                        spec.pipeWallThickness,
+                                        spec.odlockNipple,
+                                        spec.idlockNipple,
+                                        spec.pipeLength,
+                                        spec.shoulderAngle,
+                                        spec.turnkeyLengthNipple,
+                                        spec.turnkeyLengthCoupling,
+                                        spec.comment,
+                                        kitCardCount
+
+                                    )
+                                    kitOrderViewModel.insertKitOrderSpec(kitOrderSpec)
+                                }
+                                //                                //3,3,3
                             }
                         }
 
@@ -274,7 +287,7 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                     val a = model.cardList[index]
                     cards.add(
                         TaskCardListEntity(
-                            Random.nextInt(0, 1000),
+                            Random.nextInt(),
                             a.cardId,
                             a.fullName,
                             a.pipeSerialNumber,
@@ -312,5 +325,22 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                 }
             }
         }
+    }
+
+    private fun allCardCount(kitType: String?, kitCardCount: String?): String {
+        val array = ArrayList<Int>()
+        var result = 0
+        array.add(0)
+        if (kitType == "multi") {
+            kitCardCount?.forEachIndexed { i: Int, c: Char ->
+                if (c == ',') {
+                    array.add(0)
+                }
+            }
+            array.forEachIndexed { index, i ->
+                result += kitCardCount!!.split(",")[index].toInt()
+            }
+        }
+        return result.toString()
     }
 }

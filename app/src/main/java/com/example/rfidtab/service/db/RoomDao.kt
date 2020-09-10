@@ -80,8 +80,8 @@ interface RoomDao {
     @Query("SELECT * FROM KitRfidEntity WHERE KitRfidEntity.kitId=:kitId")
     fun findKitRfid(kitId: Int): LiveData<List<KitRfidEntity>>
 
-    @Query("SELECT * FROM CardImagesEntity WHERE CardImagesEntity.cardId=:id")
-    fun findImagesById(id: Int): LiveData<List<CardImagesEntity>>
+    @Query("SELECT * FROM CardImagesEntity WHERE CardImagesEntity.cardId=:cardId AND CardImagesEntity.taskId=:taskId")
+    fun findImagesById(cardId: Int, taskId: Int): LiveData<List<CardImagesEntity>>
 
     @Query("SELECT * FROM OverCardsEntity WHERE OverCardsEntity.taskId=:id")
     fun findOverCardById(id: Int): LiveData<List<OverCardsEntity>>
@@ -91,6 +91,9 @@ interface RoomDao {
 
     @Query("DELETE FROM TaskResultEntity WHERE TaskResultEntity.id=:id")
     fun deleteTaskById(id: Int)
+
+    @Query("DELETE FROM CardImagesEntity WHERE CardImagesEntity.cardId=:cardId")
+    fun deleteCardImageById(cardId: Int)
 
     @Query("DELETE FROM KitOrderEntity WHERE KitOrderEntity.id=:id")
     fun deleteKitTaskById(id: Int)
@@ -116,9 +119,11 @@ interface RoomDao {
 
     @Query("UPDATE TaskCardListEntity SET commentProblemWithMark=:errorComment WHERE cardId =:cardId")
     fun updateErrorComment(cardId: Int, errorComment: String)
+/*
 
-   /* @Query("UPDATE KitOrderCardEntity SET commentProblemWithMark=:errorComment WHERE cardId =:cardId")
-    fun updateKitErrorComment(cardId: Int, errorComment: String)*/
+    @Query("UPDATE KitOrderCardEntity SET commentProblemWithMark=:errorComment WHERE cardId =:cardId")
+    fun updateKitErrorComment(cardId: Int, errorComment: String)
+*/
 
     @Query("UPDATE TaskCardListEntity SET isConfirmed=:isConfirmed WHERE cardId =:cardId")
     fun updateConfirmTaskCard(cardId: Int, isConfirmed: Boolean)

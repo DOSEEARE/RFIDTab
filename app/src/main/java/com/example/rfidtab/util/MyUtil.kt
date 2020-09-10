@@ -50,4 +50,5 @@ class MyUtil {
         return firstText.replace(" ", "").equals(secondText.replace(" ", ""), true)
     }
 
+
 }

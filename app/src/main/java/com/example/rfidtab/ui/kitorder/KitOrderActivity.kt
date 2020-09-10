@@ -56,11 +56,14 @@ class KitOrderActivity : AppCompatActivity(),
 
             kitOrderViewModel.kitOrder(onlineData.id).observe(this, Observer { result ->
                 val data = result.data
+                val msg = result.msg
                 when (result.status) {
                     Status.SUCCESS -> {
-                        kit_order_executor.text = "Исплнитель: ${data?.executorFio}"
+                        kit_order_executor.text = "Исполнитель: ${data?.executorFio}"
                         kit_order_createdby.text = "Автор: ${data?.createdByFio}"
                         kit_order_status.text = "Статус: ${data?.statusTitle}"
+                        kit_comment.text = "Комментарии: ${data?.comment}"
+                        kit_card_counter.text = "Всего единиц оборудования для комплектации в аренду: ${allCardCount(data?.kitType, data?.kitCardCount)}"
                         kit_order_send_btn.visibility = View.GONE
                         kit_order_kits_rv.adapter =
                             KitOrderOnlineAdapter(
@@ -69,14 +72,14 @@ class KitOrderActivity : AppCompatActivity(),
                             )
                     }
                     Status.ERROR -> {
-                        toast("Проблемы с интернетом!")
+                        toast(msg)
                     }
                     Status.NETWORK -> {
-                        toast("Проблемы с интернетом!")
+                        toast(msg)
+
                     }
                     else -> {
-                        toast("Неизвестная ошибка!")
-
+                        toast(msg)
                     }
                 }
 
@@ -88,7 +91,8 @@ class KitOrderActivity : AppCompatActivity(),
             kit_order_executor.text = "Исполнитель: ${savedData?.executorFio}"
             kit_order_createdby.text = "Автор: ${savedData?.createdByFio}"
             kit_order_status.text = "Статус: ${savedData?.statusTitle}"
-
+            kit_comment.text = "Комментарии: ${savedData?.comment}"
+            kit_card_counter.text = "Всего единиц оборудования для комплектации в аренду: ${savedData?.cardCount}"
             kitOrderViewModel.findKitItem(savedData.id).observe(this, Observer {
                 kit_order_kits_rv.adapter =
                     KitOrderSavedAdapter(this, it as ArrayList<KitOrderKitEntity>)
@@ -114,6 +118,7 @@ class KitOrderActivity : AppCompatActivity(),
                                             }
 
                                             model = KitOrderModel(kit.id, createdCards)
+
                                             val modelJson = Gson().toJson(model)
                                             Log.e("METKA", modelJson)
                                             kitOrderViewModel.sendKitOrderCards(model).observe(this, Observer { result ->
@@ -175,6 +180,7 @@ class KitOrderActivity : AppCompatActivity(),
                                             confirmCard.add(ConfirmCards(it.rfidTagNo))
                                         }
                                     }
+                                        //comment
                                     body = ConfirmCardModel(savedData.id, confirmCard)
                                     kitOrderViewModel.confirmCards(body).observe(this, Observer { result ->
                                         when (result.status) {
@@ -260,5 +266,20 @@ class KitOrderActivity : AppCompatActivity(),
         startActivity(detailIntent)
     }
 
-
+    private fun allCardCount(kitType: String?, kitCardCount: String?): String {
+        val array = ArrayList<Int>()
+        var result = 0
+        array.add(0)
+        if (kitType == "multi") {
+            kitCardCount?.forEachIndexed { i: Int, c: Char ->
+                if (c == ',') {
+                    array.add(0)
+                }
+            }
+            array.forEachIndexed { index, i ->
+                result += kitCardCount!!.split(",")[index].toInt()
+            }
+        }
+        return result.toString()
+    }
 }

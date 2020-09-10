@@ -59,12 +59,34 @@ class KitOrderAddCardBS(val kitId: Int) : BottomSheetDialogFragment(), RfidScann
             add_rfid_in.text.toString()
             val rfid = add_rfid_in.text.toString()
 
-            val pipe = add_pipe_in?.text.toString().toInt()
-            val nipple = add_nipple_in?.text.toString().toInt()
-            val couple = add_couple_in?.text.toString().toInt()
+            val pipe : Int = if (add_pipe_in.text.toString().isEmpty()) {
+                0
+            } else{
+                add_pipe_in?.text.toString().toInt()
+            }
+            val nipple : Int = if (add_nipple_in.text.toString().isEmpty()) {
+                0
+            } else{
+                add_nipple_in?.text.toString().toInt()
+            }
+            val couple : Int = if (add_couple_in.text.toString().isEmpty()) {
+                0
+            } else{
+                add_couple_in?.text.toString().toInt()
+            }
+
             val comment = add_comment_in.text.toString()
 
-            val model = KitOrderAddCardEntity(Random.nextInt(0, 100), kitId, pipe, nipple, couple, rfid, 0, comment)
+            val model = KitOrderAddCardEntity(
+                Random.nextInt(0, 10000),
+                kitId,
+                pipe,
+                nipple,
+                couple,
+                rfid,
+                0,
+                comment
+            )
 
             kitOrderViewModel.insertKitOrderAddCard(model)
             toast("Сохранён")

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "52eadfffd153988142c6817da799de20",
+    "identityHash": "783803caf703389d63e6eebe7c2ccf9a",
     "entities": [
       {
         "tableName": "TaskResultEntity",
@@ -228,7 +228,7 @@
       },
       {
         "tableName": "CardImagesEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `cardId` INTEGER NOT NULL, `imagePath` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `cardId` INTEGER NOT NULL, `taskId` INTEGER NOT NULL, `imagePath` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -239,6 +239,12 @@
           {
             "fieldPath": "cardId",
             "columnName": "cardId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "taskId",
+            "columnName": "taskId",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -418,7 +424,7 @@
       },
       {
         "tableName": "KitOrderEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `userLogin` TEXT, `mainReason` TEXT, `tenantName` TEXT, `createAt` TEXT, `comment` TEXT, `statusTitle` TEXT, `statusId` TEXT, `createdByFio` TEXT, `executorFio` TEXT, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `userLogin` TEXT, `mainReason` TEXT, `tenantName` TEXT, `createAt` TEXT, `comment` TEXT, `statusTitle` TEXT, `statusId` TEXT, `createdByFio` TEXT, `executorFio` TEXT, `kitCount` TEXT, `cardCount` TEXT, `kitCardCount` TEXT, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -479,6 +485,24 @@
             "columnName": "executorFio",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "kitCount",
+            "columnName": "kitCount",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "cardCount",
+            "columnName": "cardCount",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "kitCardCount",
+            "columnName": "kitCardCount",
+            "affinity": "TEXT",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -524,13 +548,13 @@
       },
       {
         "tableName": "KitOrderSpecificationEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `kitId` INTEGER NOT NULL, `outerDiameterOfThePipe` INTEGER NOT NULL, `pipeWallThickness` INTEGER NOT NULL, `odlockNipple` INTEGER NOT NULL, `idlockNipple` INTEGER NOT NULL, `pipeLength` TEXT, `shoulderAngle` TEXT, `turnkeyLengthNipple` INTEGER NOT NULL, `turnkeyLengthCoupling` INTEGER NOT NULL, `comment` TEXT, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER, `kitId` INTEGER NOT NULL, `outerDiameterOfThePipe` INTEGER NOT NULL, `pipeWallThickness` INTEGER NOT NULL, `odlockNipple` INTEGER NOT NULL, `idlockNipple` INTEGER NOT NULL, `pipeLength` TEXT, `shoulderAngle` TEXT, `turnkeyLengthNipple` INTEGER NOT NULL, `turnkeyLengthCoupling` INTEGER NOT NULL, `comment` TEXT, `cardCount` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "kitId",
@@ -591,6 +615,12 @@
             "columnName": "comment",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "cardCount",
+            "columnName": "cardCount",
+            "affinity": "TEXT",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -668,7 +698,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '52eadfffd153988142c6817da799de20')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '783803caf703389d63e6eebe7c2ccf9a')"
     ]
   }
 }
