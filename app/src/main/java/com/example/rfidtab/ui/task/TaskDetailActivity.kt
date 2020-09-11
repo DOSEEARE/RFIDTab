@@ -193,7 +193,6 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
 
                 sendCardsImages(card.cardId, card.taskId)
                 print("")
-
                         viewModel.taskStatusChange(
                             TaskStatusModel(
                                savedData.id,

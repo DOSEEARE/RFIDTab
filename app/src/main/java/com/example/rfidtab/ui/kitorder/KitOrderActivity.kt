@@ -69,8 +69,7 @@ class KitOrderActivity : AppCompatActivity(),
                         kit_order_kits_rv.adapter =
                             KitOrderOnlineAdapter(
                                 this,
-                                data?.kits as ArrayList<KitOrderKit>
-                            )
+                                data?.kits as ArrayList<KitOrderKit>)
                     }
                     Status.ERROR -> {
                         toast(msg)
@@ -166,7 +165,6 @@ class KitOrderActivity : AppCompatActivity(),
                                             })
                                         })
                                 } else {
-
                                     // c каталога
                                     //С корточками, без тех задании
                                     val body: ConfirmCardModel
@@ -189,7 +187,6 @@ class KitOrderActivity : AppCompatActivity(),
                                         kitOrderViewModel.sendKitOrderCards(model).observe(this, Observer { result ->
                                             when (result.status) {
                                                 Status.SUCCESS -> {
-
                                                 }
                                             }
                                         })
@@ -199,7 +196,6 @@ class KitOrderActivity : AppCompatActivity(),
                                         }
                                     }
 
-                                    Log.e("metka", confirmCard.toString())
                                         //comment
                                     body = ConfirmCardModel(savedData.id, confirmCard)
                                     kitOrderViewModel.confirmCards(body).observe(this, Observer { result ->

@@ -1,6 +1,5 @@
 package com.example.rfidtab.ui.task.fragment
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -39,8 +38,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.random.Random
 
 class OnlineTaskFragment : Fragment(), TaskOnlineListener {
@@ -231,7 +228,10 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                             }
                             if (data.kits[indexKit].cards.isEmpty()) {
                                 val spec = data.kits[indexKit].specification
-                                val kitCardCount: String = data.kitCardCount?.split(",")!![indexKit]
+
+                                if (data.kitCardCount == "multii") {
+                                    val kitCardCount: String =
+                                        data.kitCardCount.split(",")[indexKit]
 
                                     val kitOrderSpec = KitOrderSpecificationEntity(
                                         spec.id,
@@ -246,9 +246,25 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                                         spec.turnkeyLengthCoupling,
                                         spec.comment,
                                         kitCardCount
-
                                     )
                                     kitOrderViewModel.insertKitOrderSpec(kitOrderSpec)
+                                } else {
+                                    val kitOrderSpec = KitOrderSpecificationEntity(
+                                        spec.id,
+                                        kitOrderKit.id,
+                                        spec.outerDiameterOfThePipe,
+                                        spec.pipeWallThickness,
+                                        spec.odlockNipple,
+                                        spec.idlockNipple,
+                                        spec.pipeLength,
+                                        spec.shoulderAngle,
+                                        spec.turnkeyLengthNipple,
+                                        spec.turnkeyLengthCoupling,
+                                        spec.comment,
+                                        data.cardCount!!
+                                    )
+                                    kitOrderViewModel.insertKitOrderSpec(kitOrderSpec)
+                                }
                                 //                                //3,3,3
                             }
                         }
