@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "783803caf703389d63e6eebe7c2ccf9a",
+    "identityHash": "f19f4ce0e449d32695e1cb75daa7338b",
     "entities": [
       {
         "tableName": "TaskResultEntity",
@@ -356,7 +356,7 @@
       },
       {
         "tableName": "KitOrderCardEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `kitId` INTEGER NOT NULL, `rfidTagNo` TEXT, `pipeSerialNumber` INTEGER, `serialNoOfNipple` INTEGER, `couplingSerialNumber` INTEGER, `fullName` TEXT, `comment` TEXT, `isConfirmed` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `kitId` INTEGER NOT NULL, `rfidTagNo` TEXT, `pipeSerialNumber` INTEGER, `serialNoOfNipple` INTEGER, `couplingSerialNumber` INTEGER, `fullName` TEXT, `comment` TEXT, `problemComment` TEXT NOT NULL, `isConfirmed` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -405,6 +405,12 @@
             "columnName": "comment",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "problemComment",
+            "columnName": "problemComment",
+            "affinity": "TEXT",
+            "notNull": true
           },
           {
             "fieldPath": "isConfirmed",
@@ -693,12 +699,50 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "ProblemCardEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `cardId` INTEGER NOT NULL, `taskId` INTEGER NOT NULL, `problemComment` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "cardId",
+            "columnName": "cardId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "taskId",
+            "columnName": "taskId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "problemComment",
+            "columnName": "problemComment",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '783803caf703389d63e6eebe7c2ccf9a')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f19f4ce0e449d32695e1cb75daa7338b')"
     ]
   }
 }

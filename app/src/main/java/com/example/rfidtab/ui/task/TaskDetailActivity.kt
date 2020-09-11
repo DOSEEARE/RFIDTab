@@ -193,7 +193,7 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
 
                 sendCardsImages(card.cardId, card.taskId)
                 print("")
-                    if (cardListIndex - 1 == cardList.size - 1) {
+
                         viewModel.taskStatusChange(
                             TaskStatusModel(
                                savedData.id,
@@ -213,21 +213,9 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
                                     startActivity(Intent(this, TaskActivity::class.java))
                                     finish()
                                 }
-                                Status.ERROR -> {
-                                    toast("$data")
-                                }
-                                Status.NETWORK -> {
-                                    toast("$data")
-                                }
-                                else -> {
-                                    toast("$data")
-                                }
                             }
 
                         })
-
-                    }
-
             }
             // После цикла измнение статуса
             sendOverCards()

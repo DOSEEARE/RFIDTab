@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import com.example.rfidtab.service.db.entity.kit.KitCommentEntity
 import com.example.rfidtab.service.db.entity.kit.KitItemEntity
 import com.example.rfidtab.service.db.entity.kit.KitRfidEntity
+import com.example.rfidtab.service.db.entity.kit.ProblemCardEntity
 import com.example.rfidtab.service.db.entity.kitorder.*
 import com.example.rfidtab.service.db.entity.task.*
 import kotlinx.coroutines.CoroutineScope
@@ -61,6 +62,16 @@ class RoomRepository(private val dao: RoomDao) {
         }
     }
 
+    fun insertProblemCard(entity: ProblemCardEntity) {
+        CoroutineScope(Dispatchers.IO).launch {
+            dao.insertProblemCard(entity)
+        }
+    }
+
+    fun findProblemCard(cardId: Int, taskId: Int): LiveData<ProblemCardEntity> {
+        return dao.findProblemCard(cardId, taskId)
+    }
+
     fun insertKitOrderSpec(entity: KitOrderSpecificationEntity) {
         dao.insertKitOrderSpec(entity)
     }
@@ -75,6 +86,10 @@ class RoomRepository(private val dao: RoomDao) {
 
     fun findOrderCard(kitInt: Int): LiveData<List<KitOrderCardEntity>> {
         return dao.findKitOrderCard(kitInt)
+    }
+
+    fun findKitOrderProblemComment(kitId: Int): LiveData<List<KitOrderCardEntity>> {
+        return dao.findKitOrderProblemCard(kitId)
     }
 
     fun findKitOrderByLogin(userLogin: String): LiveData<List<KitOrderEntity>> {
@@ -155,6 +170,12 @@ class RoomRepository(private val dao: RoomDao) {
 
     fun updateKitCard(cardId: Int, rfid: String) {
         return dao.updateKitCard(cardId, rfid)
+    }
+
+    fun updateProblemCommentKitCard(cardId: Int, problemComment: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            return@launch dao.updateProblemCommentKitCard(cardId, problemComment)
+        }
     }
 
     fun updateErrorComment(cardId: Int, comment: String) {

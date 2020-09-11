@@ -59,20 +59,20 @@ class KitOrderAddCardBS(val kitId: Int) : BottomSheetDialogFragment(), RfidScann
             add_rfid_in.text.toString()
             val rfid = add_rfid_in.text.toString()
 
-            val pipe : Int = if (add_pipe_in.text.toString().isEmpty()) {
+            val pipe : Long = if (add_pipe_in.text.toString().isEmpty()) {
                 0
             } else{
-                add_pipe_in?.text.toString().toInt()
+                add_pipe_in?.text.toString().toLong()
             }
-            val nipple : Int = if (add_nipple_in.text.toString().isEmpty()) {
+            val nipple : Long = if (add_nipple_in.text.toString().isEmpty()) {
                 0
             } else{
-                add_nipple_in?.text.toString().toInt()
+                add_nipple_in?.text.toString().toLong()
             }
-            val couple : Int = if (add_couple_in.text.toString().isEmpty()) {
+            val couple : Long = if (add_couple_in.text.toString().isEmpty()) {
                 0
             } else{
-                add_couple_in?.text.toString().toInt()
+                add_couple_in?.text.toString().toLong()
             }
 
             val comment = add_comment_in.text.toString()

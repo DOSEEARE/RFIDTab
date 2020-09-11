@@ -3,9 +3,11 @@ package com.example.rfidtab.service.model.kitorder
 import com.google.gson.annotations.SerializedName
 
 class KitOrderCards(
-    @SerializedName("pipeSerialNumber") val pipeSerialNumber: Int?,
-    @SerializedName("couplingSerialNumber") val couplingSerialNumber: Int?,
-    @SerializedName("serialNoOfNipple") val serialNoOfNipple: Int?,
+    @SerializedName("pipeSerialNumber") val pipeSerialNumber: Long?,
+    @SerializedName("couplingSerialNumber") val couplingSerialNumber: Long?,
+    @SerializedName("serialNoOfNipple") val serialNoOfNipple: Long?,
     @SerializedName("rfidTagNo") val rfidTagNo: String?,
-    val accounting : Int
+    @SerializedName("comment") val comment: String?,
+    @SerializedName("commentProblemWithMark") val commentProblemWithMark: String?
+
 )

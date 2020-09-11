@@ -72,8 +72,7 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
             val msg = result.msg
             when (result.status) {
                 Status.SUCCESS -> {
-                    online_task_rv.adapter =
-                        TaskOnlineAdapter(this, data as ArrayList<TaskResponse>)
+                    online_task_rv.adapter = TaskOnlineAdapter(this, data as ArrayList<TaskResponse>)
                 }
                 Status.ERROR -> {
                     Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
@@ -129,8 +128,7 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                     changeTaskStatus(model)
                     alertDialog.dismiss()
                 } else {
-                    saveKitOrder(model.id)
-                    changeTaskStatus(model)
+                    saveKitOrder(model)
                     alertDialog.dismiss()
                 }
             } else {
@@ -179,9 +177,8 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
         })
     }
 
-    @SuppressLint("NewApi")
-    private fun saveKitOrder(taskId: Int) {
-        kitOrderViewModel.kitOrder(taskId).observe(viewLifecycleOwner, Observer { result ->
+    private fun saveKitOrder(model : TaskResponse) {
+        kitOrderViewModel.kitOrder(model.id).observe(viewLifecycleOwner, Observer { result ->
             val data = result.data
             val msg = result.msg
             when (result.status) {
@@ -210,7 +207,7 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                             listKit.add(
                                 KitOrderKitEntity(
                                     kitOrderKit.id,
-                                    taskId,
+                                    model.id,
                                     kitOrderKit.title
                                 )
                             )
@@ -226,6 +223,7 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                                         kitOrderCard.couplingSerialNumber,
                                         kitOrderCard.fullName,
                                         kitOrderCard.comment,
+                                        " ",
                                         false
                                     )
                                 )
@@ -235,7 +233,6 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                                 val spec = data.kits[indexKit].specification
                                 val kitCardCount: String = data.kitCardCount?.split(",")!![indexKit]
 
-                                if (!Objects.isNull(spec)) {
                                     val kitOrderSpec = KitOrderSpecificationEntity(
                                         spec.id,
                                         kitOrderKit.id,
@@ -252,7 +249,6 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
 
                                     )
                                     kitOrderViewModel.insertKitOrderSpec(kitOrderSpec)
-                                }
                                 //                                //3,3,3
                             }
                         }
@@ -260,8 +256,8 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                         kitOrderViewModel.insertKitOrder(entity)
                         kitOrderViewModel.insertKitItem(listKit)
                         kitOrderViewModel.insertKitCards(listCard)
-
                     }
+                    changeTaskStatus(model)
                 }
                 Status.ERROR -> {
                     Toast.makeText(context, msg, Toast.LENGTH_LONG).show()

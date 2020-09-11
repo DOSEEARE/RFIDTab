@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.LiveData
 import com.example.rfidtab.base.BaseViewModel
 import com.example.rfidtab.service.Resource
+import com.example.rfidtab.service.db.entity.kit.ProblemCardEntity
 import com.example.rfidtab.service.db.entity.kitorder.*
 import com.example.rfidtab.service.model.confirm.ConfirmCardModel
 import com.example.rfidtab.service.model.kitorder.KitOrderModel
@@ -43,12 +44,27 @@ class KitOrderViewModel(application: Application) : BaseViewModel(application) {
         return db.updateKitCard(cardId, rfid)
     }
 
+    fun updateProblemCommentKitCard(cardId: Int, problemComment: String) {
+        return db.updateProblemCommentKitCard(cardId, problemComment)
+    }
+
     fun findKitItem(taskId: Int): LiveData<List<KitOrderKitEntity>> {
         return db.findKitItem(taskId)
     }
 
     fun findKitCards(kitId: Int): LiveData<List<KitOrderCardEntity>> {
         return db.findOrderCard(kitId)
+    }
+
+    fun findKitOrderProblemComment(kitId: Int) : LiveData<List<KitOrderCardEntity>>{
+        return db.findKitOrderProblemComment(kitId)
+    }
+    fun insertProblemCard(entity: ProblemCardEntity) {
+        db.insertProblemCard(entity)
+    }
+
+    fun findProblemCard(cardId: Int, taskId: Int): LiveData<ProblemCardEntity> {
+        return db.findProblemCard(cardId, taskId)
     }
 
     fun findKitOrderSpecByKitId(kitId: Int): LiveData<KitOrderSpecificationEntity> {

@@ -18,6 +18,7 @@ import com.example.rfidtab.service.db.entity.kitorder.KitOrderCardEntity
 import com.example.rfidtab.service.db.entity.kitorder.KitOrderKitEntity
 import com.example.rfidtab.service.response.kitorder.KitOrderCard
 import com.example.rfidtab.service.response.kitorder.KitOrderKit
+import com.example.rfidtab.ui.task.TaskViewModel
 import com.example.rfidtab.util.MyUtil
 import com.example.rfidtab.util.scanrfid.RfidScannerListener
 import com.example.rfidtab.util.scanrfid.RfidScannerUtil
@@ -28,7 +29,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class KitOrderDetailActivity : AppCompatActivity(), KitCardSavedListener, RfidScannerListener {
     private val kitOrderViewModel: KitOrderViewModel by viewModel()
     private lateinit var scanDialog: AlertDialog
-
     private lateinit var currentModel: KitOrderCardEntity
 
     private lateinit var onlineData: KitOrderKit
@@ -47,7 +47,7 @@ class KitOrderDetailActivity : AppCompatActivity(), KitCardSavedListener, RfidSc
 
         if (isOnline) {
             onlineData = intent.getSerializableExtra("data") as KitOrderKit
-
+            kit_order_add_btn.isVisible = false
             if (onlineData.cards.isNotEmpty()) {
                 kit_order_spec_card.visibility = View.GONE
                 kit_order_detail_rv.adapter =
@@ -56,6 +56,7 @@ class KitOrderDetailActivity : AppCompatActivity(), KitCardSavedListener, RfidSc
                 kit_order_count_card.isVisible = false
 
             } else {
+                kit_order_count_card.isVisible = false
                 kit_order_rv_card.visibility = View.GONE
                 kit_order_spec_angle_plait.text =
                     "Угол заплётчика: ${onlineData.specification.shoulderAngle}"
@@ -73,6 +74,8 @@ class KitOrderDetailActivity : AppCompatActivity(), KitCardSavedListener, RfidSc
                     "Толщина стенки трубы: ${onlineData.specification.pipeWallThickness}"
                 kit_order_spec_id_nipple.text =
                     "I.D замка ниппель: ${onlineData.specification.idlockNipple}"
+
+                kit_order_spec_comment.text = "Комментарий постоновщика задачи: ${onlineData.specification.comment}"
             }
 
         } else {
@@ -80,8 +83,6 @@ class KitOrderDetailActivity : AppCompatActivity(), KitCardSavedListener, RfidSc
 
             kitOrderViewModel.findKitCards(savedData.id).observe(this, Observer {
                 kit_order_detail_rv.adapter = KitCardSavedAdapter(this, it as ArrayList<KitOrderCardEntity>)
-
-                kit_order_detail_title.text = "Количество единиц оборудования: ${it.size}"
 
                 if (it.isEmpty()) {
                     kitOrderViewModel.findKitOrderSpecByKitId(savedData.id).observe(this, Observer { spec ->
@@ -97,8 +98,11 @@ class KitOrderDetailActivity : AppCompatActivity(), KitCardSavedListener, RfidSc
                             "Наружный диаметр трубы: ${spec.outerDiameterOfThePipe}"
                         kit_order_spec_pipe_wall.text =
                             "Толщина стенки трубы: ${spec.pipeWallThickness}"
-                        kit_order_spec_id_nipple.text = "I.D замка ниппель: ${spec.idlockNipple}"
+                        kit_order_spec_id_nipple.text = "I.aD замка ниппель: ${spec.idlockNipple}"
                        kit_order_detail_title.text = "Количество единиц оборудования: ${spec.cardCount}"
+
+                        kit_order_spec_comment.text = "Комментарий постоновщика задачи: ${spec.comment}"
+
 
                         kitOrderViewModel.findAddCardByKitId(savedData.id).observe(this, Observer {
                             kit_order_added_rv.adapter =
@@ -107,6 +111,7 @@ class KitOrderDetailActivity : AppCompatActivity(), KitCardSavedListener, RfidSc
                         addCardsToKit(savedData.id)
                     })
                 }else{
+                    kit_order_detail_title.text = "Количество единиц оборудования: ${it.size}"
                     kit_order_add_btn.isVisible = false
                     kit_order_spec_card.isVisible = false
                 }
@@ -138,12 +143,16 @@ class KitOrderDetailActivity : AppCompatActivity(), KitCardSavedListener, RfidSc
 
         view.scan_name.text = model.fullName
 
-        view.scan_problem_checkbox.isVisible = false
-
+        view.scan_problem_checkbox.setOnCheckedChangeListener { buttonView, isChecked ->
+            when (isChecked) {
+                true -> view.scan_comment_out.visibility = View.VISIBLE
+                false -> view.scan_comment_out.visibility = View.GONE
+            }
+        }
         view.scan_result_et.setText(accessTag)
         //Сохранение карточки
         view.scan_access_btn.setOnClickListener {
-            try {
+
                 if (accessTag.isNotEmpty()) {
                     if (MyUtil().equalsNoSpace(model.rfidTagNo!!, accessTag)) {
                         kitOrderViewModel.kitOrderCardConfirm(model.id, true)
@@ -155,18 +164,16 @@ class KitOrderDetailActivity : AppCompatActivity(), KitCardSavedListener, RfidSc
                         scanDialog.dismiss()
                     }
 
-                }/*else{
+                }else{
                     if (view.scan_comment_et.text.toString().isNotEmpty()) {
-                        kitOrderViewModel.updateErrorComment(model.cardId, view.scan_comment_et.text.toString())
+                        kitOrderViewModel.updateProblemCommentKitCard(model.id, view.scan_comment_et.text.toString())
                         toast("Успешно сохранён!")
                         scanDialog.dismiss()
                     } else {
                         view.scan_comment_et.error = "Не может быть пустым"
                     }
-                }*/
-            }catch (e : Exception){
-                toast(" ")
-            }
+                }
+
         }
 
         //Чтение со сканера

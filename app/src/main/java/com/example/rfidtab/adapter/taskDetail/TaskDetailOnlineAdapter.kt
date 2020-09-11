@@ -2,6 +2,7 @@ package com.example.rfidtab.adapter.taskDetail
 
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.example.rfidtab.R
 import com.example.rfidtab.base.GenericRecyclerAdapter
@@ -23,7 +24,7 @@ class TaskDetailOnlineAdapter(
         holder.itemView.card_problem_mark.text = "Проблемы с меткой: ${item.commentProblemWithMark}"
 
         holder.itemView.card_comment.text = "Комментарии: ${item.comment}"
-
+        holder.itemView.card_problem.isVisible = false
         holder.itemView.card_scan_btn.visibility = View.GONE
         holder.itemView.card_camera_btn.visibility = View.GONE
 

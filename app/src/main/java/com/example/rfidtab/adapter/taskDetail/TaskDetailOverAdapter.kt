@@ -19,7 +19,7 @@ class TaskDetailOverAdapter(
         holder.itemView.card_over_nipple.text = "№ ниппеля: ${item.serialNoOfNipple}"
         holder.itemView.card_over_bond.text = "№ муфты: ${item.couplingSerialNumber}"
         holder.itemView.card_over_count.text = "Лишний: ${holder.adapterPosition + 1}"
-        holder.itemView.card_over_comment.text = "Комменлтарии: ${item.comment}"
+        holder.itemView.card_over_comment.text = "Комментарий: ${item.comment}"
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {

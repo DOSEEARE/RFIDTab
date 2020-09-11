@@ -44,18 +44,22 @@ class CreateKitActivity : AppCompatActivity(), CreateKitListener {
 
             view.kit_item_access.setOnClickListener {
                 val text = view.kit_item_et.text.toString()
-                CoroutineScope(Dispatchers.IO).launch {
-                    viewModel.insertKitItem(
-                        KitItemEntity(
-                            Random.nextInt(0, 1000),
-                            AppPreferences.userLogin!!,
-                            text
+                if (text.isNotEmpty()){
+                    CoroutineScope(Dispatchers.IO).launch {
+                        viewModel.insertKitItem(
+                            KitItemEntity(
+                                Random.nextInt(0, 1000),
+                                AppPreferences.userLogin!!,
+                                text
+                            )
                         )
-                    )
+                        alertDialog.dismiss()
+                        kit_empty.visibility = View.GONE
+                        toast("Комплект создан")
+                    }
+                }else{
+                    view.kit_item_et.error = "Название не может быть пустым"
                 }
-                alertDialog.dismiss()
-                kit_empty.visibility = View.GONE
-                toast("Комплект создан")
 
                 if (kitAdapter.itemCount == 0) {
                     finish()

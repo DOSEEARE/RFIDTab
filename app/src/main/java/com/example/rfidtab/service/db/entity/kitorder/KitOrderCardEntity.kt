@@ -9,10 +9,11 @@ data class  KitOrderCardEntity(
     val id: Int,
     val kitId: Int,
     val rfidTagNo: String?,
-    val pipeSerialNumber: Int?,
-    val serialNoOfNipple: Int?,
-    val couplingSerialNumber: Int? ,
+    val pipeSerialNumber: Long?,
+    val serialNoOfNipple: Long?,
+    val couplingSerialNumber: Long? ,
     val fullName: String?,
     val comment: String?,
+    val problemComment : String,
     val isConfirmed: Boolean
 )

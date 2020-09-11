@@ -36,7 +36,7 @@ class KitCardSavedAdapter(
         holder.itemView.card_confirm_comment.text = "Комментарии: ${item.comment}"
 
 
-        holder.itemView.card_confirm_problem_mark.visibility = View.GONE
+        holder.itemView.card_confirm_problem_mark.text = "Проблема с меткой: ${item.problemComment}"
 
         holder.itemView.card_scan_btn.setOnClickListener {
             listener.scanBtnClicked(item)

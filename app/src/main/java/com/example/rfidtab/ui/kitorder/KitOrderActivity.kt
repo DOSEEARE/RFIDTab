@@ -16,6 +16,7 @@ import com.example.rfidtab.extension.toast
 import com.example.rfidtab.service.Status
 import com.example.rfidtab.service.db.entity.kitorder.KitOrderEntity
 import com.example.rfidtab.service.db.entity.kitorder.KitOrderKitEntity
+import com.example.rfidtab.service.model.CardModel
 import com.example.rfidtab.service.model.TaskStatusModel
 import com.example.rfidtab.service.model.confirm.ConfirmCardModel
 import com.example.rfidtab.service.model.confirm.ConfirmCards
@@ -108,13 +109,22 @@ class KitOrderActivity : AppCompatActivity(),
                             .observe(this, Observer { networkCards ->
 
                                 if (networkCards.isEmpty()) {
-
                                     val createdCards = ArrayList<KitOrderCards>()
+                                    //без каталога
                                     // Если карчтоки пусты значит с тех заданием, без карточек
                                     kitOrderViewModel.findAddCardByKitId(kit.id)
                                         .observe(this, Observer { addedCards ->
                                             addedCards.forEach {
-                                                createdCards.add(KitOrderCards(it.pipeSerialNumber, it.couplingSerialNumber, it.serialNoOfNipple, it.rfidTagNo, 0))
+                                                createdCards.add(
+                                                    KitOrderCards(
+                                                        it.pipeSerialNumber,
+                                                        it.couplingSerialNumber,
+                                                        it.serialNoOfNipple,
+                                                        it.rfidTagNo,
+                                                        it.comment,
+                                                        " "
+                                                    )
+                                                )
                                             }
 
                                             model = KitOrderModel(kit.id, createdCards)
@@ -124,7 +134,6 @@ class KitOrderActivity : AppCompatActivity(),
                                             kitOrderViewModel.sendKitOrderCards(model).observe(this, Observer { result ->
                                                 when (result.status) {
                                                     Status.SUCCESS -> {
-                                                        if (kitIndex -1 == it.lastIndex) {
                                                             taskViewModel.taskStatusChange(
                                                                 TaskStatusModel(
                                                                     savedData.id,
@@ -139,21 +148,9 @@ class KitOrderActivity : AppCompatActivity(),
 
                                                                         startActivity(Intent(this, TaskActivity::class.java))
                                                                         finish()
-
-                                                                    }
-                                                                    Status.ERROR -> {
-                                                                        toast("Проблемы с интернетом!")
-                                                                    }
-                                                                    Status.NETWORK -> {
-                                                                        toast("Проблемы с интернетом!")
-                                                                    }
-                                                                    else -> {
-                                                                        toast("Неизвестная ошибка!")
-
                                                                     }
                                                                 }
                                                             })
-                                                        }
                                                         toast("Успешно добавлен в комплект!")
                                                     }
                                                     Status.ERROR -> {
@@ -166,27 +163,49 @@ class KitOrderActivity : AppCompatActivity(),
                                                         toast("Неизвестная ошибка!")
                                                     }
                                                 }
-
                                             })
-
                                         })
                                 } else {
+
+                                    // c каталога
                                     //С корточками, без тех задании
                                     val body: ConfirmCardModel
                                     val confirmCard = ArrayList<ConfirmCards>()
+                                    val cards = ArrayList<KitOrderCards>()
 
                                     networkCards.forEach {
+                                        cards.add(
+                                            KitOrderCards(
+                                                it.pipeSerialNumber,
+                                                it.couplingSerialNumber,
+                                                it.serialNoOfNipple,
+                                                it.rfidTagNo,
+                                                it.comment,
+                                                it.problemComment
+                                            )
+                                        )
+                                        model = KitOrderModel(kit.id, cards)
+
+                                        kitOrderViewModel.sendKitOrderCards(model).observe(this, Observer { result ->
+                                            when (result.status) {
+                                                Status.SUCCESS -> {
+
+                                                }
+                                            }
+                                        })
+
                                         if (it.isConfirmed) {
                                             confirmCard.add(ConfirmCards(it.rfidTagNo))
                                         }
                                     }
+
+                                    Log.e("metka", confirmCard.toString())
                                         //comment
                                     body = ConfirmCardModel(savedData.id, confirmCard)
                                     kitOrderViewModel.confirmCards(body).observe(this, Observer { result ->
                                         when (result.status) {
                                             Status.SUCCESS -> {
                                                 //Измнетть статус задании
-                                                if (kitIndex -1 == it.lastIndex) {
                                                     taskViewModel.taskStatusChange(
                                                         TaskStatusModel(
                                                             savedData.id,
@@ -197,24 +216,12 @@ class KitOrderActivity : AppCompatActivity(),
                                                         when (result.status) {
                                                             Status.SUCCESS -> {
                                                                 toast("Успешно отправлен!")
-
                                                                 kitOrderViewModel.deleteKitTaskById(savedData.id)
                                                                 startActivity(Intent(this, TaskActivity::class.java))
                                                                 finish()
                                                             }
-                                                            Status.ERROR -> {
-                                                                toast("Проблемы с интернетом!")
-                                                            }
-                                                            Status.NETWORK -> {
-                                                                toast("Проблемы с интернетом!")
-                                                            }
-                                                            else -> {
-                                                                toast("Неизвестная ошибка!")
-
-                                                            }
                                                         }
                                                     })
-                                                }
                                             }
                                             Status.ERROR -> {
                                                 toast("Карточка уже в комплекте!")
@@ -282,4 +289,5 @@ class KitOrderActivity : AppCompatActivity(),
         }
         return result.toString()
     }
+
 }

@@ -8,6 +8,7 @@ import androidx.room.Query
 import com.example.rfidtab.service.db.entity.kit.KitCommentEntity
 import com.example.rfidtab.service.db.entity.kit.KitItemEntity
 import com.example.rfidtab.service.db.entity.kit.KitRfidEntity
+import com.example.rfidtab.service.db.entity.kit.ProblemCardEntity
 import com.example.rfidtab.service.db.entity.kitorder.*
 import com.example.rfidtab.service.db.entity.task.CardImagesEntity
 import com.example.rfidtab.service.db.entity.task.OverCardsEntity
@@ -48,6 +49,12 @@ interface RoomDao {
     fun insertAddCard(entity: KitOrderAddCardEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertProblemCard (entity: ProblemCardEntity)
+
+    @Query("SELECT * FROM ProblemCardEntity WHERE ProblemCardEntity.cardId=:cardId AND taskId=:taskId")
+    fun findProblemCard (cardId : Int, taskId : Int): LiveData<ProblemCardEntity>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertKitOrderCards(list: List<KitOrderCardEntity>)
 
     @Query("SELECT * FROM KitOrderAddCardEntity WHERE KitOrderAddCardEntity.kitId=:kitId")
@@ -64,6 +71,9 @@ interface RoomDao {
 
     @Query("SELECT * FROM KitOrderCardEntity WHERE KitOrderCardEntity.kitId=:kitId")
     fun findKitOrderCard(kitId: Int): LiveData<List<KitOrderCardEntity>>
+
+    @Query("SELECT * FROM KitOrderCardEntity WHERE KitOrderCardEntity.kitId=:kitId")
+    fun findKitOrderProblemCard (kitId: Int): LiveData<List<KitOrderCardEntity>>
 
     @Query("SELECT * FROM KitOrderEntity WHERE KitOrderEntity.userLogin=:userLogin")
     fun findKitOrderByLogin(userLogin: String): LiveData<List<KitOrderEntity>>
@@ -113,17 +123,17 @@ interface RoomDao {
     @Query("UPDATE KitOrderCardEntity SET isConfirmed=:isConfirmed WHERE id =:cardId")
     fun kitOrderCardConfirm(cardId: Int, isConfirmed: Boolean)
 
-
     @Query("UPDATE KitOrderCardEntity SET rfidTagNo=:rfid WHERE id =:cardId")
     fun updateKitCard(cardId: Int, rfid: String)
 
+    @Query("UPDATE KitOrderCardEntity SET problemComment=:problemComment WHERE id =:cardId")
+    fun updateProblemCommentKitCard(cardId: Int, problemComment: String)
+
     @Query("UPDATE TaskCardListEntity SET commentProblemWithMark=:errorComment WHERE cardId =:cardId")
     fun updateErrorComment(cardId: Int, errorComment: String)
-/*
 
-    @Query("UPDATE KitOrderCardEntity SET commentProblemWithMark=:errorComment WHERE cardId =:cardId")
-    fun updateKitErrorComment(cardId: Int, errorComment: String)
-*/
+    @Query("UPDATE KitOrderCardEntity SET comment=:errorComment WHERE id =:cardId AND kitId=:kitId")
+    fun updateKitErrorComment(cardId: Int, kitId: Int, errorComment: String)
 
     @Query("UPDATE TaskCardListEntity SET isConfirmed=:isConfirmed WHERE cardId =:cardId")
     fun updateConfirmTaskCard(cardId: Int, isConfirmed: Boolean)
