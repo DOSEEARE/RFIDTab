@@ -193,7 +193,7 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                             data.createdByFio,
                             data.executorFio,
                             data.kitCount,
-                            allCardCount(data.kitType, data.kitCardCount),
+                            allCardCount(data.kitType, data.kitCardCount, data.cardCount),
                             data.kitCardCount
                         )
 
@@ -229,9 +229,9 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                             if (data.kits[indexKit].cards.isEmpty()) {
                                 val spec = data.kits[indexKit].specification
 
-                                if (data.kitCardCount == "multii") {
+                                if (data.kitType == "multi") {
                                     val kitCardCount: String =
-                                        data.kitCardCount.split(",")[indexKit]
+                                        data.kitCardCount!!.split(",")[indexKit]
 
                                     val kitOrderSpec = KitOrderSpecificationEntity(
                                         spec.id,
@@ -265,10 +265,8 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                                     )
                                     kitOrderViewModel.insertKitOrderSpec(kitOrderSpec)
                                 }
-                                //                                //3,3,3
                             }
                         }
-
                         kitOrderViewModel.insertKitOrder(entity)
                         kitOrderViewModel.insertKitItem(listKit)
                         kitOrderViewModel.insertKitCards(listCard)
@@ -339,7 +337,7 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
         }
     }
 
-    private fun allCardCount(kitType: String?, kitCardCount: String?): String {
+    private fun allCardCount(kitType: String?, kitCardCount: String?, cardCount : String?): String {
         val array = ArrayList<Int>()
         var result = 0
         array.add(0)
@@ -352,7 +350,9 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
             array.forEachIndexed { index, i ->
                 result += kitCardCount!!.split(",")[index].toInt()
             }
+            return result.toString()
+        }else{
+            return cardCount!!
         }
-        return result.toString()
     }
 }

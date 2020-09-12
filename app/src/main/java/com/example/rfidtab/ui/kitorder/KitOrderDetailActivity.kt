@@ -99,6 +99,7 @@ class KitOrderDetailActivity : AppCompatActivity(), KitCardSavedListener, RfidSc
                         kit_order_spec_pipe_wall.text =
                             "Толщина стенки трубы: ${spec.pipeWallThickness}"
                         kit_order_spec_id_nipple.text = "I.aD замка ниппель: ${spec.idlockNipple}"
+
                        kit_order_detail_title.text = "Количество единиц оборудования: ${spec.cardCount}"
 
                         kit_order_spec_comment.text = "Комментарий постоновщика задачи: ${spec.comment}"
