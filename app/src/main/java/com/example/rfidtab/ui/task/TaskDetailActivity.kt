@@ -188,12 +188,12 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
                         }
                     })
 
-                sendCardsImages(card.cardId, card.taskId, card.taskTypeId)
-                print("")
+                when (savedData.taskTypeId) {
+                    TaskTypeEnum.inspection, TaskTypeEnum.kitForFix -> sendCardsImages(card.cardId, card.taskId, card.taskTypeId)
+                }
             }
             // После цикла измнение статуса
             sendOverCards()
-            loadingHide()
 
         }
 
@@ -472,7 +472,6 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
         if (savedData.taskTypeId == TaskTypeEnum.inventory) {
             val list = ArrayList<OverCards>()
             viewModel.findOverCardById(savedData.id).observe(this, Observer {
-
                 it.forEach {
                     list.add(
                         OverCards(
@@ -491,15 +490,28 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
                     when (result.status) {
                         Status.SUCCESS -> {
                             toast("$data")
-                        }
-                        Status.ERROR -> {
-                            toast("$data")
-                        }
-                        Status.NETWORK -> {
-                            toast("$data")
+                            CoroutineScope(Dispatchers.IO).launch {
+                                viewModel.deleteTaskById(savedData.id)
+                                viewModel.deleteCardsById(savedData.id)
+                                withContext(Dispatchers.Main){
+                                    startActivity(Intent(applicationContext, TaskActivity::class.java))
+                                    finish()
+                                    loadingHide()
+                                }
+                            }
                         }
                         else -> {
                             toast("$data")
+                            CoroutineScope(Dispatchers.IO).launch {
+                                viewModel.deleteTaskById(savedData.id)
+                                viewModel.deleteCardsById(savedData.id)
+                                withContext(Dispatchers.Main){
+                                    startActivity(Intent(applicationContext, TaskActivity::class.java))
+                                    finish()
+                                    loadingHide()
+                                }
+                            }
+                            loadingHide()
                         }
                     }
 
