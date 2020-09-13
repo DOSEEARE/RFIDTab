@@ -23,8 +23,8 @@ class TaskViewModel(application: Application) : BaseViewModel(application) {
         return network.cardChange(model)
     }
 
-    fun sendImage(image: MultipartBody.Part, cardId: Int): LiveData<Resource<String>> {
-        return network.sendImage(image, cardId)
+    fun sendImage(list : List<CardImagesEntity>, cardId: Int, taskTypeId : Int, taskId : Int): LiveData<Resource<String>> {
+        return network.sendImage(list, cardId, taskTypeId, taskId)
     }
 
     fun sendOverCards(model: TaskOverCards): LiveData<Resource<String>> {

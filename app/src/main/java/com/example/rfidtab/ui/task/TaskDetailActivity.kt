@@ -51,9 +51,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.util.*
@@ -191,30 +188,8 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
                         }
                     })
 
-                sendCardsImages(card.cardId, card.taskId)
+                sendCardsImages(card.cardId, card.taskId, card.taskTypeId)
                 print("")
-                        viewModel.taskStatusChange(
-                            TaskStatusModel(
-                               savedData.id,
-                                savedData.taskTypeId,
-                                TaskStatusEnum.savedToLocal
-                            )
-                        ).observe(this, Observer { result ->
-                            val data = result.data
-                            when (result.status) {
-                                Status.SUCCESS -> {
-                                    toast("$data")
-                                    CoroutineScope(Dispatchers.IO).launch {
-                                        viewModel.deleteTaskById(savedData.id)
-                                        viewModel.deleteCardsById(savedData.id)
-                                     //   viewModel.deleteCardImageById(card.cardId)
-                                    }
-                                    startActivity(Intent(this, TaskActivity::class.java))
-                                    finish()
-                                }
-                            }
-
-                        })
             }
             // После цикла измнение статуса
             sendOverCards()
@@ -224,43 +199,55 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
 
     }
 
-    private fun sendCardsImages(cardId: Int, taskId: Int) {
+    private fun sendCardsImages(cardId: Int, taskId: Int, taskTypId: Int) {
+        loadingShow()
         viewModel.findImagesById(cardId, taskId).observe(this, Observer {
             if (it.isNotEmpty()) {
-                it.forEach {
-                    if (File(it.imagePath).exists()) {
-                        val file = File(it.imagePath)
+                viewModel.sendImage(it, cardId, taskTypId, taskId)
+                    .observe(this, Observer { result ->
+                        val msg = result.msg
+                        when (result.status) {
+                            Status.SUCCESS -> {
+                                toast("Фото отправлен!")
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    viewModel.deleteTaskById(savedData.id)
+                                    viewModel.deleteCardsById(savedData.id)
+                                }
+                                viewModel.taskStatusChange(
+                                    TaskStatusModel(
+                                        savedData.id,
+                                        savedData.taskTypeId,
+                                        TaskStatusEnum.savedToLocal
+                                    )
+                                ).observe(this, Observer { result ->
+                                    val data = result.data
+                                    when (result.status) {
+                                        Status.SUCCESS -> {
+                                            toast("$data")
+                                            startActivity(Intent(this, TaskActivity::class.java))
+                                            finish()
+                                            loadingHide()
+                                        }
+                                    }
 
-                        val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
-
-                        val photo = MultipartBody.Part.createFormData("image", file.name, requestFile)
-                        viewModel.sendImage(photo, cardId).observe(this, Observer { result ->
-                            val msg = result.msg
-                            when (result.status) {
-                                Status.SUCCESS -> {
-                                    toast("Фото отправлен!")
-                                    loadingHide()
-                                                 CoroutineScope(Dispatchers.IO).launch {
-                                                     viewModel.deleteTaskById(savedData.id)
-                                                     viewModel.deleteCardsById(savedData.id)
-                                                 }
-                                }
-                                Status.ERROR -> {
-                                    toast(msg)
-                                    loadingHide()
-                                }
-                                Status.NETWORK -> {
-                                    toast(msg)
-                                    loadingHide()
-                                }
-                                else -> {
-                                    toast(msg)
+                                })
+                            }
+                            Status.ERROR -> {
+                                toast(msg)
+                                loadingHide()
+                            }
+                            Status.NETWORK -> {
+                                toast(msg)
+                                loadingHide()
+                            }
+                            else -> {
+                                toast(msg)
                                 }
                             }
 
                         })
-                    }
-                }
+
+
             }
         })
 

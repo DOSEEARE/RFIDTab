@@ -30,6 +30,8 @@ interface ApiService {
     @POST("card/file/{id}")
     suspend fun sendImage(
         @Part image: MultipartBody.Part,
+        @Part("taskId") taskId: Int,
+        @Part("taskTypeId") taskTypeId: Int,
         @Path("id") cardId: Int
     ): Response<String>
 

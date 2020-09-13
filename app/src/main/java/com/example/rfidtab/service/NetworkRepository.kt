@@ -1,6 +1,7 @@
 package com.example.rfidtab.service
 
 import androidx.lifecycle.liveData
+import com.example.rfidtab.service.db.entity.task.CardImagesEntity
 import com.example.rfidtab.service.model.AuthModel
 import com.example.rfidtab.service.model.CardModel
 import com.example.rfidtab.service.model.TaskStatusModel
@@ -10,7 +11,10 @@ import com.example.rfidtab.service.model.kitorder.KitOrderModel
 import com.example.rfidtab.service.model.overlist.TaskOverCards
 import com.example.rfidtab.service.model.search.SearchModel
 import kotlinx.coroutines.Dispatchers
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
 
 
 class NetworkRepository {
@@ -67,7 +71,7 @@ class NetworkRepository {
         }
     }
 
-    fun sendImage(image: MultipartBody.Part, cardId: Int) = liveData(Dispatchers.IO) {
+/*    fun sendImage(image: MultipartBody.Part, cardId: Int) = liveData(Dispatchers.IO) {
         try {
             val response = RetrofitClient.apiService().sendImage(image, cardId)
             val code = response.code()
@@ -81,7 +85,37 @@ class NetworkRepository {
         } catch (e: Exception) {
             emit(Resource.netwrok("Проблеммы с подключение интернета", null))
         }
-    }
+    }*/
+
+    fun sendImage(imagesPath: List<CardImagesEntity>, cardId: Int, taskTypeId: Int, taskId: Int) =
+        liveData(Dispatchers.IO) {
+            try {
+                imagesPath.forEachIndexed { index, it ->
+                    if (File(it.imagePath).exists()) {
+                        val file = File(it.imagePath)
+
+                        val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+                        val image =
+                            MultipartBody.Part.createFormData("image", file.name, requestFile)
+
+                        val response =
+                            RetrofitClient.apiService().sendImage(image, taskId, taskTypeId, cardId)
+                        val code = response.code()
+                        when {
+                            response.isSuccessful -> {
+                                if (index == imagesPath.size -1)
+                                emit(Resource.success(response.body()))
+                            }
+                            else -> {
+                                emit(Resource.error("Ошибка ${response.message()}!", null))
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                emit(Resource.netwrok("Произошла ошибка при отправке изоброжение", null))
+            }
+        }
 
     fun taskStatusChange(model: TaskStatusModel) = liveData(Dispatchers.IO) {
         try {
