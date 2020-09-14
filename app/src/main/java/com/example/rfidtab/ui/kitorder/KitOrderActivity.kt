@@ -120,8 +120,8 @@ class KitOrderActivity : AppCompatActivity(),
                                                         it.couplingSerialNumber,
                                                         it.serialNoOfNipple,
                                                         it.rfidTagNo,
-                                                        it.comment,
-                                                        " "
+                                                        "",
+                                                        it.comment
                                                     )
                                                 )
                                             }

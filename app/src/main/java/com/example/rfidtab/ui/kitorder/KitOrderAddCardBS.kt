@@ -48,11 +48,10 @@ class KitOrderAddCardBS(val kitId: Int) : BottomSheetDialogFragment(), RfidScann
 
             add_comment_btn.show()
             add_comment_out.show()
+        }
 
-            add_dismiss_btn.setOnClickListener {
-                dismiss()
-            }
-
+        add_dismiss_btn.setOnClickListener {
+            dismiss()
         }
 
         add_save_btn.setOnClickListener {

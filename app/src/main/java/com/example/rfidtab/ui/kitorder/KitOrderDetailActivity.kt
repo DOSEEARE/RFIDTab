@@ -75,7 +75,7 @@ class KitOrderDetailActivity : AppCompatActivity(), KitCardSavedListener, RfidSc
                 kit_order_spec_id_nipple.text =
                     "I.D замка ниппель: ${onlineData.specification.idlockNipple}"
 
-                kit_order_spec_comment.text = "Комментарий постоновщика задачи: ${onlineData.specification.comment}"
+                kit_order_spec_comment.text = "Комментарий постановщика задачи: ${onlineData.specification.comment}"
             }
 
         } else {
@@ -102,7 +102,7 @@ class KitOrderDetailActivity : AppCompatActivity(), KitCardSavedListener, RfidSc
 
                        kit_order_detail_title.text = "Количество единиц оборудования: ${spec.cardCount}"
 
-                        kit_order_spec_comment.text = "Комментарий постоновщика задачи: ${spec.comment}"
+                        kit_order_spec_comment.text = "Комментарий постановщика задачи: ${spec.comment}"
 
 
                         kitOrderViewModel.findAddCardByKitId(savedData.id).observe(this, Observer {

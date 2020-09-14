@@ -200,15 +200,16 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
     }
 
     private fun sendCardsImages(cardId: Int, taskId: Int, taskTypId: Int) {
-        loadingShow()
+        //отправка и закрытие таска если картинки есть
         viewModel.findImagesById(cardId, taskId).observe(this, Observer {
             if (it.isNotEmpty()) {
+                loadingShow()
                 viewModel.sendImage(it, cardId, taskTypId, taskId)
                     .observe(this, Observer { result ->
                         val msg = result.msg
                         when (result.status) {
                             Status.SUCCESS -> {
-                                toast("Фото отправлен!")
+                                toast("Фото отправлено!")
                                 CoroutineScope(Dispatchers.IO).launch {
                                     viewModel.deleteTaskById(savedData.id)
                                     viewModel.deleteCardsById(savedData.id)
@@ -229,7 +230,6 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
                                             loadingHide()
                                         }
                                     }
-
                                 })
                             }
                             Status.ERROR -> {
@@ -242,15 +242,37 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
                             }
                             else -> {
                                 toast(msg)
-                                }
                             }
+                        }
 
-                        })
+                    })
+            } else {
+                //закрытие таска если картинок нет
+                CoroutineScope(Dispatchers.IO).launch {
+                    viewModel.deleteTaskById(savedData.id)
+                    viewModel.deleteCardsById(savedData.id)
+                }
+                viewModel.taskStatusChange(
+                    TaskStatusModel(
+                        savedData.id,
+                        savedData.taskTypeId,
+                        TaskStatusEnum.savedToLocal
+                    )
+                ).observe(this, Observer { result ->
+                    val data = result.data
+                    when (result.status) {
+                        Status.SUCCESS -> {
+                            toast("$data")
+                            startActivity(Intent(this, TaskActivity::class.java))
+                            finish()
+                            loadingHide()
+                        }
+                    }
 
+                })
 
             }
         })
-
     }
 
     //Сканирование Rfid метки
@@ -489,28 +511,38 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
                     val data = result.data
                     when (result.status) {
                         Status.SUCCESS -> {
-                            toast("$data")
-                            CoroutineScope(Dispatchers.IO).launch {
-                                viewModel.deleteTaskById(savedData.id)
-                                viewModel.deleteCardsById(savedData.id)
-                                withContext(Dispatchers.Main){
-                                    startActivity(Intent(applicationContext, TaskActivity::class.java))
-                                    finish()
-                                    loadingHide()
+                            viewModel.taskStatusChange(
+                                TaskStatusModel(
+                                    savedData.id,
+                                    savedData.taskTypeId,
+                                    TaskStatusEnum.savedToLocal
+                                )
+                            ).observe(this, Observer { result ->
+                                when (result.status) {
+                                    Status.SUCCESS -> {
+                                        CoroutineScope(Dispatchers.IO).launch {
+                                            viewModel.deleteTaskById(savedData.id)
+                                            viewModel.deleteCardsById(savedData.id)
+                                            withContext(Dispatchers.Main) {
+                                                startActivity(
+                                                    Intent(
+                                                        applicationContext,
+                                                        TaskActivity::class.java
+                                                    )
+                                                )
+                                                finish()
+                                                loadingHide()
+                                            }
+                                        }
+                                    }
                                 }
-                            }
+
+                            })
+                            toast("$data")
+                            loadingHide()
                         }
                         else -> {
                             toast("$data")
-                            CoroutineScope(Dispatchers.IO).launch {
-                                viewModel.deleteTaskById(savedData.id)
-                                viewModel.deleteCardsById(savedData.id)
-                                withContext(Dispatchers.Main){
-                                    startActivity(Intent(applicationContext, TaskActivity::class.java))
-                                    finish()
-                                    loadingHide()
-                                }
-                            }
                             loadingHide()
                         }
                     }

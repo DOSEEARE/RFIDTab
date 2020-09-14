@@ -33,7 +33,6 @@ class ProfileActivity : AppCompatActivity() {
             startActivity(Intent(this, AuthActivity::class.java))
             builder.setPositiveButton("Да, выйти") { dialog, which ->
             }
-
             builder.setNegativeButton("Нет") { dialog, which ->
                 dialog.dismiss()
             }
