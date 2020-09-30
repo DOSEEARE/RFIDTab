@@ -41,11 +41,11 @@ class SearchActivity : AppCompatActivity(), SearchListener, RfidScannerListener 
         }
     }
 
-    private fun getText(view: TextInputEditText): Int {
+    private fun getText(view: TextInputEditText): String {
         return if (view.text.toString().isEmpty()) {
-            0
+            ""
         } else {
-            view.text.toString().toInt()
+            view.text.toString()
         }
     }
 

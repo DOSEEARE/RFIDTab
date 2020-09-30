@@ -116,7 +116,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="№ Трубы"
-                    android:inputType="number"
                     android:textColor="@color/blackColor" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -150,7 +149,6 @@
                     android:id="@+id/add_nipple_in"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="number"
                     android:hint="№ ниппеля"
                     android:textColor="@color/blackColor" />
 
@@ -170,7 +168,6 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_blue_button"
                 android:padding="8dp"
-                android:inputType="number"
                 android:text="Добавить № муфты"
                 android:textColor="@color/whiteColor"
                 android:visibility="gone" />
@@ -187,7 +184,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="№ Муфты"
-                    android:inputType="number"
                     android:textColor="@color/blackColor" />
 
             </com.google.android.material.textfield.TextInputLayout>

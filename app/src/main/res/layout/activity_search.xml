@@ -33,7 +33,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:hint="Добавить № трубы"
-                        android:inputType="number"
                         android:textColor="@color/blackColor" />
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -47,7 +46,6 @@
                         android:id="@+id/search_nipple"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:inputType="number"
                         android:hint="@string/add_nipple"
                         android:textColor="@color/blackColor" />
 
@@ -63,7 +61,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:hint="@string/add_couple"
-                        android:inputType="number"
                         android:textColor="@color/blackColor" />
 
                 </com.google.android.material.textfield.TextInputLayout>

@@ -13,7 +13,6 @@ abstract class GenericRecyclerAdapter<T>(private var items: ArrayList<T>) :
     fun set(items: ArrayList<T>) {
         this.items = items
         notifyDataSetChanged()
-
     }
 
     fun add(items: ArrayList<T>) {

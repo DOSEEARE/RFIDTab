@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "f19f4ce0e449d32695e1cb75daa7338b",
+    "identityHash": "4b6b6f89d92e713e20eab2a996f49e81",
     "entities": [
       {
         "tableName": "TaskResultEntity",
@@ -74,7 +74,7 @@
       },
       {
         "tableName": "TaskCardListEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `cardId` INTEGER NOT NULL, `fullName` TEXT, `pipeSerialNumber` INTEGER NOT NULL, `serialNoOfNipple` INTEGER NOT NULL, `couplingSerialNumber` INTEGER NOT NULL, `rfidTagNo` TEXT, `comment` TEXT, `accounting` INTEGER NOT NULL, `commentProblemWithMark` TEXT, `taskId` INTEGER NOT NULL, `taskTypeId` INTEGER NOT NULL, `isConfirmed` INTEGER NOT NULL, `isImageRequired` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `cardId` INTEGER NOT NULL, `fullName` TEXT, `pipeSerialNumber` TEXT NOT NULL, `serialNoOfNipple` TEXT NOT NULL, `couplingSerialNumber` TEXT NOT NULL, `rfidTagNo` TEXT, `comment` TEXT, `accounting` INTEGER NOT NULL, `commentProblemWithMark` TEXT, `taskId` INTEGER NOT NULL, `taskTypeId` INTEGER NOT NULL, `isConfirmed` INTEGER NOT NULL, `isImageRequired` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -97,19 +97,19 @@
           {
             "fieldPath": "pipeSerialNumber",
             "columnName": "pipeSerialNumber",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
             "fieldPath": "serialNoOfNipple",
             "columnName": "serialNoOfNipple",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
             "fieldPath": "couplingSerialNumber",
             "columnName": "couplingSerialNumber",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -356,7 +356,7 @@
       },
       {
         "tableName": "KitOrderCardEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `kitId` INTEGER NOT NULL, `rfidTagNo` TEXT, `pipeSerialNumber` INTEGER, `serialNoOfNipple` INTEGER, `couplingSerialNumber` INTEGER, `fullName` TEXT, `comment` TEXT, `problemComment` TEXT NOT NULL, `isConfirmed` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `kitId` INTEGER NOT NULL, `rfidTagNo` TEXT, `pipeSerialNumber` TEXT, `serialNoOfNipple` TEXT, `couplingSerialNumber` TEXT, `fullName` TEXT, `comment` TEXT, `problemComment` TEXT NOT NULL, `isConfirmed` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -379,19 +379,19 @@
           {
             "fieldPath": "pipeSerialNumber",
             "columnName": "pipeSerialNumber",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": false
           },
           {
             "fieldPath": "serialNoOfNipple",
             "columnName": "serialNoOfNipple",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": false
           },
           {
             "fieldPath": "couplingSerialNumber",
             "columnName": "couplingSerialNumber",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": false
           },
           {
@@ -640,7 +640,7 @@
       },
       {
         "tableName": "KitOrderAddCardEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `kitId` INTEGER NOT NULL, `pipeSerialNumber` INTEGER, `serialNoOfNipple` INTEGER, `couplingSerialNumber` INTEGER, `rfidTagNo` TEXT, `accounting` INTEGER NOT NULL, `comment` TEXT, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `kitId` INTEGER NOT NULL, `pipeSerialNumber` TEXT, `serialNoOfNipple` TEXT, `couplingSerialNumber` TEXT, `rfidTagNo` TEXT, `accounting` INTEGER NOT NULL, `comment` TEXT, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -657,19 +657,19 @@
           {
             "fieldPath": "pipeSerialNumber",
             "columnName": "pipeSerialNumber",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": false
           },
           {
             "fieldPath": "serialNoOfNipple",
             "columnName": "serialNoOfNipple",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": false
           },
           {
             "fieldPath": "couplingSerialNumber",
             "columnName": "couplingSerialNumber",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": false
           },
           {
@@ -742,7 +742,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f19f4ce0e449d32695e1cb75daa7338b')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4b6b6f89d92e713e20eab2a996f49e81')"
     ]
   }
 }

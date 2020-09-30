@@ -145,9 +145,7 @@ class CreateKitDetailBS(private val model: KitItemEntity) : BottomSheetDialogFra
             CoroutineScope(Dispatchers.IO).launch {
                 viewModel.insertKitRfid(
                     KitRfidEntity(
-                        model.kitId, Random.nextInt(0, 1000),
-                        tag
-                    )
+                        model.kitId, Random.nextInt(0, 1000), tag)
                 )
                 withContext(Dispatchers.Main) {
                     adapter.notifyDataSetChanged()

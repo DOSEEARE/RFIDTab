@@ -58,20 +58,20 @@ class KitOrderAddCardBS(val kitId: Int) : BottomSheetDialogFragment(), RfidScann
             add_rfid_in.text.toString()
             val rfid = add_rfid_in.text.toString()
 
-            val pipe : Long = if (add_pipe_in.text.toString().isEmpty()) {
-                0
+            val pipe : String = if (add_pipe_in.text.toString().isEmpty()) {
+                ""
             } else{
-                add_pipe_in?.text.toString().toLong()
+                add_pipe_in?.text.toString()
             }
-            val nipple : Long = if (add_nipple_in.text.toString().isEmpty()) {
-                0
+            val nipple : String = if (add_nipple_in.text.toString().isEmpty()) {
+                ""
             } else{
-                add_nipple_in?.text.toString().toLong()
+                add_nipple_in?.text.toString()
             }
-            val couple : Long = if (add_couple_in.text.toString().isEmpty()) {
-                0
+            val couple : String = if (add_couple_in.text.toString().isEmpty()) {
+                ""
             } else{
-                add_couple_in?.text.toString().toLong()
+                add_couple_in?.text.toString()
             }
 
             val comment = add_comment_in.text.toString()
@@ -97,7 +97,7 @@ class KitOrderAddCardBS(val kitId: Int) : BottomSheetDialogFragment(), RfidScann
         }
 
     }
-
+//show
     private fun View.show() {
         visibility = View.VISIBLE
     }

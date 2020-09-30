@@ -10,9 +10,9 @@ class KitOrderAddCardEntity(
     @PrimaryKey
     val id: Int,
     val kitId: Int,
-    @SerializedName("pipeSerialNumber") val pipeSerialNumber: Long?,
-    @SerializedName("serialNoOfNipple") val serialNoOfNipple: Long?,
-    @SerializedName("couplingSerialNumber") val couplingSerialNumber: Long?,
+    @SerializedName("pipeSerialNumber") val pipeSerialNumber: String?,
+    @SerializedName("serialNoOfNipple") val serialNoOfNipple: String?,
+    @SerializedName("couplingSerialNumber") val couplingSerialNumber: String?,
     @SerializedName("rfidTagNo") val rfidTagNo: String?,
     val accounting: Int = 0,
     @SerializedName("comment") val comment: String?

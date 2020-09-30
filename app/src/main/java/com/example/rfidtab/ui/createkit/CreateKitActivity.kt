@@ -33,14 +33,13 @@ class CreateKitActivity : AppCompatActivity(), CreateKitListener {
     }
 
     private fun initFabBtn() {
+
         kit_add_btn.setOnClickListener {
             val dialogBuilder = AlertDialog.Builder(this)
             val inflater = this.layoutInflater
             val view = inflater.inflate(R.layout.alert_kit_add, null)
             dialogBuilder.setView(view)
             val alertDialog = dialogBuilder.create()
-
-
 
             view.kit_item_access.setOnClickListener {
                 val text = view.kit_item_et.text.toString()
@@ -73,6 +72,7 @@ class CreateKitActivity : AppCompatActivity(), CreateKitListener {
             alertDialog.show()
             initKitRv()
         }
+
     }
 
     private fun initKitRv() {

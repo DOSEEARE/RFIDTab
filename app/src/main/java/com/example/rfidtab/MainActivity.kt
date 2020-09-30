@@ -32,5 +32,7 @@ class MainActivity : AppCompatActivity() {
         main_task_profile_btn.setOnClickListener {
             startActivity(Intent(this, ProfileActivity::class.java))
         }
+        println("project started")
     }
+
 }
