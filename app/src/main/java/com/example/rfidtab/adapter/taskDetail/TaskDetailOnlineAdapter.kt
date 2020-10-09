@@ -10,7 +10,7 @@ import com.example.rfidtab.base.ViewHolder
 import com.example.rfidtab.service.response.task.TaskCardResponse
 import kotlinx.android.synthetic.main.item_cards.view.*
 
-class TaskDetailOnlineAdapter(
+class TaskDetailOnlineAdapter (
     items: ArrayList<TaskCardResponse> = ArrayList()
 ) :
     GenericRecyclerAdapter<TaskCardResponse>(items) {

@@ -120,6 +120,13 @@ interface RoomDao {
     @Query("UPDATE TaskCardListEntity SET rfidTagNo=:rfid WHERE cardId =:cardId")
     fun updateCard(cardId: Int, rfid: String)
 
+    @Query("UPDATE TaskCardListEntity SET isConfirmed=:isConfirmed WHERE cardId =:cardId")
+    fun updateCardConfirm(cardId: Int, isConfirmed: Boolean)
+
+    @Query("UPDATE TaskCardListEntity SET comment=:comment WHERE cardId =:cardId")
+    fun updateCardComment (cardId: Int, comment : String)
+
+
     @Query("UPDATE KitOrderCardEntity SET isConfirmed=:isConfirmed WHERE id =:cardId")
     fun kitOrderCardConfirm(cardId: Int, isConfirmed: Boolean)
 

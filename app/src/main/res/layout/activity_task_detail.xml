@@ -90,6 +90,7 @@
                         app:layout_constraintTop_toTopOf="parent"
                         tools:text="Тип: Инспекция" />
 
+
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>

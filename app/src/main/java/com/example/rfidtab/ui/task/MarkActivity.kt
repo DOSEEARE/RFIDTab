@@ -2,16 +2,12 @@ package com.example.rfidtab.ui.task
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Environment
-import android.provider.MediaStore
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
-import com.example.rfidtab.BuildConfig
 import com.example.rfidtab.R
 import com.example.rfidtab.adapter.taskDetail.TaskDetailListener
 import com.example.rfidtab.adapter.taskDetail.TaskDetailOnlineAdapter
@@ -22,13 +18,14 @@ import com.example.rfidtab.extension.loadingShow
 import com.example.rfidtab.extension.toast
 import com.example.rfidtab.service.AppPreferences
 import com.example.rfidtab.service.Status
-import com.example.rfidtab.service.db.entity.task.*
+import com.example.rfidtab.service.db.entity.task.OverCardsEntity
+import com.example.rfidtab.service.db.entity.task.TaskCardListEntity
+import com.example.rfidtab.service.db.entity.task.TaskResultEntity
+import com.example.rfidtab.service.db.entity.task.TaskWithCards
 import com.example.rfidtab.service.model.CardModel
 import com.example.rfidtab.service.model.TaskStatusModel
 import com.example.rfidtab.service.model.enums.TaskStatusEnum
 import com.example.rfidtab.service.model.enums.TaskTypeEnum
-import com.example.rfidtab.service.model.overlist.OverCards
-import com.example.rfidtab.service.model.overlist.TaskOverCards
 import com.example.rfidtab.service.response.task.TaskCardResponse
 import com.example.rfidtab.service.response.task.TaskResponse
 import com.example.rfidtab.ui.task.fragment.TaskAddOverBS
@@ -43,16 +40,16 @@ import kotlinx.android.synthetic.main.activity_task_detail.task_detail_send_btn
 import kotlinx.android.synthetic.main.activity_task_detail.task_detail_status
 import kotlinx.android.synthetic.main.activity_task_detail.task_detail_type
 import kotlinx.android.synthetic.main.activity_task_mark_inventory.*
+import kotlinx.android.synthetic.main.activity_task_mark_inventory.task_detail_add_over
+import kotlinx.android.synthetic.main.activity_task_mark_inventory.task_detail_over_rv
 import kotlinx.android.synthetic.main.alert_add.view.*
+import kotlinx.android.synthetic.main.alert_add_comment.view.*
 import kotlinx.android.synthetic.main.alert_scan.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.io.File
-import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.random.Random
 
 class MarkActivity : AppCompatActivity(), TaskDetailListener, RfidScannerListener {
@@ -60,9 +57,7 @@ class MarkActivity : AppCompatActivity(), TaskDetailListener, RfidScannerListene
     private lateinit var savedData: TaskResultEntity
     private var cardList = ArrayList<TaskCardListEntity>()
     private val viewModel: TaskViewModel by viewModel()
-    private lateinit var filePath: File
     private var CAMERA_REQUEST_CODE = 1
-    private var cardId = 0
     private lateinit var currentCardEntity: TaskCardListEntity
 
     private lateinit var scanDialog: AlertDialog
@@ -90,6 +85,7 @@ class MarkActivity : AppCompatActivity(), TaskDetailListener, RfidScannerListene
             task_detail_executor.text = "Исполнитель: ${onlineData.executorFio}"
             task_detail_status.text = "Статус: ${onlineData.statusTitle}"
             task_detail_type.text = "Тип задания: ${onlineData.taskTypeTitle}"
+            task_detail_comment.text = "Комментарии: ${onlineData.comment}"
             task_detail_send_btn.visibility = View.GONE
             task_detail_rv.adapter =
                 TaskDetailOnlineAdapter(onlineData.cardList as ArrayList<TaskCardResponse>)
@@ -111,7 +107,7 @@ class MarkActivity : AppCompatActivity(), TaskDetailListener, RfidScannerListene
             task_detail_executor.text = "Исполнитель: ${savedData.executorFio}"
             task_detail_status.text = "Статус: ${savedData.statusTitle}"
             task_detail_type.text = "Тип задания: ${savedData.taskTypeTitle}"
-
+            task_detail_comment.text = "Комментарии ${savedData?.comment}"
             viewModel.findCardsById(savedData.id).observe(this, Observer {
                 cardList = it as ArrayList<TaskCardListEntity>
                 task_detail_rv.adapter = TaskMarkSavedAdapter(this, it)
@@ -159,13 +155,13 @@ class MarkActivity : AppCompatActivity(), TaskDetailListener, RfidScannerListene
                     //Изменение карточек по циклу
                     cardList.forEach {
                         val model = CardModel(
-                            it.cardId,
-                            savedData.id,
-                            it.taskTypeId,
-                            it.rfidTagNo,
-                            1,
-                            it.comment,
-                            it.commentProblemWithMark
+                            id = it.cardId,
+                            taskId = savedData.id,
+                            taskTypeId = it.taskTypeId,
+                            rfidTagNo = it.rfidTagNo,
+                            accounting = 0,
+                            comment = it.comment,
+                            commentProblemWithMark = it.commentProblemWithMark
                         )
                         viewModel.changeCard(model)
                             .observe(this@MarkActivity, Observer { result ->
@@ -175,13 +171,6 @@ class MarkActivity : AppCompatActivity(), TaskDetailListener, RfidScannerListene
                                     }
                                     Status.ERROR -> {
                                         toast("Ошибка!")
-                                    }
-                                    Status.NETWORK -> {
-                                        toast("Проблемы с интернетом!")
-                                    }
-                                    else -> {
-                                        toast("Неизвестная ошибка!")
-
                                     }
                                 }
                             })
@@ -215,12 +204,8 @@ class MarkActivity : AppCompatActivity(), TaskDetailListener, RfidScannerListene
                                 toast("$data")
                             }
                         }
-
                     })
-
-                    sendOverCards()
                     loadingHide()
-
                 }
             }
         }
@@ -248,9 +233,9 @@ class MarkActivity : AppCompatActivity(), TaskDetailListener, RfidScannerListene
         view.scan_access_btn.setOnClickListener {
             if (accessTag.isNotEmpty()) {
                 viewModel.updateCard(model.cardId, accessTag)
+                viewModel.updateCardConfirm(model.cardId, true)
                 toast("Метка задана!")
                 scanDialog.dismiss()
-
             } else {
                 CoroutineScope(Dispatchers.IO).launch {
                     viewModel.updateErrorComment(model.cardId, view.scan_comment_et.text.toString())
@@ -280,7 +265,30 @@ class MarkActivity : AppCompatActivity(), TaskDetailListener, RfidScannerListene
     }
 
     override fun cameraBtnClicked(model: TaskCardListEntity) {
-        //todo samsy
+        /**Добавление комментарии, а не камеры. Т.к один интерфейс на все, смог переименовать метод или создать новый.*/
+        val dialogBuilder = AlertDialog.Builder(this)
+        val inflater = this.layoutInflater
+        val view = inflater.inflate(R.layout.alert_add_comment, null)
+        dialogBuilder.setView(view)
+        val dialog = dialogBuilder.create()
+
+        view.alert_add_comment_dismiss_btn.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        view.alert_add_comment_access_btn.setOnClickListener {
+            val text = view.alert_add_comment_in.text.toString()
+            if (text.isNotEmpty()) {
+                viewModel.updateCardComment(model.cardId, text)
+                toast("Комментарии добавлены!")
+                dialog.dismiss()
+            } else {
+                view.alert_add_comment_out.error = "Комментарии не могут быть пустыми!"
+            }
+        }
+
+        dialog.show()
+
     }
 
     //detail card
@@ -375,45 +383,6 @@ class MarkActivity : AppCompatActivity(), TaskDetailListener, RfidScannerListene
         val fragment =
             TaskAddOverBS(savedData.id)
         fragment.show(supportFragmentManager, "AddOverCard")
-    }
-
-    private fun sendOverCards() {
-        if (savedData.taskTypeId == TaskTypeEnum.inventory) {
-            val list = ArrayList<OverCards>()
-            viewModel.findOverCardById(savedData.id).observe(this, Observer {
-                it.forEach {
-                    list.add(
-                        OverCards(
-                            it.pipeSerialNumber,
-                            it.serialNoOfNipple,
-                            it.couplingSerialNumber,
-                            it.rfidTagNo,
-                            it.comment
-                        )
-                    )
-                }
-            })
-
-            val model = TaskOverCards(savedData.id, list)
-
-            viewModel.sendOverCards(model).observe(this, Observer { result ->
-                val data = result.data
-                when (result.status) {
-                    Status.SUCCESS -> {
-                        toast("$data")
-                    }
-                    Status.ERROR -> {
-                        toast("$data")
-                    }
-                    Status.NETWORK -> {
-                        toast("$data")
-                    }
-                    else -> {
-                        toast("$data")
-                    }
-                }
-            })
-        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

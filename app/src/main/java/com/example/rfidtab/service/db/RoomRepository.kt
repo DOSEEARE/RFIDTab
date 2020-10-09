@@ -161,6 +161,17 @@ class RoomRepository(private val dao: RoomDao) {
 
         }
     }
+    fun updateCardConfirm(cardId: Int, isConfirmed: Boolean) {
+        CoroutineScope(Dispatchers.IO).launch {
+            return@launch dao.updateCardConfirm(cardId, isConfirmed)
+        }
+    }
+
+  fun updateCardComment(cardId: Int, comment: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            return@launch dao.updateCardComment(cardId, comment)
+        }
+    }
 
     fun kitOrderCardConfirm(cardId: Int, isConfirmed: Boolean) {
         CoroutineScope(Dispatchers.IO).launch {

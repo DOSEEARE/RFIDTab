@@ -78,6 +78,14 @@ class TaskViewModel(application: Application) : BaseViewModel(application) {
         return db.updateCard(cardId, rfidTag)
     }
 
+    fun updateCardConfirm(cardId: Int, isConfirmed: Boolean) {
+        return db.updateCardConfirm(cardId, isConfirmed)
+    }
+
+    fun updateCardComment(cardId: Int, comment: String) {
+        return db.updateCardComment(cardId, comment)
+    }
+
     fun updateErrorComment(cardId: Int, comment: String) {
         return db.updateErrorComment(cardId, comment)
     }

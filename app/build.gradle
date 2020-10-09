@@ -61,7 +61,6 @@ dependencies {
     //viewpager2
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
 
-
     //test
     implementation 'com.android.support:support-v4:29.+'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
