@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "4b6b6f89d92e713e20eab2a996f49e81",
+    "identityHash": "71918fd7db64a589781e4c9c5a5e68ef",
     "entities": [
       {
         "tableName": "TaskResultEntity",
@@ -292,7 +292,7 @@
       },
       {
         "tableName": "KitRfidEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`kitId` INTEGER NOT NULL, `rfidId` INTEGER NOT NULL, `rfid` TEXT, PRIMARY KEY(`rfidId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`kitId` INTEGER NOT NULL, `rfidId` INTEGER NOT NULL, `rfid` TEXT, `sortOrder` INTEGER NOT NULL, PRIMARY KEY(`rfidId`))",
         "fields": [
           {
             "fieldPath": "kitId",
@@ -311,6 +311,12 @@
             "columnName": "rfid",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "sortOrder",
+            "columnName": "sortOrder",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -742,7 +748,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4b6b6f89d92e713e20eab2a996f49e81')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '71918fd7db64a589781e4c9c5a5e68ef')"
     ]
   }
 }

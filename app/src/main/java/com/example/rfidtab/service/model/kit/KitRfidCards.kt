@@ -2,4 +2,7 @@ package com.example.rfidtab.service.model.kit
 
 import com.google.gson.annotations.SerializedName
 
-class KitRfidCards(@SerializedName("rfidTagNo") val rfidTagNo: String?)
+class KitRfidCards(
+    @SerializedName("rfidTagNo") val rfidTagNo: String?,
+    @SerializedName("sortOrder") val sortOrder: Int?
+)

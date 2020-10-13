@@ -33,11 +33,12 @@ import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.random.Random
 
-class CreateKitDetailBS(private val model: KitItemEntity) : BottomSheetDialogFragment(),
-    CreateKitDetailListener, RfidScannerListener {
+class CreateKitDetailBS(private val model: KitItemEntity) : BottomSheetDialogFragment(), CreateKitDetailListener, RfidScannerListener {
+
     private val viewModel: CreateKitViewModel by viewModel()
     private lateinit var adapter: CreateKitDetailAdapter
     private lateinit var scanDialog: AlertDialog
+    private var sortOrder = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -64,14 +65,17 @@ class CreateKitDetailBS(private val model: KitItemEntity) : BottomSheetDialogFra
         sendToCheck()
     }
 
+
+    //исправить, вывести за viewmodel
     private fun sendToCheck() {
         kit_detail_send_button.setOnClickListener {
             loadingShow()
             viewModel.findKitRfid(model.kitId).observe(viewLifecycleOwner, Observer {
                 val rfidList = ArrayList<KitRfidCards>()
                 it.forEach {
-                    rfidList.add(KitRfidCards(it.rfid))
+                    rfidList.add(KitRfidCards(it.rfid, it.sortOrder))
                 }
+
                 val body = CreateKitModel(model.comment, rfidList)
                 viewModel.createKit(body).observe(viewLifecycleOwner, Observer { result ->
                     val data = result.data
@@ -96,7 +100,6 @@ class CreateKitDetailBS(private val model: KitItemEntity) : BottomSheetDialogFra
                             loadingHide()
                         }
                     }
-
 
                 })
             })
@@ -142,14 +145,20 @@ class CreateKitDetailBS(private val model: KitItemEntity) : BottomSheetDialogFra
 
         view.scan_access_btn.setOnClickListener {
             val tag = view.scan_result_et.text.toString()
-            CoroutineScope(Dispatchers.IO).launch {
-                viewModel.insertKitRfid(
-                    KitRfidEntity(
-                        model.kitId, Random.nextInt(0, 1000), tag)
-                )
-                withContext(Dispatchers.Main) {
-                    adapter.notifyDataSetChanged()
+            if (tag.isNotEmpty()) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    viewModel.insertKitRfid(
+                        KitRfidEntity(
+                            model.kitId, Random.nextInt(0, 1000), tag, sortOrder
+                        )
+                    )
+                    sortOrder++
+                    withContext(Dispatchers.Main) {
+                        adapter.notifyDataSetChanged()
+                    }
                 }
+            } else {
+                toast("Пусто!")
             }
             scanDialog.dismiss()
         }

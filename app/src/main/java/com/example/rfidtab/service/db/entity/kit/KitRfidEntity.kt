@@ -8,5 +8,6 @@ class KitRfidEntity(
     val kitId: Int,
     @PrimaryKey
     val rfidId: Int,
-    val rfid: String?
+    val rfid: String?,
+    val sortOrder: Int
 )
