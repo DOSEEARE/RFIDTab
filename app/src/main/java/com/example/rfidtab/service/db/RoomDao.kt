@@ -96,6 +96,9 @@ interface RoomDao {
     @Query("SELECT * FROM OverCardsEntity WHERE OverCardsEntity.taskId=:id")
     fun findOverCardById(id: Int): LiveData<List<OverCardsEntity>>
 
+    @Query("SELECT * FROM OverCardsEntity WHERE OverCardsEntity.taskId=:id")
+    fun findOverCardByIdNoLIve (id: Int): List<OverCardsEntity>
+
     @Query("SELECT * FROM TaskCardListEntity WHERE TaskCardListEntity.taskId=:taskId")
     fun findCardsById(taskId: Int): LiveData<List<TaskCardListEntity>>
 
@@ -104,6 +107,9 @@ interface RoomDao {
 
     @Query("DELETE FROM CardImagesEntity WHERE CardImagesEntity.cardId=:cardId")
     fun deleteCardImageById(cardId: Int)
+
+    @Query("DELETE FROM OverCardsEntity WHERE OverCardsEntity.taskId=:taskId")
+    fun deleteOverCards(taskId: Int)
 
     @Query("DELETE FROM KitOrderEntity WHERE KitOrderEntity.id=:id")
     fun deleteKitTaskById(id: Int)
@@ -125,7 +131,6 @@ interface RoomDao {
 
     @Query("UPDATE TaskCardListEntity SET comment=:comment WHERE cardId =:cardId")
     fun updateCardComment (cardId: Int, comment : String)
-
 
     @Query("UPDATE KitOrderCardEntity SET isConfirmed=:isConfirmed WHERE id =:cardId")
     fun kitOrderCardConfirm(cardId: Int, isConfirmed: Boolean)

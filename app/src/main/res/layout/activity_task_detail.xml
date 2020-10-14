@@ -90,6 +90,18 @@
                         app:layout_constraintTop_toTopOf="parent"
                         tools:text="Тип: Инспекция" />
 
+                    <TextView
+                        android:id="@+id/task_detail_comment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="8dp"
+                        android:textColor="@color/blue"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="Комментарии: " />
+
 
                 </LinearLayout>
 

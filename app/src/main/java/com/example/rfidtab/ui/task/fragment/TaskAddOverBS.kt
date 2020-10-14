@@ -66,6 +66,7 @@ class TaskAddOverBS(val taskId: Int) : BottomSheetDialogFragment(), RfidScannerL
         }
         over_rfid_btn.setOnClickListener {
             showView(over_rfid_out)
+
             over_scan_btn.setOnClickListener {
                 RfidScannerUtil(this).run {
                     isCancelable = false

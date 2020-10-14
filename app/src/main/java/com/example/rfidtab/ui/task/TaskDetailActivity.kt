@@ -92,6 +92,8 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
             task_detail_executor.text = "Исполнитель: ${onlineData.executorFio}"
             task_detail_status.text = "Статус: ${onlineData.statusTitle}"
             task_detail_type.text = "Тип задания: ${onlineData.taskTypeTitle}"
+            task_detail_comment.text = "Коментарии: ${onlineData.comment}"
+
             task_detail_send_btn.visibility = View.GONE
             task_detail_rv.adapter =
                 TaskDetailOnlineAdapter(onlineData.cardList as ArrayList<TaskCardResponse>)
@@ -112,6 +114,7 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
             task_detail_executor.text = "Исполнитель: ${savedData.executorFio}"
             task_detail_status.text = "Статус: ${savedData.statusTitle}"
             task_detail_type.text = "Тип задания: ${savedData.taskTypeTitle}"
+            task_detail_comment.text = "Коментарии: ${savedData.comment}"
 
             viewModel.findCardsById(savedData.id).observe(this, Observer {
                 cardList = it as ArrayList<TaskCardListEntity>
@@ -183,7 +186,6 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
                             }
                             else -> {
                                 toast("Неизвестная ошибка!")
-
                             }
                         }
                     })
@@ -194,7 +196,6 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
             }
             // После цикла измнение статуса
             sendOverCards()
-
         }
 
     }
@@ -251,6 +252,7 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
                 CoroutineScope(Dispatchers.IO).launch {
                     viewModel.deleteTaskById(savedData.id)
                     viewModel.deleteCardsById(savedData.id)
+                    viewModel.deleteOverCards(savedData.id)
                 }
                 viewModel.taskStatusChange(
                     TaskStatusModel(
@@ -512,31 +514,24 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
                     when (result.status) {
                         Status.SUCCESS -> {
                             viewModel.taskStatusChange(
-                                TaskStatusModel(
-                                    savedData.id,
-                                    savedData.taskTypeId,
-                                    TaskStatusEnum.savedToLocal
-                                )
-                            ).observe(this, Observer { result ->
+                                TaskStatusModel(savedData.id, savedData.taskTypeId, TaskStatusEnum.savedToLocal)).observe(this, Observer { result ->
                                 when (result.status) {
                                     Status.SUCCESS -> {
                                         CoroutineScope(Dispatchers.IO).launch {
+                                            viewModel.deleteOverCards(savedData.id)
                                             viewModel.deleteTaskById(savedData.id)
                                             viewModel.deleteCardsById(savedData.id)
-                                            withContext(Dispatchers.Main) {
-                                                startActivity(
-                                                    Intent(
-                                                        applicationContext,
-                                                        TaskActivity::class.java
-                                                    )
-                                                )
-                                                finish()
-                                                loadingHide()
-                                            }
                                         }
+                                        startActivity(
+                                            Intent(
+                                                this,
+                                                TaskActivity::class.java
+                                            )
+                                        )
+                                        finish()
+                                        loadingHide()
                                     }
                                 }
-
                             })
                             toast("$data")
                             loadingHide()
@@ -546,7 +541,6 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
                             loadingHide()
                         }
                     }
-
 
                 })
             })
