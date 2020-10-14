@@ -97,7 +97,7 @@ interface RoomDao {
     fun findOverCardById(id: Int): LiveData<List<OverCardsEntity>>
 
     @Query("SELECT * FROM OverCardsEntity WHERE OverCardsEntity.taskId=:id")
-    fun findOverCardByIdNoLIve (id: Int): List<OverCardsEntity>
+   suspend fun findOverCardByIdNoLIve (id: Int): List<OverCardsEntity>
 
     @Query("SELECT * FROM TaskCardListEntity WHERE TaskCardListEntity.taskId=:taskId")
     fun findCardsById(taskId: Int): LiveData<List<TaskCardListEntity>>

@@ -59,6 +59,10 @@ class TaskViewModel(application: Application) : BaseViewModel(application) {
         return db.findOverCardById(id)
     }
 
+    suspend fun findOverCardByIdNoLive(id: Int): List<OverCardsEntity> {
+        return db.findOverCardByIdNoLive(id)
+    }
+
     fun deleteTaskById(id: Int) {
         return db.deleteTaskById(id)
     }

@@ -178,15 +178,6 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
                             Status.SUCCESS -> {
                                 toast("Успешно!")
                             }
-                            Status.ERROR -> {
-                                toast("Проблемы с интернетом!")
-                            }
-                            Status.NETWORK -> {
-                                toast("Проблемы с интернетом!")
-                            }
-                            else -> {
-                                toast("Неизвестная ошибка!")
-                            }
                         }
                     })
 
@@ -495,64 +486,68 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
     private fun sendOverCards() {
         if (savedData.taskTypeId == TaskTypeEnum.inventory) {
             val list = ArrayList<OverCards>()
-            viewModel.findOverCardById(savedData.id).observe(this, Observer {
-                it.forEach {
-                    list.add(
-                        OverCards(
-                            it.pipeSerialNumber,
-                            it.serialNoOfNipple,
-                            it.couplingSerialNumber,
-                            it.rfidTagNo,
-                            it.comment
-                        )
+        CoroutineScope(Dispatchers.IO).launch {
+            viewModel.findOverCardByIdNoLive(savedData.id).forEach {
+                list.add(
+                    OverCards(
+                        it.pipeSerialNumber,
+                        it.serialNoOfNipple,
+                        it.couplingSerialNumber,
+                        it.rfidTagNo,
+                        it.comment
                     )
-                }
-                val model = TaskOverCards(savedData.id, list)
-
-                viewModel.sendOverCards(model).observe(this, Observer { result ->
-                    val data = result.data
-                    when (result.status) {
-                        Status.SUCCESS -> {
-                            viewModel.taskStatusChange(
-                                TaskStatusModel(savedData.id, savedData.taskTypeId, TaskStatusEnum.savedToLocal)).observe(this, Observer { result ->
-                                when (result.status) {
-                                    Status.SUCCESS -> {
-                                        CoroutineScope(Dispatchers.IO).launch {
-                                            viewModel.deleteOverCards(savedData.id)
-                                            viewModel.deleteTaskById(savedData.id)
-                                            viewModel.deleteCardsById(savedData.id)
-                                        }
-                                        startActivity(
-                                            Intent(
-                                                this,
-                                                TaskActivity::class.java
-                                            )
-                                        )
-                                        finish()
-                                        loadingHide()
+                )
+            }
+        }
+            val model = TaskOverCards(savedData.id, list)
+            viewModel.sendOverCards(model).observe(this, Observer { result ->
+                val data = result.data
+                when (result.status) {
+                    Status.SUCCESS -> {
+                        viewModel.taskStatusChange(
+                            TaskStatusModel(
+                                savedData.id,
+                                savedData.taskTypeId,
+                                TaskStatusEnum.savedToLocal
+                            )
+                        ).observe(this, Observer { result ->
+                            when (result.status) {
+                                Status.SUCCESS -> {
+                                    CoroutineScope(Dispatchers.IO).launch {
+                                        viewModel.deleteOverCards(savedData.id)
+                                        viewModel.deleteTaskById(savedData.id)
+                                        viewModel.deleteCardsById(savedData.id)
                                     }
+                                    startActivity(
+                                        Intent(
+                                            this,
+                                            TaskActivity::class.java
+                                        )
+                                    )
+                                    finish()
+                                    loadingHide()
                                 }
-                            })
-                            toast("$data")
-                            loadingHide()
-                        }
-                        else -> {
-                            toast("$data")
-                            loadingHide()
-                        }
+                            }
+                        })
+                        toast("$data")
+                        loadingHide()
                     }
+                    else -> {
+                        toast("$data")
+                        loadingHide()
+                    }
+                }
 
-                })
             })
         }
     }
-
-    private fun accounting(isConfirm: Boolean, problemComment: String?): Int {
-        return if (isConfirm || problemComment != null) {
-            1
-        } else {
-            0
-        }
-    }
-
 }
+
+private fun accounting(isConfirm: Boolean, problemComment: String?): Int {
+    return if (isConfirm || problemComment != null) {
+        1
+    } else {
+        0
+    }
+}
+

@@ -104,6 +104,10 @@ class RoomRepository(private val dao: RoomDao) {
         return dao.findOverCardById(id)
     }
 
+    suspend fun findOverCardByIdNoLive(taskId: Int): List<OverCardsEntity> {
+        return dao.findOverCardByIdNoLIve(taskId)
+    }
+
     fun findTasksByLogin(userLogin: String): LiveData<List<TaskResultEntity>> {
         return dao.findTasksByLogin(userLogin)
     }
