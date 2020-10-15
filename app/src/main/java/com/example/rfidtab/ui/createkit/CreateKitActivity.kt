@@ -5,6 +5,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import com.example.rfidtab.R
 import com.example.rfidtab.adapter.kit.CreateKitAdapter
@@ -33,7 +34,6 @@ class CreateKitActivity : AppCompatActivity(), CreateKitListener {
     }
 
     private fun initFabBtn() {
-
         kit_add_btn.setOnClickListener {
             val dialogBuilder = AlertDialog.Builder(this)
             val inflater = this.layoutInflater
@@ -47,49 +47,67 @@ class CreateKitActivity : AppCompatActivity(), CreateKitListener {
                     CoroutineScope(Dispatchers.IO).launch {
                         viewModel.insertKitItem(
                             KitItemEntity(
-                                Random.nextInt(0, 1000),
+                                Random.nextInt(),
                                 AppPreferences.userLogin!!,
                                 text
                             )
                         )
                         alertDialog.dismiss()
-                        kit_empty.visibility = View.GONE
-                        toast("Комплект создан")
                     }
+                    kit_empty.visibility = View.GONE
+                    toast("Комплект создан")
                 }else{
                     view.kit_item_et.error = "Название не может быть пустым"
                 }
-
-                if (kitAdapter.itemCount == 0) {
-                    finish()
-                    startActivity(intent)
-                }
-
             }
             view.kit_item_denied.setOnClickListener {
                 alertDialog.dismiss()
             }
             alertDialog.show()
-            initKitRv()
+
         }
 
     }
 
     private fun initKitRv() {
-        viewModel.findKitItem(AppPreferences.userLogin!!).observe(this, Observer {
-            kitAdapter = CreateKitAdapter(this, it as ArrayList<KitItemEntity>)
-            kit_rv.adapter = kitAdapter
-            if (it.isEmpty()) {
-                kit_empty.visibility = View.VISIBLE
-                kit_rv.visibility = View.GONE
-            }
-        })
-
+            viewModel.findKitItem(AppPreferences.userLogin!!).observe(this, Observer {
+                kitAdapter = CreateKitAdapter(this, it as ArrayList<KitItemEntity>)
+                kit_rv.adapter = kitAdapter
+                if (it.isEmpty()) {
+                    kit_empty.visibility = View.VISIBLE
+                    kit_rv.visibility = View.GONE
+                }else{
+                    kit_empty.visibility = View.GONE
+                    kit_rv.visibility = View.VISIBLE
+                }
+            })
     }
 
     override fun kitItemClicked(model: KitItemEntity) {
         val fm = CreateKitDetailBS(model)
         fm.show(supportFragmentManager, "CreateKitDetailFragment")
+    }
+
+    override fun kitItemDelete(kitId: Int) {
+        val dialogBuilder = AlertDialog.Builder(this)
+        val inflater = this.layoutInflater
+        val view = inflater.inflate(R.layout.alert_kit_add, null)
+        dialogBuilder.setView(view)
+        val alertDialog = dialogBuilder.create()
+
+        view.kit_item_et.isVisible = false
+        view.kit_item_title.text = "Вы действительно хотите удалить комплект?"
+
+        view.kit_item_access.setOnClickListener {
+            viewModel.deleteKitItem(kitId)
+            viewModel.deleteKitAllRfid(kitId)
+            alertDialog.dismiss()
+        }
+
+        view.kit_item_denied.setOnClickListener {
+            alertDialog.dismiss()
+        }
+        alertDialog.show()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

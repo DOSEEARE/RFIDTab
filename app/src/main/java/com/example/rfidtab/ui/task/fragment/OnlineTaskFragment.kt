@@ -341,7 +341,7 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
         val array = ArrayList<Int>()
         var result = 0
         array.add(0)
-        if (kitType == "multi") {
+        return if (kitType == "multi") {
             kitCardCount?.forEachIndexed { i: Int, c: Char ->
                 if (c == ',') {
                     array.add(0)
@@ -350,9 +350,9 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
             array.forEachIndexed { index, i ->
                 result += kitCardCount!!.split(",")[index].toInt()
             }
-            return result.toString()
+            result.toString()
         }else{
-            return cardCount!!
+            cardCount!!
         }
     }
 }

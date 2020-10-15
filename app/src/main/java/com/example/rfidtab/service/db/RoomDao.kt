@@ -87,6 +87,9 @@ interface RoomDao {
     @Query("SELECT * FROM KitItemEntity WHERE KitItemEntity.userLogin=:userLogin")
     fun findKitItem(userLogin: String): LiveData<List<KitItemEntity>>
 
+    @Query("SELECT * FROM KitItemEntity WHERE KitItemEntity.userLogin=:userLogin")
+    suspend fun findKitItemNoLive (userLogin: String): List<KitItemEntity>
+
     @Query("SELECT * FROM KitRfidEntity WHERE KitRfidEntity.kitId=:kitId")
     fun findKitRfid(kitId: Int): LiveData<List<KitRfidEntity>>
 
@@ -116,6 +119,9 @@ interface RoomDao {
 
     @Query("DELETE FROM KitRfidEntity WHERE KitRfidEntity.rfidId=:rfidId")
     fun deleteKitRfid(rfidId: Int)
+
+    @Query("DELETE FROM KitRfidEntity WHERE KitRfidEntity.kitId=:kitId")
+    fun deleteKitAllRfid(kitId: Int)
 
     @Query("DELETE FROM KitItemEntity WHERE KitItemEntity.kitId=:kitId")
     fun deleteKitItem(kitId: Int)

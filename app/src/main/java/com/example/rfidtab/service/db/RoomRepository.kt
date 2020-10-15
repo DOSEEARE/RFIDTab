@@ -120,6 +120,10 @@ class RoomRepository(private val dao: RoomDao) {
         return dao.findKitItem(userLogin)
     }
 
+    suspend fun findKitItemNoLive(userLogin: String): List<KitItemEntity> {
+        return dao.findKitItemNoLive(userLogin)
+    }
+
     fun findKitRfid(kitId: Int): LiveData<List<KitRfidEntity>> {
         return dao.findKitRfid(kitId)
     }
@@ -151,6 +155,12 @@ class RoomRepository(private val dao: RoomDao) {
 
     fun deleteKitRfid(rfidID: Int) {
         return dao.deleteKitRfid(rfidID)
+    }
+
+    fun deleteKitAllRfid(kitId: Int) {
+        CoroutineScope(Dispatchers.IO).launch {
+            return@launch dao.deleteKitAllRfid(kitId)
+        }
     }
 
     fun deleteKitItem(kitId: Int) {

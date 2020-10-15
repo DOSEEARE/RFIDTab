@@ -39,8 +39,15 @@ class CreateKitViewModel(application: Application) : BaseViewModel(application) 
         return db.findKitItem(userLogin)
     }
 
+    suspend fun findKitItemNoLive (userLogin: String): List<KitItemEntity> {
+        return db.findKitItemNoLive(userLogin)
+    }
     fun deleteKitRfid(rfid: Int) {
         db.deleteKitRfid(rfid)
+    }
+
+    fun deleteKitAllRfid (kitId : Int){
+        db.deleteKitAllRfid(kitId)
     }
 
     fun deleteKitItem(kitId: Int) {

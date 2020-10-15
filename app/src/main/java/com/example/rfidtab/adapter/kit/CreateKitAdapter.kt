@@ -19,6 +19,9 @@ class CreateKitAdapter(
             listener.kitItemClicked(item)
         }
 
+        holder.itemView.kit_delete.setOnClickListener {
+            listener.kitItemDelete(item.kitId)
+        }
         holder.itemView.kit_title.text = "Создание комплекта №${holder.adapterPosition + 1}"
         holder.itemView.kit_comment.text = item.comment
 

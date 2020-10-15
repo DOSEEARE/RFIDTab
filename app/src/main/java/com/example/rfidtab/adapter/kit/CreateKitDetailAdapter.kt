@@ -18,6 +18,7 @@ class CreateKitDetailAdapter(
         holder.itemView.kit_detail_delete.setOnClickListener {
             listener.rfidItemDelete(item, holder.adapterPosition)
         }
+
         holder.itemView.kit_detail_rfid.text = item.rfid
 
     }
