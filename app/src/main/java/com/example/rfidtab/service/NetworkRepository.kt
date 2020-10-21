@@ -67,7 +67,7 @@ class NetworkRepository {
                 }
             }
         } catch (e: Exception) {
-            emit(Resource.netwrok("Проблеммы с подключение интернета", null))
+            emit(Resource.netwrok("Проблемы с подключение интернета", null))
         }
     }
 
@@ -163,8 +163,7 @@ class NetworkRepository {
                 }
             }
         } catch (e: Exception) {
-            emit(Resource.netwrok("Проблеммы с подключение интернета", null))
-        }
+            emit(Resource.netwrok("Проблеммы с подключение интернета", null))        }
     }
 
     fun confirmCards (model: ConfirmCardModel) = liveData(Dispatchers.IO) {

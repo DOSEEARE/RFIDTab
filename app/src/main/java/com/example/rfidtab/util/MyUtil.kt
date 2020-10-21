@@ -34,6 +34,23 @@ class MyUtil {
         }
     }
 
+    fun askPermissionForStorage(context: Activity, code: Int) {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                context,
+                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                code
+            )
+            ActivityCompat.requestPermissions(
+                context,
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                code
+            )
+        }
+    }
+
     fun hideKeyboard(activity: Activity) {
         val imm: InputMethodManager =
             activity.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager

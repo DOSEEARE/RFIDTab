@@ -16,8 +16,8 @@ import com.example.rfidtab.service.AppPreferences
 import com.example.rfidtab.service.db.entity.kitorder.KitOrderEntity
 import com.example.rfidtab.service.db.entity.task.TaskResultEntity
 import com.example.rfidtab.service.model.enums.TaskTypeEnum
-import com.example.rfidtab.ui.kitorder.KitOrderActivity
-import com.example.rfidtab.ui.kitorder.KitOrderViewModel
+import com.example.rfidtab.ui.task.kitorder.KitOrderActivity
+import com.example.rfidtab.ui.task.kitorder.KitOrderViewModel
 import com.example.rfidtab.ui.task.TaskDetailActivity
 import com.example.rfidtab.ui.task.TaskViewModel
 import com.example.rfidtab.ui.task.MarkActivity

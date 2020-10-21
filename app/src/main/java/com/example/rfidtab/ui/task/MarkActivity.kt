@@ -87,8 +87,9 @@ class MarkActivity : AppCompatActivity(), TaskDetailListener, RfidScannerListene
             task_detail_type.text = "Тип задания: ${onlineData.taskTypeTitle}"
             task_detail_comment.text = "Комментарии: ${onlineData.comment}"
             task_detail_send_btn.visibility = View.GONE
-            task_detail_rv.adapter =
-                TaskDetailOnlineAdapter(onlineData.cardList as ArrayList<TaskCardResponse>)
+            val sortedListOnline = ArrayList<TaskCardResponse>()
+            sortedListOnline.addAll(onlineData.cardList.sortedWith(compareBy(TaskCardResponse::sortOrder)))
+            task_detail_rv.adapter = TaskDetailOnlineAdapter(sortedListOnline)
         } else {
             val model = intent.getParcelableExtra<TaskResultEntity>("data")
             savedData = model
@@ -109,8 +110,10 @@ class MarkActivity : AppCompatActivity(), TaskDetailListener, RfidScannerListene
             task_detail_type.text = "Тип задания: ${savedData.taskTypeTitle}"
             task_detail_comment.text = "Комментарии ${savedData?.comment}"
             viewModel.findCardsById(savedData.id).observe(this, Observer {
-                cardList = it as ArrayList<TaskCardListEntity>
-                task_detail_rv.adapter = TaskMarkSavedAdapter(this, it)
+                val sortedListSaved = ArrayList<TaskCardListEntity>()
+                cardList.addAll(it)
+                sortedListSaved.addAll(it.sortedWith(compareBy(TaskCardListEntity::sortOrder)))
+                task_detail_rv.adapter = TaskMarkSavedAdapter(this, sortedListSaved)
             })
 
         }
@@ -352,6 +355,7 @@ class MarkActivity : AppCompatActivity(), TaskDetailListener, RfidScannerListene
                         a.commentProblemWithMark,
                         a.taskId,
                         a.taskTypeId,
+                        a.sortOrder,
                         false,
                         a.cardImgRequired
                     )

@@ -29,16 +29,19 @@ class ProfileActivity : AppCompatActivity() {
         profile_exit_btn.setOnClickListener {
             val builder = AlertDialog.Builder(this)
             builder.setTitle("Вы хотите выйти?")
-            AppPreferences.clear()
-            startActivity(Intent(this, AuthActivity::class.java))
+
             builder.setPositiveButton("Да, выйти") { dialog, which ->
+                AppPreferences.clear()
+                startActivity(Intent(this, AuthActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
             }
+
             builder.setNegativeButton("Нет") { dialog, which ->
                 dialog.dismiss()
             }
             builder.show()
 
         }
+
         viewModel.userInfo(0).observe(this, Observer { result ->
             val data = result.data
             val msg = result.msg

@@ -11,7 +11,6 @@ import com.example.rfidtab.service.model.confirm.ConfirmCardModel
 import com.example.rfidtab.service.model.overlist.TaskOverCards
 import com.example.rfidtab.service.response.task.TaskCardResponse
 import com.example.rfidtab.service.response.task.TaskResponse
-import okhttp3.MultipartBody
 
 class TaskViewModel(application: Application) : BaseViewModel(application) {
 
@@ -71,15 +70,20 @@ class TaskViewModel(application: Application) : BaseViewModel(application) {
         return db.deleteCardsById(id)
     }
 
-    fun deleteCardImageById (cardId: Int){
+    fun deleteCardImageById(cardId: Int) {
         return db.deleteCardImageById(cardId)
     }
 
-    fun deleteOverCards (taskId: Int){
+    fun deleteOverCards(taskId: Int) {
         return db.deleteOverCards(taskId)
     }
+
     fun findCardsById(id: Int): LiveData<List<TaskCardListEntity>> {
         return db.findCardsById(id)
+    }
+
+    suspend fun findCardsByIdNoLive(id: Int): List<TaskCardListEntity> {
+        return db.findCardsByIdNoLive(id)
     }
 
     fun updateCard(cardId: Int, rfidTag: String) {

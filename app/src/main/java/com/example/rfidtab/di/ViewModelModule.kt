@@ -3,7 +3,7 @@ package com.example.rfidtab.di
 
 import com.example.rfidtab.ui.auth.AuthViewModel
 import com.example.rfidtab.ui.createkit.CreateKitViewModel
-import com.example.rfidtab.ui.kitorder.KitOrderViewModel
+import com.example.rfidtab.ui.task.kitorder.KitOrderViewModel
 import com.example.rfidtab.ui.profile.ProfileViewModel
 import com.example.rfidtab.ui.search.SearchViewModel
 import com.example.rfidtab.ui.task.TaskViewModel

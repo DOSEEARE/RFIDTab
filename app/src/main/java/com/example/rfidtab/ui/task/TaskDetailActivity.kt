@@ -60,26 +60,28 @@ import kotlin.random.Random
 class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerListener {
     private lateinit var onlineData: TaskResponse
     private lateinit var savedData: TaskResultEntity
-    private var cardList = ArrayList<TaskCardListEntity>()
+    private var sortedListFromBd = ArrayList<TaskCardListEntity>()
     private val viewModel: TaskViewModel by viewModel()
     private lateinit var filePath: File
     private var CAMERA_REQUEST_CODE = 1
+    private var EXTERNAL_STORAGE_CODE = 2
     private var cardId = 0
     private var mTaskId = 0
     private lateinit var currentCardEntity: TaskCardListEntity
     private lateinit var scanDialog: AlertDialog
-
+    private val cardClickListener : TaskDetailListener = this
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task_detail)
         supportActionBar?.title = "Задание"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         MyUtil().askPermissionForCamera(this, CAMERA_REQUEST_CODE)
+        MyUtil().askPermissionForStorage(this, EXTERNAL_STORAGE_CODE)
         initViews()
         sendToCheck()
     }
 
-    // 1 активити на Online и Saved здесь идёт определение
+    // Одна активити на Online и Saved здесь идёт определение
     // telegram: @doseeare. If u have some problem, i can help you.
 
     private fun initViews() {
@@ -95,8 +97,9 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
             task_detail_comment.text = "Коментарии: ${onlineData.comment}"
 
             task_detail_send_btn.visibility = View.GONE
-            task_detail_rv.adapter =
-                TaskDetailOnlineAdapter(onlineData.cardList as ArrayList<TaskCardResponse>)
+            val sortedListFromNet = ArrayList<TaskCardResponse>()
+            sortedListFromNet.addAll(onlineData.cardList.sortedWith(compareBy(TaskCardResponse::sortOrder)))
+            task_detail_rv.adapter = TaskDetailOnlineAdapter(sortedListFromNet)
         } else {
             val model = intent.getParcelableExtra<TaskResultEntity>("data")
             savedData = model
@@ -116,16 +119,31 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
             task_detail_type.text = "Тип задания: ${savedData.taskTypeTitle}"
             task_detail_comment.text = "Коментарии: ${savedData.comment}"
 
+            //Изменение данных при измнении полей в таблице
             viewModel.findCardsById(savedData.id).observe(this, Observer {
-                cardList = it as ArrayList<TaskCardListEntity>
-                task_detail_rv.adapter = TaskDetailSavedAdapter(this, savedData.taskTypeId, it)
+                task_detail_rv.adapter = TaskDetailSavedAdapter(
+                    this,
+                    savedData.taskTypeId,
+                    it as ArrayList<TaskCardListEntity>
+                )
 
                 viewModel.getConfirmedCardCount(savedData.id).observe(this, Observer { confirmed ->
                     task_detail_counter.text = "Подтверждено $confirmed/${it.size}"
-
                 })
 
             })
+
+            //Первый список
+            CoroutineScope(Dispatchers.IO).launch {
+                sortedListFromBd.addAll(viewModel.findCardsByIdNoLive(savedData.id).sortedWith(compareBy(TaskCardListEntity::sortOrder)))
+                withContext(Dispatchers.Main){
+                    task_detail_rv.adapter = TaskDetailSavedAdapter(
+                        cardClickListener,
+                        savedData.taskTypeId,
+                        sortedListFromBd
+                    )
+                }
+            }
 
         }
 
@@ -161,7 +179,7 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
         task_detail_send_btn.setOnClickListener {
             loadingShow()
             //Изменение карточек по циклу
-            cardList.forEach { card ->
+            sortedListFromBd.forEach { card ->
                 cardListIndex++
                 val model = CardModel(
                     card.cardId,
@@ -177,6 +195,7 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
                         when (result.status) {
                             Status.SUCCESS -> {
                                 toast("Успешно!")
+                                loadingHide()
                             }
                         }
                     })
@@ -234,6 +253,7 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
                             }
                             else -> {
                                 toast(msg)
+                                loadingHide()
                             }
                         }
 
@@ -260,6 +280,7 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
                             finish()
                             loadingHide()
                         }
+                        else -> loadingHide()
                     }
 
                 })
@@ -296,7 +317,6 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
                     toast("Не совпадает!")
                     scanDialog.dismiss()
                 }
-
             } else {
                 if (view.scan_comment_et.text.toString().isNotEmpty()) {
                     viewModel.updateErrorComment(model.cardId, view.scan_comment_et.text.toString())
@@ -431,6 +451,7 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
                         a.commentProblemWithMark,
                         a.taskId,
                         a.taskTypeId,
+                        a.sortOrder,
                         false,
                         a.cardImgRequired
                     )
@@ -529,12 +550,37 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
                                 }
                             }
                         })
-                        toast("$data")
                         loadingHide()
                     }
                     else -> {
-                        toast("$data")
+
+                        viewModel.taskStatusChange(
+                            TaskStatusModel(
+                                savedData.id,
+                                savedData.taskTypeId,
+                                TaskStatusEnum.savedToLocal
+                            )
+                        ).observe(this, Observer { result ->
+                            when (result.status) {
+                                Status.SUCCESS -> {
+                                    CoroutineScope(Dispatchers.IO).launch {
+                                        viewModel.deleteOverCards(savedData.id)
+                                        viewModel.deleteTaskById(savedData.id)
+                                        viewModel.deleteCardsById(savedData.id)
+                                    }
+                                    startActivity(
+                                        Intent(
+                                            this,
+                                            TaskActivity::class.java
+                                        )
+                                    )
+                                    finish()
+                                    loadingHide()
+                                }
+                            }
+                        })
                         loadingHide()
+
                     }
                 }
 

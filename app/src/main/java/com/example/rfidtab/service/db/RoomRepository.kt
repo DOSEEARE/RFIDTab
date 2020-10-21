@@ -173,6 +173,10 @@ class RoomRepository(private val dao: RoomDao) {
         return dao.findCardsById(id)
     }
 
+    suspend fun findCardsByIdNoLive(id: Int): List<TaskCardListEntity> {
+        return dao.findCardsByIdNoLive(id)
+    }
+
     fun updateCard(cardId: Int, rfidTag: String) {
         CoroutineScope(Dispatchers.IO).launch {
             return@launch dao.updateCard(cardId, rfidTag)
@@ -210,7 +214,6 @@ class RoomRepository(private val dao: RoomDao) {
     fun updateErrorComment(cardId: Int, comment: String) {
         CoroutineScope(Dispatchers.IO).launch {
             return@launch dao.updateErrorComment(cardId, comment)
-
         }
     }
 

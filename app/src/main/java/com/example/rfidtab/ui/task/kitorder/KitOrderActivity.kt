@@ -1,4 +1,4 @@
-package com.example.rfidtab.ui.kitorder
+package com.example.rfidtab.ui.task.kitorder
 
 import android.content.Intent
 import android.os.Bundle
@@ -16,7 +16,6 @@ import com.example.rfidtab.extension.toast
 import com.example.rfidtab.service.Status
 import com.example.rfidtab.service.db.entity.kitorder.KitOrderEntity
 import com.example.rfidtab.service.db.entity.kitorder.KitOrderKitEntity
-import com.example.rfidtab.service.model.CardModel
 import com.example.rfidtab.service.model.TaskStatusModel
 import com.example.rfidtab.service.model.confirm.ConfirmCardModel
 import com.example.rfidtab.service.model.confirm.ConfirmCards

@@ -1,4 +1,4 @@
-package com.example.rfidtab.ui.kitorder
+package com.example.rfidtab.ui.task.kitorder
 
 import android.os.Bundle
 import android.view.LayoutInflater

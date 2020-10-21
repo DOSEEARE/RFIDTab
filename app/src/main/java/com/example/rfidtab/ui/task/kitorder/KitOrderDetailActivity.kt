@@ -1,4 +1,4 @@
-package com.example.rfidtab.ui.kitorder
+package com.example.rfidtab.ui.task.kitorder
 
 import android.os.Bundle
 import android.view.MenuItem
@@ -18,7 +18,6 @@ import com.example.rfidtab.service.db.entity.kitorder.KitOrderCardEntity
 import com.example.rfidtab.service.db.entity.kitorder.KitOrderKitEntity
 import com.example.rfidtab.service.response.kitorder.KitOrderCard
 import com.example.rfidtab.service.response.kitorder.KitOrderKit
-import com.example.rfidtab.ui.task.TaskViewModel
 import com.example.rfidtab.util.MyUtil
 import com.example.rfidtab.util.scanrfid.RfidScannerListener
 import com.example.rfidtab.util.scanrfid.RfidScannerUtil

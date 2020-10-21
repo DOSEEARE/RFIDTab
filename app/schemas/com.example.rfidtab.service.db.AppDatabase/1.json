@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "71918fd7db64a589781e4c9c5a5e68ef",
+    "identityHash": "9b0521fe038172178a4e2915db2205bf",
     "entities": [
       {
         "tableName": "TaskResultEntity",
@@ -74,7 +74,7 @@
       },
       {
         "tableName": "TaskCardListEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `cardId` INTEGER NOT NULL, `fullName` TEXT, `pipeSerialNumber` TEXT NOT NULL, `serialNoOfNipple` TEXT NOT NULL, `couplingSerialNumber` TEXT NOT NULL, `rfidTagNo` TEXT, `comment` TEXT, `accounting` INTEGER NOT NULL, `commentProblemWithMark` TEXT, `taskId` INTEGER NOT NULL, `taskTypeId` INTEGER NOT NULL, `isConfirmed` INTEGER NOT NULL, `isImageRequired` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `cardId` INTEGER NOT NULL, `fullName` TEXT, `pipeSerialNumber` TEXT NOT NULL, `serialNoOfNipple` TEXT NOT NULL, `couplingSerialNumber` TEXT NOT NULL, `rfidTagNo` TEXT, `comment` TEXT, `accounting` INTEGER NOT NULL, `commentProblemWithMark` TEXT, `taskId` INTEGER NOT NULL, `taskTypeId` INTEGER NOT NULL, `sortOrder` INTEGER NOT NULL, `isConfirmed` INTEGER NOT NULL, `isImageRequired` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -145,6 +145,12 @@
           {
             "fieldPath": "taskTypeId",
             "columnName": "taskTypeId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sortOrder",
+            "columnName": "sortOrder",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -748,7 +754,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '71918fd7db64a589781e4c9c5a5e68ef')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9b0521fe038172178a4e2915db2205bf')"
     ]
   }
 }

@@ -18,15 +18,17 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity android:name=".ui.search.SearchDetailActivity" />
-        <activity android:name=".ui.kitorder.KitOrderActivity" />
-        <activity android:name=".ui.kitorder.KitOrderDetailActivity" />
+        <activity android:name="com.example.rfidtab.ui.task.kitorder.KitOrderActivity" />
+        <activity android:name="com.example.rfidtab.ui.task.kitorder.KitOrderDetailActivity" />
         <activity android:name=".ui.search.SearchActivity" />
         <activity android:name=".ui.createkit.CreateKitActivity" />
         <activity android:name=".ui.task.MarkActivity" />
         <activity
             android:name=".ui.task.CardDetailActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.profile.ProfileActivity" />
+        <activity
+            android:name=".ui.profile.ProfileActivity"
+            android:noHistory="true" />
         <activity android:name=".ui.task.TaskDetailActivity" />
         <activity
             android:name=".ui.auth.AuthActivity"

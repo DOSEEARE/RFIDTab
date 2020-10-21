@@ -26,8 +26,8 @@ import com.example.rfidtab.service.model.TaskStatusModel
 import com.example.rfidtab.service.model.enums.TaskStatusEnum
 import com.example.rfidtab.service.model.enums.TaskTypeEnum
 import com.example.rfidtab.service.response.task.TaskResponse
-import com.example.rfidtab.ui.kitorder.KitOrderActivity
-import com.example.rfidtab.ui.kitorder.KitOrderViewModel
+import com.example.rfidtab.ui.task.kitorder.KitOrderActivity
+import com.example.rfidtab.ui.task.kitorder.KitOrderViewModel
 import com.example.rfidtab.ui.task.MarkActivity
 import com.example.rfidtab.ui.task.TaskDetailActivity
 import com.example.rfidtab.ui.task.TaskViewModel
@@ -309,6 +309,7 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                             a.commentProblemWithMark,
                             a.taskId,
                             a.taskTypeId,
+                            a.sortOrder,
                             false,
                             a.cardImgRequired
                         )
