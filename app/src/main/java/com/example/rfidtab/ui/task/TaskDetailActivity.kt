@@ -121,19 +121,21 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
 
             //Изменение данных при измнении полей в таблице
             viewModel.findCardsById(savedData.id).observe(this, Observer {
+                val sortedList = ArrayList<TaskCardListEntity>()
+                sortedList.addAll(it.sortedWith(compareBy(TaskCardListEntity::sortOrder)))
+                sortedListFromBd.addAll(it)
                 task_detail_rv.adapter = TaskDetailSavedAdapter(
                     this,
                     savedData.taskTypeId,
-                    it as ArrayList<TaskCardListEntity>
+                    sortedList
                 )
 
                 viewModel.getConfirmedCardCount(savedData.id).observe(this, Observer { confirmed ->
                     task_detail_counter.text = "Подтверждено $confirmed/${it.size}"
                 })
-
             })
 
-            //Первый список
+ /*           //Первый список
             CoroutineScope(Dispatchers.IO).launch {
                 sortedListFromBd.addAll(viewModel.findCardsByIdNoLive(savedData.id).sortedWith(compareBy(TaskCardListEntity::sortOrder)))
                 withContext(Dispatchers.Main){
@@ -143,7 +145,7 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
                         sortedListFromBd
                     )
                 }
-            }
+            }*/
 
         }
 
@@ -186,7 +188,7 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
                     savedData.id,
                     card.taskTypeId,
                     card.rfidTagNo,
-                    accounting(card.isConfirmed, card.commentProblemWithMark),
+                    accounting(card.isConfirmed, card.commentProblemWithMark.toString()),
                     card.comment,
                     card.commentProblemWithMark
                 )
@@ -589,8 +591,8 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
     }
 }
 
-private fun accounting(isConfirm: Boolean, problemComment: String?): Int {
-    return if (isConfirm || problemComment != null) {
+private fun accounting(isConfirm: Boolean, problemComment: String): Int {
+    return if (isConfirm || (problemComment.isNotEmpty() && problemComment != "null")) {
         1
     } else {
         0

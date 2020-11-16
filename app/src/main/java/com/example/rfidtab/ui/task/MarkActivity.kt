@@ -109,6 +109,7 @@ class MarkActivity : AppCompatActivity(), TaskDetailListener, RfidScannerListene
             task_detail_status.text = "Статус: ${savedData.statusTitle}"
             task_detail_type.text = "Тип задания: ${savedData.taskTypeTitle}"
             task_detail_comment.text = "Комментарии ${savedData?.comment}"
+
             viewModel.findCardsById(savedData.id).observe(this, Observer {
                 val sortedListSaved = ArrayList<TaskCardListEntity>()
                 cardList.addAll(it)

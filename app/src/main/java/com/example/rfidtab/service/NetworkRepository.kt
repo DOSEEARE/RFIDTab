@@ -1,5 +1,6 @@
 package com.example.rfidtab.service
 
+import android.util.Log
 import androidx.lifecycle.liveData
 import com.example.rfidtab.service.db.entity.task.CardImagesEntity
 import com.example.rfidtab.service.model.AuthModel
@@ -10,6 +11,7 @@ import com.example.rfidtab.service.model.kit.CreateKitModel
 import com.example.rfidtab.service.model.kitorder.KitOrderModel
 import com.example.rfidtab.service.model.overlist.TaskOverCards
 import com.example.rfidtab.service.model.search.SearchModel
+import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -55,6 +57,8 @@ class NetworkRepository {
     }
 
     fun cardChange(model: CardModel) = liveData(Dispatchers.IO) {
+        Log.e("SUKABLYA", Gson().toJson(model))
+
         try {
             val response = RetrofitClient.apiService().changeCard(model)
             val code = response.code()
