@@ -14,7 +14,7 @@ class SearchDetailActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = "Идентификация метки"
+        supportActionBar?.title = "Идентификация оборудования"
         setContentView(R.layout.activity_search_detail)
 
         data = intent.getSerializableExtra("data") as SearchCard

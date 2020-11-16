@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "9b0521fe038172178a4e2915db2205bf",
+    "identityHash": "72f476c954864cdc55f31c4e6ca6a0c7",
     "entities": [
       {
         "tableName": "TaskResultEntity",
@@ -74,7 +74,7 @@
       },
       {
         "tableName": "TaskCardListEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `cardId` INTEGER NOT NULL, `fullName` TEXT, `pipeSerialNumber` TEXT NOT NULL, `serialNoOfNipple` TEXT NOT NULL, `couplingSerialNumber` TEXT NOT NULL, `rfidTagNo` TEXT, `comment` TEXT, `accounting` INTEGER NOT NULL, `commentProblemWithMark` TEXT, `taskId` INTEGER NOT NULL, `taskTypeId` INTEGER NOT NULL, `sortOrder` INTEGER NOT NULL, `isConfirmed` INTEGER NOT NULL, `isImageRequired` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `cardId` INTEGER NOT NULL, `fullName` TEXT, `pipeSerialNumber` TEXT, `serialNoOfNipple` TEXT, `couplingSerialNumber` TEXT, `rfidTagNo` TEXT, `comment` TEXT, `accounting` INTEGER NOT NULL, `commentProblemWithMark` TEXT, `taskId` INTEGER NOT NULL, `taskTypeId` INTEGER NOT NULL, `sortOrder` INTEGER NOT NULL, `isConfirmed` INTEGER NOT NULL, `isImageRequired` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -98,19 +98,19 @@
             "fieldPath": "pipeSerialNumber",
             "columnName": "pipeSerialNumber",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "serialNoOfNipple",
             "columnName": "serialNoOfNipple",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "couplingSerialNumber",
             "columnName": "couplingSerialNumber",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "rfidTagNo",
@@ -754,7 +754,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9b0521fe038172178a4e2915db2205bf')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '72f476c954864cdc55f31c4e6ca6a0c7')"
     ]
   }
 }

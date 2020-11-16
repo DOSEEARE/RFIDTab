@@ -22,7 +22,6 @@ class AuthActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)
         auth()
-
     }
 
     private fun auth() {
@@ -35,7 +34,7 @@ class AuthActivity : AppCompatActivity() {
                         Status.SUCCESS -> {
                             toast("Успешно авторизованы!")
                             AppPreferences.accessToken = data?.jwt
-                                    AppPreferences.isLogined = true
+                            AppPreferences.isLogined = true
 
                             AppPreferences.userLogin = login_login.text.toString()
 

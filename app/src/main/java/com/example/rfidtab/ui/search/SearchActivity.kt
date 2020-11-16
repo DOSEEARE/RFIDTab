@@ -27,7 +27,7 @@ class SearchActivity : AppCompatActivity(), SearchListener, RfidScannerListener 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = "Идентификация метки"
+        supportActionBar?.title = "Идентификация оборудования   "
         initViews()
         initScanner()
     }

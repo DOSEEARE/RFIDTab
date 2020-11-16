@@ -1,6 +1,5 @@
 package com.example.rfidtab.service
 
-import com.example.rfidtab.service.response.Authenticator
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient

@@ -1,4 +1,4 @@
-package com.example.rfidtab.service.response
+package com.example.rfidtab.service
 
 import com.example.rfidtab.service.AppPreferences
 import okhttp3.Authenticator

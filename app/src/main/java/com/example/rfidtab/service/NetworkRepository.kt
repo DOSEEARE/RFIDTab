@@ -57,7 +57,6 @@ class NetworkRepository {
     }
 
     fun cardChange(model: CardModel) = liveData(Dispatchers.IO) {
-        Log.e("SUKABLYA", Gson().toJson(model))
 
         try {
             val response = RetrofitClient.apiService().changeCard(model)
@@ -117,7 +116,7 @@ class NetworkRepository {
                     }
                 }
             } catch (e: Exception) {
-                emit(Resource.netwrok("Произошла ошибка при отправке изоброжение", null))
+                emit(Resource.netwrok("Произошла ошибка при отправке изображение", null))
             }
         }
 
