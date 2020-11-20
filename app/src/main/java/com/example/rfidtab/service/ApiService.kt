@@ -5,6 +5,7 @@ import com.example.rfidtab.service.model.CardModel
 import com.example.rfidtab.service.model.TaskStatusModel
 import com.example.rfidtab.service.model.confirm.ConfirmCardModel
 import com.example.rfidtab.service.model.kit.CreateKitModel
+import com.example.rfidtab.service.model.kit.ImageListBase64Model
 import com.example.rfidtab.service.model.kitorder.KitOrderModel
 import com.example.rfidtab.service.model.overlist.TaskOverCards
 import com.example.rfidtab.service.model.search.SearchModel
@@ -34,6 +35,9 @@ interface ApiService {
         @Part("taskTypeId") taskTypeId: Int,
         @Path("id") cardId: Int
     ): Response<String>
+
+    @POST ("card/list/files")
+    suspend fun sendImageListBase64 (@Body body : ImageListBase64Model) : Response<String>
 
     @GET("task/list")
     suspend fun task(@Query("withCards") withCards: Boolean): Response<List<TaskResponse>>

@@ -8,6 +8,7 @@ import com.example.rfidtab.service.model.CardModel
 import com.example.rfidtab.service.model.TaskStatusModel
 import com.example.rfidtab.service.model.confirm.ConfirmCardModel
 import com.example.rfidtab.service.model.kit.CreateKitModel
+import com.example.rfidtab.service.model.kit.ImageListBase64Model
 import com.example.rfidtab.service.model.kitorder.KitOrderModel
 import com.example.rfidtab.service.model.overlist.TaskOverCards
 import com.example.rfidtab.service.model.search.SearchModel
@@ -120,6 +121,23 @@ class NetworkRepository {
             }
         }
 
+    fun sendImageListBase64 (body : ImageListBase64Model) = liveData(Dispatchers.IO) {
+        try {
+            val response = RetrofitClient.apiService().sendImageListBase64(body)
+            val code = response.code()
+            when {
+                response.isSuccessful -> {
+                    emit(Resource.success(response.body()))
+                }
+                else -> {
+                    emit(Resource.error("Успешно отправлен", null))
+                }
+            }
+        } catch (e: Exception) {
+            emit(Resource.netwrok("Проблеммы с подключение интернета", null))
+        }
+    }
+
     fun taskStatusChange(model: TaskStatusModel) = liveData(Dispatchers.IO) {
         try {
             val response = RetrofitClient.apiService().taskStatusChange(model)
@@ -136,6 +154,8 @@ class NetworkRepository {
             emit(Resource.netwrok("Проблеммы с подключение интернета", null))
         }
     }
+
+
 
     fun createKit (model: CreateKitModel) = liveData(Dispatchers.IO) {
         try {

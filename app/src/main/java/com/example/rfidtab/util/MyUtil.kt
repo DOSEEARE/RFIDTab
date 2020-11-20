@@ -3,11 +3,15 @@ package com.example.rfidtab.util
 import android.Manifest
 import android.app.Activity
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Environment
+import android.util.Base64
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import java.io.ByteArrayOutputStream
 import java.io.File
 
 
@@ -35,9 +39,7 @@ class MyUtil {
     }
 
     fun askPermissionForStorage(context: Activity, code: Int) {
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)
-            != PackageManager.PERMISSION_GRANTED
-        ) {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(
                 context,
                 arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
@@ -46,7 +48,7 @@ class MyUtil {
             ActivityCompat.requestPermissions(
                 context,
                 arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                code
+                code + 1    
             )
         }
     }
@@ -65,6 +67,24 @@ class MyUtil {
 
     fun equalsNoSpace(firstText: String, secondText: String): Boolean {
         return firstText.replace(" ", "").equals(secondText.replace(" ", ""), true)
+    }
+
+
+    fun convertImageToBase64 (imagePath: String) : String{
+        val bmp: Bitmap?
+        val bos: ByteArrayOutputStream?
+        val bt: ByteArray?
+        var encodeString: String? = null
+        try {
+            bmp = BitmapFactory.decodeFile(imagePath)
+            bos = ByteArrayOutputStream()
+            bmp.compress(Bitmap.CompressFormat.JPEG, 100, bos)
+            bt = bos.toByteArray()
+            encodeString = Base64.encodeToString(bt, Base64.DEFAULT)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return encodeString!!
     }
 
 

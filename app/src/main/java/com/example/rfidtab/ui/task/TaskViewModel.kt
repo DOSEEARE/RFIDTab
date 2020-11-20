@@ -8,6 +8,7 @@ import com.example.rfidtab.service.db.entity.task.*
 import com.example.rfidtab.service.model.CardModel
 import com.example.rfidtab.service.model.TaskStatusModel
 import com.example.rfidtab.service.model.confirm.ConfirmCardModel
+import com.example.rfidtab.service.model.kit.ImageListBase64Model
 import com.example.rfidtab.service.model.overlist.TaskOverCards
 import com.example.rfidtab.service.response.task.TaskCardResponse
 import com.example.rfidtab.service.response.task.TaskResponse
@@ -24,6 +25,10 @@ class TaskViewModel(application: Application) : BaseViewModel(application) {
 
     fun sendImage(list : List<CardImagesEntity>, cardId: Int, taskTypeId : Int, taskId : Int): LiveData<Resource<String>> {
         return network.sendImage(list, cardId, taskTypeId, taskId)
+    }
+
+    fun sendImageBase64 (body : ImageListBase64Model): LiveData<Resource<String>> {
+        return network.sendImageListBase64(body)
     }
 
     fun sendOverCards(model: TaskOverCards): LiveData<Resource<String>> {

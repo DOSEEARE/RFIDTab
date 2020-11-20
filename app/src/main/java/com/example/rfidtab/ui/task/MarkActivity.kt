@@ -58,6 +58,7 @@ class MarkActivity : AppCompatActivity(), TaskDetailListener, RfidScannerListene
     private var cardList = ArrayList<TaskCardListEntity>()
     private val viewModel: TaskViewModel by viewModel()
     private var CAMERA_REQUEST_CODE = 1
+    private val STORAGE_REQUEST_CODE = 2
     private lateinit var currentCardEntity: TaskCardListEntity
 
     private lateinit var scanDialog: AlertDialog
@@ -68,6 +69,7 @@ class MarkActivity : AppCompatActivity(), TaskDetailListener, RfidScannerListene
         supportActionBar?.title = "Задание"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         MyUtil().askPermissionForCamera(this, CAMERA_REQUEST_CODE)
+        MyUtil().askPermissionForStorage(this, STORAGE_REQUEST_CODE)
         initViews()
         sendToCheck()
     }

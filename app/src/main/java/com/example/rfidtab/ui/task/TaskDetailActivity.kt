@@ -64,7 +64,7 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
     private val viewModel: TaskViewModel by viewModel()
     private lateinit var filePath: File
     private var CAMERA_REQUEST_CODE = 1
-    private var EXTERNAL_STORAGE_CODE = 2
+    private var EXTERNAL_REQUEST_CODE = 2
     private var cardId = 0
     private var mTaskId = 0
     private lateinit var currentCardEntity: TaskCardListEntity
@@ -76,7 +76,6 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
         supportActionBar?.title = "Задание"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         MyUtil().askPermissionForCamera(this, CAMERA_REQUEST_CODE)
-        MyUtil().askPermissionForStorage(this, EXTERNAL_STORAGE_CODE)
         initViews()
         sendToCheck()
     }
@@ -290,6 +289,86 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
             }
         })
     }
+
+  /*  private fun sendCardsImagesBase64 (cardId: Int, taskId: Int, taskTypId: Int) {
+        //отправка и закрытие таска если картинки есть
+        viewModel.findImagesById(cardId, taskId).observe(this, Observer {
+            if (it.isNotEmpty()) {
+                loadingShow()
+
+                viewModel.sendImageBase64(it, cardId, taskTypId, taskId)
+                    .observe(this, Observer { result ->
+                        val msg = result.msg
+                        when (result.status) {
+                            Status.SUCCESS -> {
+                                toast("Фото отправлено!")
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    viewModel.deleteTaskById(savedData.id)
+                                    viewModel.deleteCardsById(savedData.id)
+                                }
+                                viewModel.taskStatusChange(
+                                    TaskStatusModel(
+                                        savedData.id,
+                                        savedData.taskTypeId,
+                                        TaskStatusEnum.savedToLocal
+                                    )
+                                ).observe(this, Observer { result ->
+                                    val data = result.data
+                                    when (result.status) {
+                                        Status.SUCCESS -> {
+                                            toast("$data")
+                                            startActivity(Intent(this, TaskActivity::class.java))
+                                            finish()
+                                            loadingHide()
+                                        }
+                                    }
+                                })
+                            }
+                            Status.ERROR -> {
+                                toast(msg)
+                                loadingHide()
+                            }
+                            Status.NETWORK -> {
+                                toast(msg)
+                                loadingHide()
+                            }
+                            else -> {
+                                toast(msg)
+                                loadingHide()
+                            }
+                        }
+
+                    })
+            } else {
+                //закрытие таска если картинок нет
+                CoroutineScope(Dispatchers.IO).launch {
+                    viewModel.deleteTaskById(savedData.id)
+                    viewModel.deleteCardsById(savedData.id)
+                    viewModel.deleteOverCards(savedData.id)
+                }
+                viewModel.taskStatusChange(
+                    TaskStatusModel(
+                        savedData.id,
+                        savedData.taskTypeId,
+                        TaskStatusEnum.savedToLocal
+                    )
+                ).observe(this, Observer { result ->
+                    val data = result.data
+                    when (result.status) {
+                        Status.SUCCESS -> {
+                            toast("$data")
+                            startActivity(Intent(this, TaskActivity::class.java))
+                            finish()
+                            loadingHide()
+                        }
+                        else -> loadingHide()
+                    }
+
+                })
+
+            }
+        })
+    }*/
 
     //Сканирование Rfid метки
     override fun scantBtnClicked(model: TaskCardListEntity) {
