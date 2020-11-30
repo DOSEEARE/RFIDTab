@@ -11,13 +11,13 @@ data class KitOrderSpecificationEntity(
     @SerializedName("id") val id: Int?,
     val kitId: Int,
     @SerializedName("outerDiameterOfThePipe") val outerDiameterOfThePipe: Int,
-    @SerializedName("pipeWallThickness") val pipeWallThickness: Int,
-    @SerializedName("odlockNipple") val odlockNipple: Int,
-    @SerializedName("idlockNipple") val idlockNipple: Int,
+    @SerializedName("pipeWallThickness") val pipeWallThickness: String?,
+    @SerializedName("odlockNipple") val odlockNipple: String?,
+    @SerializedName("idlockNipple") val idlockNipple: String?,
     @SerializedName("pipeLength") val pipeLength: String?,
     @SerializedName("shoulderAngle") val shoulderAngle: String?,
-    @SerializedName("turnkeyLengthNipple") val turnkeyLengthNipple: Int,
-    @SerializedName("turnkeyLengthCoupling") val turnkeyLengthCoupling: Int,
+    @SerializedName("turnkeyLengthNipple") val turnkeyLengthNipple: String?,
+    @SerializedName("turnkeyLengthCoupling") val turnkeyLengthCoupling: String?,
     @SerializedName("comment") val comment: String?,
     val cardCount : String
 ) : Serializable

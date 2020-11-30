@@ -26,11 +26,11 @@ import com.example.rfidtab.service.model.TaskStatusModel
 import com.example.rfidtab.service.model.enums.TaskStatusEnum
 import com.example.rfidtab.service.model.enums.TaskTypeEnum
 import com.example.rfidtab.service.response.task.TaskResponse
-import com.example.rfidtab.ui.task.kitorder.KitOrderActivity
-import com.example.rfidtab.ui.task.kitorder.KitOrderViewModel
 import com.example.rfidtab.ui.task.MarkActivity
 import com.example.rfidtab.ui.task.TaskDetailActivity
 import com.example.rfidtab.ui.task.TaskViewModel
+import com.example.rfidtab.ui.task.kitorder.KitOrderActivity
+import com.example.rfidtab.ui.task.kitorder.KitOrderViewModel
 import kotlinx.android.synthetic.main.alert_add.view.*
 import kotlinx.android.synthetic.main.fragment_online_tasks.*
 import kotlinx.coroutines.CoroutineScope
@@ -162,8 +162,7 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                     Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
                 }
                 Status.NETWORK -> {
-                    Toast.makeText(context, "Проблемы с интернетом", Toast.LENGTH_LONG)
-                        .show()
+                    Toast.makeText(context, "Проблемы с интернетом", Toast.LENGTH_LONG).show()
                 }
                 else -> {
                     Toast.makeText(context, "Произошла ошибка", Toast.LENGTH_LONG).show()
@@ -229,9 +228,9 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                             if (data.kits[indexKit].cards.isEmpty()) {
                                 val spec = data.kits[indexKit].specification
 
-                                if (data.kitType == "multi") {
+                                if (data.kitType == "multi" && data.kitCardCount!!.length > 1) {
                                     val kitCardCount: String =
-                                        data.kitCardCount!!.split(",")[indexKit]
+                                        data.kitCardCount.split(",")[indexKit]
 
                                     val kitOrderSpec = KitOrderSpecificationEntity(
                                         spec.id,
@@ -277,8 +276,7 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                     Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
                 }
                 Status.NETWORK -> {
-                    Toast.makeText(context, "Проблемы с интернетом", Toast.LENGTH_LONG)
-                        .show()
+                    Toast.makeText(context, "Проблемы с интернетом", Toast.LENGTH_LONG).show()
                 }
                 else -> {
                     Toast.makeText(context, "Произошла ошибка", Toast.LENGTH_LONG).show()

@@ -1,5 +1,6 @@
 package com.example.rfidtab.ui.task
 
+import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import android.os.Environment
@@ -9,6 +10,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
 import com.example.rfidtab.BuildConfig
@@ -75,7 +77,13 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
         setContentView(R.layout.activity_task_detail)
         supportActionBar?.title = "Задание"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        MyUtil().askPermissionForCamera(this, CAMERA_REQUEST_CODE)
+        val PERMISSIONS = arrayOf(
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.CAMERA
+        )
+        if (!MyUtil().hasPermissions(this, PERMISSIONS)) {
+            ActivityCompat.requestPermissions(this, PERMISSIONS, 1);
+        }
         initViews()
         sendToCheck()
     }

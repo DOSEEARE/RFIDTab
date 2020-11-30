@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "72f476c954864cdc55f31c4e6ca6a0c7",
+    "identityHash": "c08491240477e6e01d618ff6f1a6aa23",
     "entities": [
       {
         "tableName": "TaskResultEntity",
@@ -566,7 +566,7 @@
       },
       {
         "tableName": "KitOrderSpecificationEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER, `kitId` INTEGER NOT NULL, `outerDiameterOfThePipe` INTEGER NOT NULL, `pipeWallThickness` INTEGER NOT NULL, `odlockNipple` INTEGER NOT NULL, `idlockNipple` INTEGER NOT NULL, `pipeLength` TEXT, `shoulderAngle` TEXT, `turnkeyLengthNipple` INTEGER NOT NULL, `turnkeyLengthCoupling` INTEGER NOT NULL, `comment` TEXT, `cardCount` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER, `kitId` INTEGER NOT NULL, `outerDiameterOfThePipe` INTEGER NOT NULL, `pipeWallThickness` TEXT, `odlockNipple` TEXT, `idlockNipple` TEXT, `pipeLength` TEXT, `shoulderAngle` TEXT, `turnkeyLengthNipple` TEXT, `turnkeyLengthCoupling` TEXT, `comment` TEXT, `cardCount` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -589,20 +589,20 @@
           {
             "fieldPath": "pipeWallThickness",
             "columnName": "pipeWallThickness",
-            "affinity": "INTEGER",
-            "notNull": true
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "odlockNipple",
             "columnName": "odlockNipple",
-            "affinity": "INTEGER",
-            "notNull": true
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "idlockNipple",
             "columnName": "idlockNipple",
-            "affinity": "INTEGER",
-            "notNull": true
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "pipeLength",
@@ -619,14 +619,14 @@
           {
             "fieldPath": "turnkeyLengthNipple",
             "columnName": "turnkeyLengthNipple",
-            "affinity": "INTEGER",
-            "notNull": true
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "turnkeyLengthCoupling",
             "columnName": "turnkeyLengthCoupling",
-            "affinity": "INTEGER",
-            "notNull": true
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "comment",
@@ -754,7 +754,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '72f476c954864cdc55f31c4e6ca6a0c7')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c08491240477e6e01d618ff6f1a6aa23')"
     ]
   }
 }

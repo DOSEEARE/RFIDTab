@@ -2,6 +2,7 @@ package com.example.rfidtab.util
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -39,18 +40,17 @@ class MyUtil {
     }
 
     fun askPermissionForStorage(context: Activity, code: Int) {
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(
-                context,
-                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
-                code
-            )
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(
                 context,
                 arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                code + 1    
+                code
             )
         }
+    }
+
+    fun hasPermissions(context: Context, vararg permissions: Array<String>) : Boolean = permissions.all {
+        ActivityCompat.checkSelfPermission(context, it.toString()) == PackageManager.PERMISSION_GRANTED
     }
 
     fun hideKeyboard(activity: Activity) {
