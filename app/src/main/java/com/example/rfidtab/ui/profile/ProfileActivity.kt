@@ -30,12 +30,12 @@ class ProfileActivity : AppCompatActivity() {
             val builder = AlertDialog.Builder(this)
             builder.setTitle("Вы хотите выйти?")
 
-            builder.setPositiveButton("Да, выйти") { dialog, which ->
+            builder.setPositiveButton("Да, выйти") { _, _ ->
                 AppPreferences.clear()
                 startActivity(Intent(this, AuthActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
             }
 
-            builder.setNegativeButton("Нет") { dialog, which ->
+            builder.setNegativeButton("Нет") { dialog, _ ->
                 dialog.dismiss()
             }
             builder.show()
@@ -58,9 +58,6 @@ class ProfileActivity : AppCompatActivity() {
                 Status.NETWORK -> {
                     toast("Проблемы с интернетом")
 
-                }
-                else -> {
-                    toast("Произшла ошибка")
                 }
             }
 

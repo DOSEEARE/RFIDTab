@@ -15,11 +15,6 @@ data class Resource<out T>(val status: Status, val data: T?, val msg: String?) {
         fun <T> netwrok(msg: String = "", data: T? = null): Resource<T> {
             return Resource(Status.NETWORK, data, msg)
         }
-
-        fun <T> empty(msg: String = "", data: T? = null): Resource<T> {
-            return Resource(Status.EMPTY, data, msg)
-        }
-
     }
 }
 
@@ -27,5 +22,4 @@ enum class Status {
     SUCCESS,
     ERROR,
     NETWORK,
-    EMPTY
 }
