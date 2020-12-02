@@ -442,9 +442,9 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
     }
     override fun cameraBtnClicked(model: TaskCardListEntity) {
         val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        MyUtil().createCardFolder()
+        MyUtil().createCardFolder(this)
         filePath = File(
-            Environment.getExternalStorageDirectory().path + "/RFID cards",
+            getExternalFilesDir(Environment.DIRECTORY_DCIM)?.path + "/RFID cards",
             "/card ${Calendar.getInstance().time}.jpg"
         )
         cardId = model.cardId

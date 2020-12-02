@@ -27,6 +27,6 @@
     <string name="add_couple">Добавить № муфты</string>
     <string name="add_number">Добавить серийный №</string>
     <string name="add_about_card">Добавление данных о карте</string>
-    <string name="app_version">0.0.3v 02.12.20</string>
+    <string name="app_version">0.0.4v 02.12.20</string>
     <string name="app_version_date">16.11.2020</string>
 </resources>

@@ -14,12 +14,13 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.util.*
 
 
 class MyUtil {
 
-    fun createCardFolder() {
-        val folderPath = Environment.getExternalStorageDirectory().path + "/RFID cards"
+    fun createCardFolder(context: Context) {
+        val folderPath = context.getExternalFilesDir(Environment.DIRECTORY_DCIM)?.path + "/RFID cards"
         val folder = File(folderPath)
         if (!folder.exists()) {
             val cardsDirectory = File(folderPath)
