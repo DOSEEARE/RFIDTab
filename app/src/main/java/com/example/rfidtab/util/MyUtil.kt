@@ -41,7 +41,11 @@ class MyUtil {
     }
 
     fun askPermissionForStorage(context: Activity, code: Int) {
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
             ActivityCompat.requestPermissions(
                 context,
                 arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
@@ -50,9 +54,13 @@ class MyUtil {
         }
     }
 
-    fun hasPermissions(context: Context, vararg permissions: Array<String>) : Boolean = permissions.all {
-        ActivityCompat.checkSelfPermission(context, it.toString()) == PackageManager.PERMISSION_GRANTED
-    }
+    fun hasPermissions(context: Context, vararg permissions: Array<String>): Boolean =
+        permissions.all {
+            ActivityCompat.checkSelfPermission(
+                context,
+                it.toString()
+            ) == PackageManager.PERMISSION_GRANTED
+        }
 
     fun hideKeyboard(activity: Activity) {
         val imm: InputMethodManager =
@@ -71,7 +79,7 @@ class MyUtil {
     }
 
 
-    fun convertImageToBase64 (imagePath: String) : String{
+    fun convertImageToBase64(imagePath: String): String {
         val bmp: Bitmap?
         val bos: ByteArrayOutputStream?
         val bt: ByteArray?
@@ -88,5 +96,19 @@ class MyUtil {
         return encodeString!!
     }
 
+    fun accounting(isConfirm: Boolean, problemComment: String): Int {
+        return if (isConfirm || (problemComment.isNotEmpty() && problemComment != "null")) {
+            1
+        } else {
+            0
+        }
+    }
 
+    fun accounting(problemComment: String): Int {
+        return if ((problemComment.isNotEmpty() && problemComment != "null")) {
+            1
+        } else {
+            0
+        }
+    }
 }

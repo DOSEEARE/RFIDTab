@@ -2,9 +2,11 @@ package com.example.rfidtab.ui.task
 
 import android.Manifest
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
@@ -12,13 +14,11 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
+import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import com.example.rfidtab.BuildConfig
 import com.example.rfidtab.R
-import com.example.rfidtab.adapter.taskDetail.TaskDetailListener
-import com.example.rfidtab.adapter.taskDetail.TaskDetailOnlineAdapter
-import com.example.rfidtab.adapter.taskDetail.TaskDetailOverAdapter
-import com.example.rfidtab.adapter.taskDetail.TaskDetailSavedAdapter
+import com.example.rfidtab.adapter.taskDetail.*
 import com.example.rfidtab.extension.loadingHide
 import com.example.rfidtab.extension.loadingShow
 import com.example.rfidtab.extension.toast
@@ -26,14 +26,17 @@ import com.example.rfidtab.service.AppPreferences
 import com.example.rfidtab.service.Status
 import com.example.rfidtab.service.db.entity.task.*
 import com.example.rfidtab.service.model.CardModel
+import com.example.rfidtab.service.model.CardModelList
 import com.example.rfidtab.service.model.TaskStatusModel
 import com.example.rfidtab.service.model.enums.TaskStatusEnum
 import com.example.rfidtab.service.model.enums.TaskTypeEnum
 import com.example.rfidtab.service.model.overlist.OverCards
 import com.example.rfidtab.service.model.overlist.TaskOverCards
+import com.example.rfidtab.service.response.task.OverCardsResponse
 import com.example.rfidtab.service.response.task.TaskCardResponse
 import com.example.rfidtab.service.response.task.TaskResponse
 import com.example.rfidtab.ui.task.fragment.TaskAddOverBS
+import com.example.rfidtab.ui.task.fragment.TaskEditOverBS
 import com.example.rfidtab.util.MyUtil
 import com.example.rfidtab.util.scanrfid.RfidScannerListener
 import com.example.rfidtab.util.scanrfid.RfidScannerUtil
@@ -59,7 +62,8 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.random.Random
 
-class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerListener {
+class TaskDetailActivity : AppCompatActivity(), TaskDetailListener,
+    TaskDetailSavedOverAdapter.TaskDetailOverClickListener, RfidScannerListener {
     private lateinit var onlineData: TaskResponse
     private lateinit var savedData: TaskResultEntity
     private var sortedListFromBd = ArrayList<TaskCardListEntity>()
@@ -107,12 +111,17 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
             val sortedListFromNet = ArrayList<TaskCardResponse>()
             sortedListFromNet.addAll(onlineData.cardList.sortedWith(compareBy(TaskCardResponse::sortOrder)))
             task_detail_rv.adapter = TaskDetailOnlineAdapter(sortedListFromNet)
+
+            if (model.taskTypeId == TaskTypeEnum.inventory) {
+                initOnlineOverCards(model.id)
+            }
+
         } else {
             val model = intent.getParcelableExtra<TaskResultEntity>("data")
             savedData = model
 
             if (savedData.taskTypeId == TaskTypeEnum.inventory) {
-                initOverCards()
+                initSavedOverCards()
                 task_detail_add_over.visibility = View.VISIBLE
                 task_detail_add_over.setOnClickListener {
                     addOverCards()
@@ -141,19 +150,6 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
                     task_detail_counter.text = "Подтверждено $confirmed/${it.size}"
                 })
             })
-
- /*           //Первый список
-            CoroutineScope(Dispatchers.IO).launch {
-                sortedListFromBd.addAll(viewModel.findCardsByIdNoLive(savedData.id).sortedWith(compareBy(TaskCardListEntity::sortOrder)))
-                withContext(Dispatchers.Main){
-                    task_detail_rv.adapter = TaskDetailSavedAdapter(
-                        cardClickListener,
-                        savedData.taskTypeId,
-                        sortedListFromBd
-                    )
-                }
-            }*/
-
         }
 
         task_detail_save_btn.setOnClickListener {
@@ -163,13 +159,8 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
             dialogBuilder.setView(view)
             val alertDialog = dialogBuilder.create()
 
-            alertDialog.setCancelable(false)
-
             view.add_positive_btn.setOnClickListener {
-                if (changeTaskStatus(onlineData)) {
-                    alertDialog.dismiss()
-                }
-
+                changeTaskStatus(onlineData)
             }
 
             view.add_negative_btn.setOnClickListener {
@@ -180,7 +171,20 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
 
         }
 
+    }
 
+    private fun initOnlineOverCards(taskId: Int) {
+        viewModel.getOverCards(taskId).observe(this, Observer { result ->
+            val data = result.data
+            when (result.status) {
+                Status.SUCCESS -> {
+                    task_detail_over_rv.adapter = TaskDetailOnlineOverAdapter(data as ArrayList<OverCardsResponse>)
+                }
+                Status.ERROR -> toast("Ошибка")
+                Status.NETWORK -> toast("Ошибка сети")
+            }
+
+        })
     }
 
     private fun sendToCheck() {
@@ -188,6 +192,7 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
         task_detail_send_btn.setOnClickListener {
             loadingShow()
             //Изменение карточек по циклу
+            val arrayList = ArrayList<CardModel>()
             sortedListFromBd.forEach { card ->
                 cardListIndex++
                 val model = CardModel(
@@ -199,20 +204,44 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
                     card.comment,
                     card.commentProblemWithMark
                 )
-                viewModel.changeCard(model)
-                    .observe(this@TaskDetailActivity, Observer { result ->
-                        when (result.status) {
-                            Status.SUCCESS -> {
-                                toast("Успешно!")
-                                loadingHide()
-                            }
-                        }
-                    })
-
+                arrayList.add(model)
                 when (savedData.taskTypeId) {
-                    TaskTypeEnum.inspection, TaskTypeEnum.kitForFix -> sendCardsImages(card.cardId, card.taskId, card.taskTypeId)
+                    TaskTypeEnum.inspection, TaskTypeEnum.kitForFix -> sendCardsImages(
+                        card.cardId,
+                        card.taskId,
+                        card.taskTypeId
+                    )
                 }
             }
+            viewModel.changeCardList(CardModelList(arrayList))
+                .observe(this@TaskDetailActivity, Observer { result ->
+                    when (result.status) {
+                        Status.SUCCESS -> {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                viewModel.deleteTaskById(savedData.id)
+                                viewModel.deleteCardsById(savedData.id)
+                            }
+                            viewModel.taskStatusChange(
+                                TaskStatusModel(
+                                    savedData.id,
+                                    savedData.taskTypeId,
+                                    TaskStatusEnum.savedToLocal
+                                )
+                            ).observe(this, Observer { result ->
+                                val data = result.data
+                                when (result.status) {
+                                    Status.SUCCESS -> {
+                                        toast("$data")
+                                        startActivity(Intent(this, TaskActivity::class.java))
+                                        finish()
+                                        loadingHide()
+                                    }
+                                }
+                            })
+                            loadingHide()
+                        }
+                    }
+                })
             // После цикла измнение статуса
             sendOverCards()
         }
@@ -230,27 +259,6 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
                         when (result.status) {
                             Status.SUCCESS -> {
                                 toast("Фото отправлено!")
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    viewModel.deleteTaskById(savedData.id)
-                                    viewModel.deleteCardsById(savedData.id)
-                                }
-                                viewModel.taskStatusChange(
-                                    TaskStatusModel(
-                                        savedData.id,
-                                        savedData.taskTypeId,
-                                        TaskStatusEnum.savedToLocal
-                                    )
-                                ).observe(this, Observer { result ->
-                                    val data = result.data
-                                    when (result.status) {
-                                        Status.SUCCESS -> {
-                                            toast("$data")
-                                            startActivity(Intent(this, TaskActivity::class.java))
-                                            finish()
-                                            loadingHide()
-                                        }
-                                    }
-                                })
                             }
                             Status.ERROR -> {
                                 toast(msg)
@@ -272,7 +280,7 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
                 CoroutineScope(Dispatchers.IO).launch {
                     viewModel.deleteTaskById(savedData.id)
                     viewModel.deleteCardsById(savedData.id)
-                    viewModel.deleteOverCards(savedData.id)
+                    viewModel.deleteAllOverCards(savedData.id)
                 }
                 viewModel.taskStatusChange(
                     TaskStatusModel(
@@ -297,86 +305,6 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
             }
         })
     }
-
-  /*  private fun sendCardsImagesBase64 (cardId: Int, taskId: Int, taskTypId: Int) {
-        //отправка и закрытие таска если картинки есть
-        viewModel.findImagesById(cardId, taskId).observe(this, Observer {
-            if (it.isNotEmpty()) {
-                loadingShow()
-
-                viewModel.sendImageBase64(it, cardId, taskTypId, taskId)
-                    .observe(this, Observer { result ->
-                        val msg = result.msg
-                        when (result.status) {
-                            Status.SUCCESS -> {
-                                toast("Фото отправлено!")
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    viewModel.deleteTaskById(savedData.id)
-                                    viewModel.deleteCardsById(savedData.id)
-                                }
-                                viewModel.taskStatusChange(
-                                    TaskStatusModel(
-                                        savedData.id,
-                                        savedData.taskTypeId,
-                                        TaskStatusEnum.savedToLocal
-                                    )
-                                ).observe(this, Observer { result ->
-                                    val data = result.data
-                                    when (result.status) {
-                                        Status.SUCCESS -> {
-                                            toast("$data")
-                                            startActivity(Intent(this, TaskActivity::class.java))
-                                            finish()
-                                            loadingHide()
-                                        }
-                                    }
-                                })
-                            }
-                            Status.ERROR -> {
-                                toast(msg)
-                                loadingHide()
-                            }
-                            Status.NETWORK -> {
-                                toast(msg)
-                                loadingHide()
-                            }
-                            else -> {
-                                toast(msg)
-                                loadingHide()
-                            }
-                        }
-
-                    })
-            } else {
-                //закрытие таска если картинок нет
-                CoroutineScope(Dispatchers.IO).launch {
-                    viewModel.deleteTaskById(savedData.id)
-                    viewModel.deleteCardsById(savedData.id)
-                    viewModel.deleteOverCards(savedData.id)
-                }
-                viewModel.taskStatusChange(
-                    TaskStatusModel(
-                        savedData.id,
-                        savedData.taskTypeId,
-                        TaskStatusEnum.savedToLocal
-                    )
-                ).observe(this, Observer { result ->
-                    val data = result.data
-                    when (result.status) {
-                        Status.SUCCESS -> {
-                            toast("$data")
-                            startActivity(Intent(this, TaskActivity::class.java))
-                            finish()
-                            loadingHide()
-                        }
-                        else -> loadingHide()
-                    }
-
-                })
-
-            }
-        })
-    }*/
 
     //Сканирование Rfid метки
     override fun scantBtnClicked(model: TaskCardListEntity) {
@@ -409,6 +337,7 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
             } else {
                 if (view.scan_comment_et.text.toString().isNotEmpty()) {
                     viewModel.updateErrorComment(model.cardId, view.scan_comment_et.text.toString())
+                    viewModel.updateConfirmTaskCard(model.cardId, true)
                     toast("Успешно сохранён!")
                     scanDialog.dismiss()
                 } else {
@@ -442,15 +371,20 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
     }
     override fun cameraBtnClicked(model: TaskCardListEntity) {
         val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        MyUtil().createCardFolder(this)
+        MyUtil().createCardFolder()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE)
+        }
         filePath = File(
-            getExternalFilesDir(Environment.DIRECTORY_DCIM)?.path + "/RFID cards",
+            Environment.getExternalStorageDirectory().path + "/RFID cards",
             "/card ${Calendar.getInstance().time}.jpg"
         )
         cardId = model.cardId
         mTaskId = savedData.id
 
-        val uri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", filePath)
+        val uri =
+            FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", filePath)
         //      val uri = Uri.fromFile(filePath)
 
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
@@ -502,6 +436,10 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
                     isSuccess = true
                     toast("Вы взяли задание на исполнение")
                     saveItemToDb(model)
+                    if (model.taskTypeId == TaskTypeEnum.inventory){
+                        getOverCardsAndSave(onlineData.id)
+                    }
+                    finish()
                 }
                 Status.ERROR -> {
                     Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
@@ -518,6 +456,34 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
         })
         return isSuccess
     }
+
+    private fun getOverCardsAndSave(taskId: Int) {
+        viewModel.getOverCards(taskId).observe(this, Observer { result ->
+            val data = result.data
+            val msg = result.msg
+            when (result.status) {
+                Status.SUCCESS -> {
+                    val overCardsList = ArrayList<OverCardsEntity>()
+                    data?.forEach { it ->
+                        overCardsList.add(OverCardsEntity(it.id, taskId, it.pipeSerialNumber, it.serialNoOfNipple, it.couplingSerialNumber, it.rfidTagNo, it.comment))
+                    }
+                    Log.d("TASKID", "taskid onlineFragment: $overCardsList")
+                    viewModel.insertOverCardsList(overCardsList)
+                }
+                Status.ERROR -> {
+                    Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
+                }
+                Status.NETWORK -> {
+                    Toast.makeText(this, "Проблемы с интернетом", Toast.LENGTH_LONG).show()
+                }
+                else -> {
+                    Toast.makeText(this, "Произошла ошибка", Toast.LENGTH_LONG).show()
+                }
+            }
+        })
+
+    }
+
 
     //сохранить задачи на кнопку сохранить
     private fun saveItemToDb(model: TaskResponse) {
@@ -581,10 +547,12 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
         createScanDialog(currentCardEntity, tag)
     }
 
-    private fun initOverCards() {
-        viewModel.findOverCardById(savedData.id).observe(this, Observer {
-            task_detail_over_rv.adapter = TaskDetailOverAdapter(it as ArrayList<OverCardsEntity>)
+    private fun initSavedOverCards() {
+        viewModel.findAllOverCardById(savedData.id).observe(this, Observer {
+            Log.d("TASKID", "taskid detail: ${savedData.id}, $it")
+            task_detail_over_rv.adapter = TaskDetailSavedOverAdapter(it as ArrayList<OverCardsEntity>, this)
         })
+
     }
 
     private fun addOverCards() {
@@ -597,7 +565,7 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
         if (savedData.taskTypeId == TaskTypeEnum.inventory) {
             val list = ArrayList<OverCards>()
         CoroutineScope(Dispatchers.IO).launch {
-            viewModel.findOverCardByIdNoLive(savedData.id).forEach {
+            viewModel.findAllOverCardByIdNoLive(savedData.id).forEach {
                 list.add(
                     OverCards(
                         it.pipeSerialNumber,
@@ -624,7 +592,7 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
                             when (result.status) {
                                 Status.SUCCESS -> {
                                     CoroutineScope(Dispatchers.IO).launch {
-                                        viewModel.deleteOverCards(savedData.id)
+                                        viewModel.deleteAllOverCards(savedData.id)
                                         viewModel.deleteTaskById(savedData.id)
                                         viewModel.deleteCardsById(savedData.id)
                                     }
@@ -653,7 +621,7 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
                             when (result.status) {
                                 Status.SUCCESS -> {
                                     CoroutineScope(Dispatchers.IO).launch {
-                                        viewModel.deleteOverCards(savedData.id)
+                                        viewModel.deleteAllOverCards(savedData.id)
                                         viewModel.deleteTaskById(savedData.id)
                                         viewModel.deleteCardsById(savedData.id)
                                     }
@@ -675,6 +643,31 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener, RfidScannerL
 
             })
         }
+    }
+
+    override fun overEditClicked(id: Int) {
+        TaskEditOverBS(savedData.id, id).show(supportFragmentManager, "TaskEditOverBS")
+    }
+
+    override fun overDeleteClicked(id: Int) {
+        val dialogBuilder = AlertDialog.Builder(this)
+        val inflater = this.layoutInflater
+        val view = inflater.inflate(R.layout.alert_add, null)
+        dialogBuilder.setView(view)
+        val alertDialog = dialogBuilder.create()
+
+        view.add_tv.text = "Внимание! Вы удаляете излишек"
+        view.add_positive_btn.setOnClickListener {
+            viewModel.deleteOverCard(id)
+            toast("Удалено")
+            alertDialog.dismiss()
+        }
+
+        view.add_negative_btn.setOnClickListener {
+            alertDialog.dismiss()
+        }
+
+        alertDialog.show()
     }
 }
 

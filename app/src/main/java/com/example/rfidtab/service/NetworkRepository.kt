@@ -1,10 +1,10 @@
 package com.example.rfidtab.service
 
-import android.util.Log
 import androidx.lifecycle.liveData
 import com.example.rfidtab.service.db.entity.task.CardImagesEntity
 import com.example.rfidtab.service.model.AuthModel
 import com.example.rfidtab.service.model.CardModel
+import com.example.rfidtab.service.model.CardModelList
 import com.example.rfidtab.service.model.TaskStatusModel
 import com.example.rfidtab.service.model.confirm.ConfirmCardModel
 import com.example.rfidtab.service.model.kit.CreateKitModel
@@ -12,7 +12,6 @@ import com.example.rfidtab.service.model.kit.ImageListBase64Model
 import com.example.rfidtab.service.model.kitorder.KitOrderModel
 import com.example.rfidtab.service.model.overlist.TaskOverCards
 import com.example.rfidtab.service.model.search.SearchModel
-import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -35,13 +34,13 @@ class NetworkRepository {
                 }
             }
         } catch (e: Exception) {
-            emit(Resource.netwrok("Проблеммы с подключение интернета", null))
+            emit(Resource.netwrok("Проблемы с подключением интернета", null))
         }
     }
 
-    fun overCards(model: TaskOverCards) = liveData(Dispatchers.IO) {
+    fun sendOverCards(model: TaskOverCards) = liveData(Dispatchers.IO) {
         try {
-            val response = RetrofitClient.apiService().overCards(model)
+            val response = RetrofitClient.apiService().sendOverCards(model)
 
             val code = response.code()
             when {
@@ -53,7 +52,7 @@ class NetworkRepository {
                 }
             }
         } catch (e: Exception) {
-            emit(Resource.netwrok("Проблеммы с подключение интернета", null))
+            emit(Resource.netwrok("Проблемы с подключением интернета", null))
         }
     }
 
@@ -61,6 +60,24 @@ class NetworkRepository {
 
         try {
             val response = RetrofitClient.apiService().changeCard(model)
+            val code = response.code()
+            when {
+                response.isSuccessful -> {
+                    emit(Resource.success(response.body()))
+                }
+                else -> {
+                    emit(Resource.error("Неверно заполнен!", null))
+                }
+            }
+        } catch (e: Exception) {
+            emit(Resource.netwrok("Проблемы с подключение интернета", null))
+        }
+    }
+
+    fun cardChangeList(model: CardModelList) = liveData(Dispatchers.IO) {
+
+        try {
+            val response = RetrofitClient.apiService().changeCardList(model)
             val code = response.code()
             when {
                 response.isSuccessful -> {
@@ -87,7 +104,7 @@ class NetworkRepository {
                 }
             }
         } catch (e: Exception) {
-            emit(Resource.netwrok("Проблеммы с подключение интернета", null))
+            emit(Resource.netwrok("Проблемы с подключением интернета", null))
         }
     }*/
 
@@ -134,7 +151,7 @@ class NetworkRepository {
                 }
             }
         } catch (e: Exception) {
-            emit(Resource.netwrok("Проблеммы с подключение интернета", null))
+            emit(Resource.netwrok("Проблемы с подключением интернета", null))
         }
     }
 
@@ -151,7 +168,7 @@ class NetworkRepository {
                 }
             }
         } catch (e: Exception) {
-            emit(Resource.netwrok("Проблеммы с подключение интернета", null))
+            emit(Resource.netwrok("Проблемы с подключением интернета", null))
         }
     }
 
@@ -170,7 +187,7 @@ class NetworkRepository {
                 }
             }
         } catch (e: Exception) {
-            emit(Resource.netwrok("Проблеммы с подключение интернета", null))
+            emit(Resource.netwrok("Проблемы с подключением интернета", null))
         }
     }
 
@@ -186,7 +203,7 @@ class NetworkRepository {
                 }
             }
         } catch (e: Exception) {
-            emit(Resource.netwrok("Проблеммы с подключение интернета", null))        }
+            emit(Resource.netwrok("Проблемы с подключением интернета", null))        }
     }
 
     fun confirmCards (model: ConfirmCardModel) = liveData(Dispatchers.IO) {
@@ -201,7 +218,7 @@ class NetworkRepository {
                 }
             }
         } catch (e: Exception) {
-            emit(Resource.netwrok("Проблеммы с подключение интернета", null))
+            emit(Resource.netwrok("Проблемы с подключением интернета", null))
         }
     }
 
@@ -217,7 +234,7 @@ class NetworkRepository {
                 }
             }
         } catch (e: Exception) {
-            emit(Resource.netwrok("Проблеммы с подключение интернета", null))
+            emit(Resource.netwrok("Проблемы с подключением интернета", null))
         }
     }
 
@@ -234,7 +251,23 @@ class NetworkRepository {
                 }
             }
         } catch (e: Exception) {
-            emit(Resource.netwrok("Проблеммы с подключение интернета", null))
+            emit(Resource.netwrok("Проблемы с подключением интернета", null))
+        }
+    }
+
+    fun getOverCards(taskId: Int) = liveData(Dispatchers.IO) {
+        try {
+            val response = RetrofitClient.apiService().getOverCards(taskId)
+            val code = response.code()
+            when {
+                response.isSuccessful -> { emit(Resource.success(response.body()))
+                }
+                else -> {
+                    emit(Resource.error("Ошибка при загрузке данных", null))
+                }
+            }
+        } catch (e: Exception) {
+            emit(Resource.netwrok("Проблемы с подключением интернета", null))
         }
     }
 
@@ -252,7 +285,7 @@ class NetworkRepository {
                 }
             }
         } catch (e: Exception) {
-            emit(Resource.netwrok("Проблеммы с подключение интернета", null))
+            emit(Resource.netwrok("Проблемы с подключением интернета", null))
         }
     }
 
@@ -269,7 +302,7 @@ class NetworkRepository {
                 }
             }
         } catch (e: Exception) {
-            emit(Resource.netwrok("Проблеммы с подключение интернета", null))
+            emit(Resource.netwrok("Проблемы с подключением интернета", null))
         }
     }
 }

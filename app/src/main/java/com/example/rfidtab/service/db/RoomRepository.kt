@@ -30,6 +30,12 @@ class RoomRepository(private val dao: RoomDao) {
         dao.insertOverCard(entity)
     }
 
+    fun insertOverCardsList(list: List<OverCardsEntity>) {
+        CoroutineScope(Dispatchers.IO).launch {
+            dao.insertOverCardsList(list)
+        }
+    }
+
     fun insertKitComment(entity: KitCommentEntity) {
         dao.insertKitComment(entity)
     }
@@ -43,9 +49,7 @@ class RoomRepository(private val dao: RoomDao) {
     }
 
     fun insertKitItem(entity: List<KitOrderKitEntity>) {
-
         dao.insertKitItem(entity)
-
     }
 
     fun insertKitCads(list: List<KitOrderCardEntity>) {
@@ -100,12 +104,20 @@ class RoomRepository(private val dao: RoomDao) {
         return dao.findImagesById(cardId, taskId)
     }
 
-    fun findOverCardById(id: Int): LiveData<List<OverCardsEntity>> {
+    fun findAllOverCardById(id: Int): LiveData<List<OverCardsEntity>> {
+        return dao.findAllOverCardById(id)
+    }
+
+   suspend fun findAllOverCardByIdNO(id: Int): List<OverCardsEntity> {
+        return dao.findAllOverCardByIdNO(id)
+    }
+
+    fun findOverCardById(id: Int): LiveData<OverCardsEntity> {
         return dao.findOverCardById(id)
     }
 
-    suspend fun findOverCardByIdNoLive(taskId: Int): List<OverCardsEntity> {
-        return dao.findOverCardByIdNoLIve(taskId)
+    suspend fun findAllOverCardByIdNoLive(taskId: Int): List<OverCardsEntity> {
+        return dao.findAllOverCardByIdNoLIve(taskId)
     }
 
     fun findTasksByLogin(userLogin: String): LiveData<List<TaskResultEntity>> {
@@ -139,8 +151,14 @@ class RoomRepository(private val dao: RoomDao) {
         }
     }
 
-    fun deleteOverCards(taskId: Int) {
-            return dao.deleteOverCards(taskId)
+    fun deleteAllOverCards(taskId: Int) {
+        return dao.deleteAllOverCards(taskId)
+    }
+
+    fun deleteOverCard(taskId: Int) {
+        CoroutineScope(Dispatchers.IO).launch {
+            return@launch dao.deleteOverCard(taskId)
+        }
     }
 
     fun deleteKitTaskById(id: Int) {
@@ -220,7 +238,6 @@ class RoomRepository(private val dao: RoomDao) {
     fun updateConfirmTaskCard(cardId: Int, isConfirmed: Boolean) {
         CoroutineScope(Dispatchers.IO).launch {
             return@launch dao.updateConfirmTaskCard(cardId, isConfirmed)
-
         }
     }
 

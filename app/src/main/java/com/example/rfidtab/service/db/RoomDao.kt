@@ -31,6 +31,9 @@ interface RoomDao {
     fun insertOverCard(entity: OverCardsEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertOverCardsList(list : List<OverCardsEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertKitComment(entity: KitCommentEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -88,7 +91,7 @@ interface RoomDao {
     fun findKitItem(userLogin: String): LiveData<List<KitItemEntity>>
 
     @Query("SELECT * FROM KitItemEntity WHERE KitItemEntity.userLogin=:userLogin")
-    suspend fun findKitItemNoLive (userLogin: String): List<KitItemEntity>
+    suspend fun findKitItemNoLive(userLogin: String): List<KitItemEntity>
 
     @Query("SELECT * FROM KitRfidEntity WHERE KitRfidEntity.kitId=:kitId")
     fun findKitRfid(kitId: Int): LiveData<List<KitRfidEntity>>
@@ -97,10 +100,16 @@ interface RoomDao {
     fun findImagesById(cardId: Int, taskId: Int): LiveData<List<CardImagesEntity>>
 
     @Query("SELECT * FROM OverCardsEntity WHERE OverCardsEntity.taskId=:id")
-    fun findOverCardById(id: Int): LiveData<List<OverCardsEntity>>
+    fun findAllOverCardById(id: Int): LiveData<List<OverCardsEntity>>
 
     @Query("SELECT * FROM OverCardsEntity WHERE OverCardsEntity.taskId=:id")
-   suspend fun findOverCardByIdNoLIve (id: Int): List<OverCardsEntity>
+    suspend fun findAllOverCardByIdNO(id: Int): List<OverCardsEntity>
+
+    @Query("SELECT * FROM OverCardsEntity WHERE OverCardsEntity.id=:id")
+    fun findOverCardById(id: Int): LiveData<OverCardsEntity>
+
+    @Query("SELECT * FROM OverCardsEntity WHERE OverCardsEntity.taskId=:id")
+    suspend fun findAllOverCardByIdNoLIve(id: Int): List<OverCardsEntity>
 
     @Query("SELECT * FROM TaskCardListEntity WHERE TaskCardListEntity.taskId=:taskId")
     fun findCardsById(taskId: Int): LiveData<List<TaskCardListEntity>>
@@ -115,7 +124,10 @@ interface RoomDao {
     fun deleteCardImageById(cardId: Int)
 
     @Query("DELETE FROM OverCardsEntity WHERE OverCardsEntity.taskId=:taskId")
-    fun deleteOverCards(taskId: Int)
+    fun deleteAllOverCards(taskId: Int)
+
+    @Query("DELETE FROM OverCardsEntity WHERE OverCardsEntity.id=:overCardId")
+    fun deleteOverCard(overCardId: Int)
 
     @Query("DELETE FROM KitOrderEntity WHERE KitOrderEntity.id=:id")
     fun deleteKitTaskById(id: Int)

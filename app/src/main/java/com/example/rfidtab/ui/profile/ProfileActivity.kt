@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.pm.PackageInfoCompat
 import androidx.lifecycle.Observer
 import com.example.rfidtab.R
 import com.example.rfidtab.extension.toast
@@ -26,6 +27,7 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun initViews() {
+        profile_app_version.text = "${packageManager.getPackageInfo(packageName, 0).versionName}v 18.12.2020"
         profile_exit_btn.setOnClickListener {
             val builder = AlertDialog.Builder(this)
             builder.setTitle("Вы хотите выйти?")

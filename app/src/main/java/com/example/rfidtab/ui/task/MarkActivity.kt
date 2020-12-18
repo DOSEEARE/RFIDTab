@@ -2,6 +2,7 @@ package com.example.rfidtab.ui.task
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
@@ -11,18 +12,17 @@ import androidx.lifecycle.Observer
 import com.example.rfidtab.R
 import com.example.rfidtab.adapter.taskDetail.TaskDetailListener
 import com.example.rfidtab.adapter.taskDetail.TaskDetailOnlineAdapter
-import com.example.rfidtab.adapter.taskDetail.TaskDetailOverAdapter
 import com.example.rfidtab.adapter.taskDetail.TaskMarkSavedAdapter
 import com.example.rfidtab.extension.loadingHide
 import com.example.rfidtab.extension.loadingShow
 import com.example.rfidtab.extension.toast
 import com.example.rfidtab.service.AppPreferences
 import com.example.rfidtab.service.Status
-import com.example.rfidtab.service.db.entity.task.OverCardsEntity
 import com.example.rfidtab.service.db.entity.task.TaskCardListEntity
 import com.example.rfidtab.service.db.entity.task.TaskResultEntity
 import com.example.rfidtab.service.db.entity.task.TaskWithCards
 import com.example.rfidtab.service.model.CardModel
+import com.example.rfidtab.service.model.CardModelList
 import com.example.rfidtab.service.model.TaskStatusModel
 import com.example.rfidtab.service.model.enums.TaskStatusEnum
 import com.example.rfidtab.service.model.enums.TaskTypeEnum
@@ -41,7 +41,6 @@ import kotlinx.android.synthetic.main.activity_task_detail.task_detail_status
 import kotlinx.android.synthetic.main.activity_task_detail.task_detail_type
 import kotlinx.android.synthetic.main.activity_task_mark_inventory.*
 import kotlinx.android.synthetic.main.activity_task_mark_inventory.task_detail_add_over
-import kotlinx.android.synthetic.main.activity_task_mark_inventory.task_detail_over_rv
 import kotlinx.android.synthetic.main.alert_add.view.*
 import kotlinx.android.synthetic.main.alert_add_comment.view.*
 import kotlinx.android.synthetic.main.alert_scan.view.*
@@ -53,6 +52,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.random.Random
 
 class MarkActivity : AppCompatActivity(), TaskDetailListener, RfidScannerListener {
+    val TAG = "MarkActivity"
     private lateinit var onlineData: TaskResponse
     private lateinit var savedData: TaskResultEntity
     private var cardList = ArrayList<TaskCardListEntity>()
@@ -98,7 +98,7 @@ class MarkActivity : AppCompatActivity(), TaskDetailListener, RfidScannerListene
 
             //добавить излишное в inventory
             if (savedData.taskTypeId == TaskTypeEnum.inventory) {
-                initOverCards()
+               // initOverCards()
                 task_detail_add_over.visibility = View.VISIBLE
                 task_detail_add_over.setOnClickListener {
                     addOverCards()
@@ -147,14 +147,15 @@ class MarkActivity : AppCompatActivity(), TaskDetailListener, RfidScannerListene
 
     }
 
-    private fun initOverCards() {
-        viewModel.findOverCardById(savedData.id).observe(this, Observer {
+/*    private fun initOverCards() {
+        viewModel.findAllOverCardById(savedData.id).observe(this, Observer {
             task_detail_over_rv.adapter = TaskDetailOverAdapter(it as ArrayList<OverCardsEntity>)
         })
-    }
+    }*/
 
     private fun sendToCheck() {
         task_detail_send_btn.setOnClickListener {
+            val requestBody = ArrayList<CardModel>()
             when (savedData.taskTypeId) {
                 TaskTypeEnum.marking, TaskTypeEnum.inventory -> {
                     loadingShow()
@@ -165,52 +166,59 @@ class MarkActivity : AppCompatActivity(), TaskDetailListener, RfidScannerListene
                             taskId = savedData.id,
                             taskTypeId = it.taskTypeId,
                             rfidTagNo = it.rfidTagNo,
-                            accounting = 0,
+                            accounting = MyUtil().accounting(it.comment.toString()),
                             comment = it.comment,
                             commentProblemWithMark = it.commentProblemWithMark
                         )
-                        viewModel.changeCard(model)
-                            .observe(this@MarkActivity, Observer { result ->
-                                when (result.status) {
-                                    Status.SUCCESS -> {
-                                        toast("Успешно!")
-                                    }
-                                    Status.ERROR -> {
-                                        toast("Ошибка!")
-                                    }
-                                }
-                            })
-
+                        requestBody.add(model)
                     }
-                    // После цикла измнение статуса
-                    viewModel.taskStatusChange(
-                        TaskStatusModel(
-                            savedData.id,
-                            savedData.taskTypeId,
-                            TaskStatusEnum.savedToLocal
-                        )
-                    ).observe(this, Observer { result ->
-                        val data = result.data
-                        val msg = result.msg
-                        when (result.status) {
-                            Status.SUCCESS -> {
-                                toast("$data")
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    viewModel.deleteTaskById(savedData.id)
-                                    viewModel.deleteCardsById(savedData.id)
+                    viewModel.changeCardList(CardModelList(requestBody))
+                        .observe(this@MarkActivity, Observer { result ->
+                            when (result.status) {
+                                Status.SUCCESS -> {
+                                    toast("Успешно!")
+                                    Log.d(TAG, "changeCardList success")
+                                    viewModel.taskStatusChange(
+                                        TaskStatusModel(
+                                            savedData.id,
+                                            savedData.taskTypeId,
+                                            TaskStatusEnum.savedToLocal
+                                        )
+                                    ).observe(this, Observer { result ->
+                                        val data = result.data
+                                        val msg = result.msg
+                                        when (result.status) {
+                                            Status.SUCCESS -> {
+                                                toast("$data")
+                                                Log.d(TAG, "changeCardList success - > change status success")
+                                                CoroutineScope(Dispatchers.IO).launch {
+                                                    viewModel.deleteTaskById(savedData.id)
+                                                    viewModel.deleteCardsById(savedData.id)
+                                                    loadingHide()
+                                                }
+                                            }
+                                            Status.ERROR -> {
+                                                loadingHide()
+                                                Log.d(TAG, "changeCardList success - > change status error")
+                                                toast("$data")
+                                            }
+                                            Status.NETWORK -> {
+                                                loadingHide()
+                                                Log.d(TAG, "changeCardList success - > change status network")
+                                                toast("$data")
+                                            }
+                                        }
+                                    })
+                                }
+                                Status.ERROR -> {
+                                    loadingHide()
+                                    Log.d(TAG, "changeCardList error")
+                                    toast("Ошибка!")
                                 }
                             }
-                            Status.ERROR -> {
-                                toast("$data")
-                            }
-                            Status.NETWORK -> {
-                                toast("$data")
-                            }
-                            else -> {
-                                toast("$data")
-                            }
-                        }
-                    })
+                        })
+
+                    // После цикла измнение статуса
                     loadingHide()
                 }
             }
@@ -387,8 +395,7 @@ class MarkActivity : AppCompatActivity(), TaskDetailListener, RfidScannerListene
     }
 
     private fun addOverCards() {
-        val fragment =
-            TaskAddOverBS(savedData.id)
+        val fragment = TaskAddOverBS(savedData.id)
         fragment.show(supportFragmentManager, "AddOverCard")
     }
 

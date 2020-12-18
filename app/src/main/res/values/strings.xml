@@ -29,4 +29,5 @@
     <string name="add_about_card">Добавление данных о карте</string>
     <string name="app_version">0.0.4v 02.12.20</string>
     <string name="app_version_date">16.11.2020</string>
+    <string name="edit_over_card">Изменить данные излишка</string>
 </resources>

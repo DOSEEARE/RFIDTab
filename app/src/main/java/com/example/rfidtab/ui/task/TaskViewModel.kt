@@ -6,10 +6,12 @@ import com.example.rfidtab.base.BaseViewModel
 import com.example.rfidtab.service.Resource
 import com.example.rfidtab.service.db.entity.task.*
 import com.example.rfidtab.service.model.CardModel
+import com.example.rfidtab.service.model.CardModelList
 import com.example.rfidtab.service.model.TaskStatusModel
 import com.example.rfidtab.service.model.confirm.ConfirmCardModel
 import com.example.rfidtab.service.model.kit.ImageListBase64Model
 import com.example.rfidtab.service.model.overlist.TaskOverCards
+import com.example.rfidtab.service.response.task.OverCardsResponse
 import com.example.rfidtab.service.response.task.TaskCardResponse
 import com.example.rfidtab.service.response.task.TaskResponse
 
@@ -23,6 +25,10 @@ class TaskViewModel(application: Application) : BaseViewModel(application) {
         return network.cardChange(model)
     }
 
+    fun changeCardList(model: CardModelList): LiveData<Resource<String>> {
+        return network.cardChangeList(model)
+    }
+
     fun sendImage(list : List<CardImagesEntity>, cardId: Int, taskTypeId : Int, taskId : Int): LiveData<Resource<String>> {
         return network.sendImage(list, cardId, taskTypeId, taskId)
     }
@@ -32,11 +38,15 @@ class TaskViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun sendOverCards(model: TaskOverCards): LiveData<Resource<String>> {
-        return network.overCards(model)
+        return network.sendOverCards(model)
     }
 
     fun taskStatusChange(model: TaskStatusModel): LiveData<Resource<String>> {
         return network.taskStatusChange(model)
+    }
+
+    fun getOverCards(taskId: Int): LiveData<Resource<List<OverCardsResponse>>> {
+        return network.getOverCards(taskId)
     }
 
     fun insertTaskToDb(item: TaskWithCards) {
@@ -51,6 +61,10 @@ class TaskViewModel(application: Application) : BaseViewModel(application) {
         return db.insertOverCard(entity)
     }
 
+    fun insertOverCardsList(list: List<OverCardsEntity>) {
+        return db.insertOverCardsList(list)
+    }
+
     fun findTasksByLogin(userLogin: String): LiveData<List<TaskResultEntity>> {
         return db.findTasksByLogin(userLogin)
     }
@@ -59,12 +73,19 @@ class TaskViewModel(application: Application) : BaseViewModel(application) {
         return db.findImagesById(cardId, taskId)
     }
 
-    fun findOverCardById(id: Int): LiveData<List<OverCardsEntity>> {
-        return db.findOverCardById(id)
+    fun findAllOverCardById(id: Int): LiveData<List<OverCardsEntity>> {
+        return db.findAllOverCardById(id)
     }
 
-    suspend fun findOverCardByIdNoLive(id: Int): List<OverCardsEntity> {
-        return db.findOverCardByIdNoLive(id)
+    suspend fun findAllOverCardByIdNO(id: Int): List<OverCardsEntity> {
+        return db.findAllOverCardByIdNO(id)
+    }
+
+    fun findOverCardById (id : Int) : LiveData<OverCardsEntity>{
+        return db.findOverCardById(id)
+    }
+    suspend fun findAllOverCardByIdNoLive(id: Int): List<OverCardsEntity> {
+        return db.findAllOverCardByIdNoLive(id)
     }
 
     fun deleteTaskById(id: Int) {
@@ -79,10 +100,13 @@ class TaskViewModel(application: Application) : BaseViewModel(application) {
         return db.deleteCardImageById(cardId)
     }
 
-    fun deleteOverCards(taskId: Int) {
-        return db.deleteOverCards(taskId)
+    fun deleteAllOverCards(taskId: Int) {
+        return db.deleteAllOverCards(taskId)
     }
 
+    fun deleteOverCard (id : Int){
+        return db.deleteOverCard(id)
+    }
     fun findCardsById(id: Int): LiveData<List<TaskCardListEntity>> {
         return db.findCardsById(id)
     }

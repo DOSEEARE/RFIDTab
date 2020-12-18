@@ -2,6 +2,7 @@ package com.example.rfidtab.ui.task.fragment
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,12 +20,14 @@ import com.example.rfidtab.service.db.entity.kitorder.KitOrderCardEntity
 import com.example.rfidtab.service.db.entity.kitorder.KitOrderEntity
 import com.example.rfidtab.service.db.entity.kitorder.KitOrderKitEntity
 import com.example.rfidtab.service.db.entity.kitorder.KitOrderSpecificationEntity
+import com.example.rfidtab.service.db.entity.task.OverCardsEntity
 import com.example.rfidtab.service.db.entity.task.TaskCardListEntity
 import com.example.rfidtab.service.db.entity.task.TaskResultEntity
 import com.example.rfidtab.service.db.entity.task.TaskWithCards
 import com.example.rfidtab.service.model.TaskStatusModel
 import com.example.rfidtab.service.model.enums.TaskStatusEnum
 import com.example.rfidtab.service.model.enums.TaskTypeEnum
+import com.example.rfidtab.service.response.task.OverCardsResponse
 import com.example.rfidtab.service.response.task.TaskResponse
 import com.example.rfidtab.ui.task.MarkActivity
 import com.example.rfidtab.ui.task.TaskDetailActivity
@@ -95,7 +98,7 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                 orderIntent.putExtra("isOnline", true)
                 startActivity(orderIntent)
             }
-            //Переход на Маркировка и инвенторизация
+            //Переход на Маркировка
             TaskTypeEnum.marking -> {
                 val intent = Intent(activity, MarkActivity::class.java)
                 intent.putExtra("data", model)
@@ -122,7 +125,7 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
         view.add_positive_btn.setOnClickListener {
             if (model.statusId == TaskStatusEnum.sentToExecutor) {
                 if (model.taskTypeId != TaskTypeEnum.kitForOder) {
-                    changeTaskStatus(model)
+                    saveTask(model)
                     alertDialog.dismiss()
                 } else {
                     saveKitOrder(model)
@@ -143,7 +146,7 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
 
     }
 
-    private fun changeTaskStatus(model: TaskResponse) {
+    private fun saveTask(model: TaskResponse) {
         viewModel.taskStatusChange(
             TaskStatusModel(
                 model.id,
@@ -157,6 +160,9 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                 Status.SUCCESS -> {
                     toast("Вы взяли задание на исполнение")
                     saveItemToDb(model)
+                    if (model.taskTypeId == TaskTypeEnum.inventory){
+                        getOverCardsAndSave(model.id)
+                    }
                 }
                 Status.ERROR -> {
                     Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
@@ -173,7 +179,34 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
         })
     }
 
-    private fun saveKitOrder(model : TaskResponse) {
+    private fun getOverCardsAndSave(taskId: Int) {
+        viewModel.getOverCards(taskId).observe(viewLifecycleOwner, Observer { result ->
+            val data = result.data
+            val msg = result.msg
+            when (result.status) {
+                Status.SUCCESS -> {
+                    val overCardsList = ArrayList<OverCardsEntity>()
+                    data?.forEach { it ->
+                        overCardsList.add(OverCardsEntity(it.id, taskId, it.pipeSerialNumber, it.serialNoOfNipple, it.couplingSerialNumber, it.rfidTagNo, it.comment))
+                    }
+                    Log.d("TASKID", "taskid onlineFragment: $overCardsList")
+                    viewModel.insertOverCardsList(overCardsList)
+                }
+                Status.ERROR -> {
+                    Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
+                }
+                Status.NETWORK -> {
+                    Toast.makeText(context, "Проблемы с интернетом", Toast.LENGTH_LONG).show()
+                }
+                else -> {
+                    Toast.makeText(context, "Произошла ошибка", Toast.LENGTH_LONG).show()
+                }
+            }
+        })
+
+    }
+
+    private fun saveKitOrder(model: TaskResponse) {
         kitOrderViewModel.kitOrder(model.id).observe(viewLifecycleOwner, Observer { result ->
             val data = result.data
             val msg = result.msg
@@ -270,7 +303,7 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                         kitOrderViewModel.insertKitItem(listKit)
                         kitOrderViewModel.insertKitCards(listCard)
                     }
-                    changeTaskStatus(model)
+                    saveTask(model)
                 }
                 Status.ERROR -> {
                     Toast.makeText(context, msg, Toast.LENGTH_LONG).show()

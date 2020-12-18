@@ -29,8 +29,7 @@ class CardDetailAdapter(
         holder.itemView.card_item_image.layoutParams.width = size.x / 3
 
         val bitmap = BitmapFactory.decodeFile(item.imagePath)
-        val bitmapResized =
-            Bitmap.createScaledBitmap(bitmap, bitmap.width / 10, bitmap.height / 10, true)
+        val bitmapResized = Bitmap.createScaledBitmap(bitmap, bitmap.width / 10, bitmap.height / 10, true)
 
         Glide
             .with(holder.itemView)
