@@ -1,6 +1,7 @@
 package com.example.rfidtab.ui.task.kitorder
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,11 +11,12 @@ import com.example.rfidtab.service.db.entity.kitorder.KitOrderAddCardEntity
 import com.example.rfidtab.util.scanrfid.RfidScannerListener
 import com.example.rfidtab.util.scanrfid.RfidScannerUtil
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_kit_order_add_card.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.random.Random
 
-class KitOrderAddCardBS(val kitId: Int) : BottomSheetDialogFragment(), RfidScannerListener {
+class KitOrderAddCardBS(val kitId: Int, val taskId : Int) : BottomSheetDialogFragment(), RfidScannerListener {
     private val kitOrderViewModel: KitOrderViewModel by viewModel()
 
     override fun onCreateView(
@@ -77,7 +79,7 @@ class KitOrderAddCardBS(val kitId: Int) : BottomSheetDialogFragment(), RfidScann
             val comment = add_comment_in.text.toString()
 
             val model = KitOrderAddCardEntity(
-                Random.nextInt(0, 10000),
+                Random.nextInt(),
                 kitId,
                 pipe,
                 nipple,
@@ -88,6 +90,7 @@ class KitOrderAddCardBS(val kitId: Int) : BottomSheetDialogFragment(), RfidScann
             )
 
             kitOrderViewModel.insertKitOrderAddCard(model)
+            Log.d("AddCardsCheck", "Добавленные карточки добавлено ${Gson().toJson(model)}: ")
             toast("Сохранён")
             dismiss()
         }

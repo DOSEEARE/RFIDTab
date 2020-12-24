@@ -19,7 +19,7 @@ class KitOrderSavedAdapter(
         holder.itemView.search_item_title.text = "${holder.adapterPosition + 1}) ${item.title}"
 
         holder.itemView.setOnClickListener {
-            listener.onSavedKitClicked(item)
+            listener.onSavedKitClicked(item, holder.adapterPosition)
         }
     }
 

@@ -16,6 +16,18 @@ class KitOrderViewModel(application: Application) : BaseViewModel(application) {
         return network.kitOrder(id)
     }
 
+    fun deleteAllKitOrderCards(taskId: Int) {
+        return db.deleteAllOverCards(taskId)
+    }
+
+    fun deleteKitOrderAddCard(id: Int) {
+        return db.deleteKitOrderAddCard(id)
+    }
+
+    fun deleteAllKitOrderAddCards(kitId: Int) {
+        return db.deleteAllKitOrderAddCards(kitId)
+    }
+
     fun insertKitOrderSpec(entity: KitOrderSpecificationEntity) {
         db.insertKitOrderSpec(entity)
     }
@@ -87,6 +99,9 @@ class KitOrderViewModel(application: Application) : BaseViewModel(application) {
         db.insertKitOrderAddCard(entity)
     }
 
+    fun insertKitOrderAddCardList(list : List<KitOrderAddCardEntity>){
+        db.insertKitOrderAddCardList(list)
+    }
     fun findAddCardByKitId(kitId: Int): LiveData<List<KitOrderAddCardEntity>> {
         return db.findAddCardByKitId(kitId)
     }

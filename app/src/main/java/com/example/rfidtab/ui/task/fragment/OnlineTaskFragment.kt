@@ -15,11 +15,9 @@ import com.example.rfidtab.adapter.task.TaskOnlineAdapter
 import com.example.rfidtab.adapter.task.TaskOnlineListener
 import com.example.rfidtab.extension.toast
 import com.example.rfidtab.service.AppPreferences
+import com.example.rfidtab.service.RetrofitClient
 import com.example.rfidtab.service.Status
-import com.example.rfidtab.service.db.entity.kitorder.KitOrderCardEntity
-import com.example.rfidtab.service.db.entity.kitorder.KitOrderEntity
-import com.example.rfidtab.service.db.entity.kitorder.KitOrderKitEntity
-import com.example.rfidtab.service.db.entity.kitorder.KitOrderSpecificationEntity
+import com.example.rfidtab.service.db.entity.kitorder.*
 import com.example.rfidtab.service.db.entity.task.OverCardsEntity
 import com.example.rfidtab.service.db.entity.task.TaskCardListEntity
 import com.example.rfidtab.service.db.entity.task.TaskResultEntity
@@ -34,6 +32,7 @@ import com.example.rfidtab.ui.task.TaskDetailActivity
 import com.example.rfidtab.ui.task.TaskViewModel
 import com.example.rfidtab.ui.task.kitorder.KitOrderActivity
 import com.example.rfidtab.ui.task.kitorder.KitOrderViewModel
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.alert_add.view.*
 import kotlinx.android.synthetic.main.fragment_online_tasks.*
 import kotlinx.coroutines.CoroutineScope
@@ -41,6 +40,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import kotlin.random.Random
 
 class OnlineTaskFragment : Fragment(), TaskOnlineListener {
@@ -80,9 +82,6 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                 Status.NETWORK -> {
                     Toast.makeText(context, "Проблемы с интернетом", Toast.LENGTH_LONG)
                         .show()
-                }
-                else -> {
-                    Toast.makeText(context, "Произошла ошибка", Toast.LENGTH_LONG).show()
                 }
             }
 
@@ -170,9 +169,6 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                 Status.NETWORK -> {
                     Toast.makeText(context, "Проблемы с интернетом", Toast.LENGTH_LONG).show()
                 }
-                else -> {
-                    Toast.makeText(context, "Произошла ошибка", Toast.LENGTH_LONG).show()
-                }
             }
 
 
@@ -180,32 +176,61 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
     }
 
     private fun getOverCardsAndSave(taskId: Int) {
-        viewModel.getOverCards(taskId).observe(viewLifecycleOwner, Observer { result ->
-            val data = result.data
-            val msg = result.msg
-            when (result.status) {
-                Status.SUCCESS -> {
-                    val overCardsList = ArrayList<OverCardsEntity>()
-                    data?.forEach { it ->
-                        overCardsList.add(OverCardsEntity(it.id, taskId, it.pipeSerialNumber, it.serialNoOfNipple, it.couplingSerialNumber, it.rfidTagNo, it.comment))
+        /*       viewModel.getOverCards(taskId).observe(viewLifecycleOwner, Observer { result ->
+                   val data = result.data
+                   val msg = result.msg
+                   when (result.status) {
+                       Status.SUCCESS -> {
+                           val overCardsList = ArrayList<OverCardsEntity>()
+                           data?.forEach { it ->
+                               overCardsList.add(OverCardsEntity(it.id, taskId, it.pipeSerialNumber, it.serialNoOfNipple, it.couplingSerialNumber, it.rfidTagNo, it.comment))
+                           }
+                           Log.d("TASKID", "taskid onlineFragment: $overCardsList")
+                           viewModel.insertOverCardsList(overCardsList)
+                       }
+                       Status.ERROR -> {
+                           Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
+                       }
+                       Status.NETWORK -> {
+                           Toast.makeText(context, "Проблемы с интернетом", Toast.LENGTH_LONG).show()
+                       }
+                   }
+               })*/
+
+        RetrofitClient.apiService().getOverCardsNoLive(taskId)
+            .enqueue(object : Callback<List<OverCardsResponse>> {
+                override fun onFailure(call: Call<List<OverCardsResponse>>, t: Throwable) {
+                    println(t)
+                }
+
+                override fun onResponse(
+                    call: Call<List<OverCardsResponse>>,
+                    response: Response<List<OverCardsResponse>>
+                ) {
+                    println(response)
+                    if (response.isSuccessful) {
+                        if (!response.body().isNullOrEmpty()) {
+                            val overCardsList = ArrayList<OverCardsEntity>()
+                            response.body()?.forEach { it ->
+                                overCardsList.add(
+                                    OverCardsEntity(
+                                        it.id,
+                                        taskId,
+                                        it.pipeSerialNumber,
+                                        it.serialNoOfNipple,
+                                        it.couplingSerialNumber,
+                                        it.rfidTagNo,
+                                        it.comment
+                                    )
+                                )
+                            }
+                            Log.d("TASKID", "taskid onlineFragment: $overCardsList")
+                            viewModel.insertOverCardsList(overCardsList)
+                        }
                     }
-                    Log.d("TASKID", "taskid onlineFragment: $overCardsList")
-                    viewModel.insertOverCardsList(overCardsList)
                 }
-                Status.ERROR -> {
-                    Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
-                }
-                Status.NETWORK -> {
-                    Toast.makeText(context, "Проблемы с интернетом", Toast.LENGTH_LONG).show()
-                }
-                else -> {
-                    Toast.makeText(context, "Произошла ошибка", Toast.LENGTH_LONG).show()
-                }
-            }
-        })
-
+            })
     }
-
     private fun saveKitOrder(model: TaskResponse) {
         kitOrderViewModel.kitOrder(model.id).observe(viewLifecycleOwner, Observer { result ->
             val data = result.data
@@ -225,12 +250,13 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                             data.createdByFio,
                             data.executorFio,
                             data.kitCount,
+                            data.withKit,
                             allCardCount(data.kitType, data.kitCardCount, data.cardCount),
                             data.kitCardCount
                         )
-
                         val listCard = ArrayList<KitOrderCardEntity>()
                         val listKit = ArrayList<KitOrderKitEntity>()
+                        val addedCardList = ArrayList<KitOrderAddCardEntity>()
 
                         data.kits.forEachIndexed { indexKit, kitOrderKit ->
                             listKit.add(
@@ -241,10 +267,41 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                                 )
                             )
 
+                            kitOrderKit.cardListConfirmed.forEach {
+                                addedCardList.add(
+                                    KitOrderAddCardEntity(
+                                        id = it.id,
+                                        serialNoOfNipple = it.serialNoOfNipple,
+                                        pipeSerialNumber = it.pipeSerialNumber,
+                                        couplingSerialNumber = it.couplingSerialNumber,
+                                        rfidTagNo = it.rfidTagNo,
+                                        comment = it.comment,
+                                        accounting = initAccounting(it.accounting),
+                                        kitId = kitOrderKit.id
+                                    )
+                                )
+                            }
+
+                            kitOrderKit.cardListNotConfirmed.forEach {
+                                addedCardList.add(
+                                    KitOrderAddCardEntity(
+                                        id = it.id,
+                                        serialNoOfNipple = it.serialNoOfNipple,
+                                        pipeSerialNumber = it.pipeSerialNumber,
+                                        couplingSerialNumber = it.couplingSerialNumber,
+                                        rfidTagNo = it.rfidTagNo,
+                                        comment = it.comment,
+                                        accounting = initAccounting(it.accounting),
+                                        kitId = kitOrderKit.id
+                                    )
+                                )
+                            }
+
                             kitOrderKit.cards.forEachIndexed { indexCard, kitOrderCard ->
                                 listCard.add(
                                     KitOrderCardEntity(
                                         kitOrderCard.id,
+                                        model.id,
                                         kitOrderKit.id,
                                         kitOrderCard.rfidTagNo,
                                         kitOrderCard.pipeSerialNumber,
@@ -256,7 +313,6 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                                         false
                                     )
                                 )
-
                             }
                             if (data.kits[indexKit].cards.isEmpty()) {
                                 val spec = data.kits[indexKit].specification
@@ -299,6 +355,8 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                                 }
                             }
                         }
+                        Log.d("DDASDSA", "saveKitOrder: ${Gson().toJson(data)}")
+                        kitOrderViewModel.insertKitOrderAddCardList(addedCardList)
                         kitOrderViewModel.insertKitOrder(entity)
                         kitOrderViewModel.insertKitItem(listKit)
                         kitOrderViewModel.insertKitCards(listCard)
@@ -310,9 +368,6 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                 }
                 Status.NETWORK -> {
                     Toast.makeText(context, "Проблемы с интернетом", Toast.LENGTH_LONG).show()
-                }
-                else -> {
-                    Toast.makeText(context, "Произошла ошибка", Toast.LENGTH_LONG).show()
                 }
             }
 
@@ -383,8 +438,16 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                 result += kitCardCount!!.split(",")[index].toInt()
             }
             result.toString()
-        }else{
+        } else {
             cardCount!!
+        }
+    }
+
+    private fun initAccounting(boolean: Boolean): Int {
+        return if (boolean) {
+            1
+        } else {
+            0
         }
     }
 }

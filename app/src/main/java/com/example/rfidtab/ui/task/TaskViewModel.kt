@@ -49,6 +49,12 @@ class TaskViewModel(application: Application) : BaseViewModel(application) {
         return network.getOverCards(taskId)
     }
 
+/*
+    fun getOverCardsNoLive (taskId: Int) : List<OverCardsResponse>?{
+        return network.getOverCardsNoLive(taskId)
+    }
+*/
+
     fun insertTaskToDb(item: TaskWithCards) {
         db.insertTaskToDB(item)
     }
@@ -101,6 +107,10 @@ class TaskViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun deleteAllOverCards(taskId: Int) {
+        return db.deleteAllOverCards(taskId)
+    }
+
+    fun deleteAllKitOrderCards(taskId: Int) {
         return db.deleteAllOverCards(taskId)
     }
 

@@ -36,6 +36,9 @@ class RoomRepository(private val dao: RoomDao) {
         }
     }
 
+
+
+
     fun insertKitComment(entity: KitCommentEntity) {
         dao.insertKitComment(entity)
     }
@@ -64,6 +67,10 @@ class RoomRepository(private val dao: RoomDao) {
         CoroutineScope(Dispatchers.IO).launch {
             dao.insertAddCard(entity)
         }
+    }
+
+    fun insertKitOrderAddCardList(list : List<KitOrderAddCardEntity>){
+            dao.insertKitOrderAddCardList(list)
     }
 
     fun insertProblemCard(entity: ProblemCardEntity) {
@@ -152,7 +159,19 @@ class RoomRepository(private val dao: RoomDao) {
     }
 
     fun deleteAllOverCards(taskId: Int) {
-        return dao.deleteAllOverCards(taskId)
+        CoroutineScope(Dispatchers.IO).launch {
+            return@launch dao.deleteAllOverCards(taskId)
+        }
+    }
+
+    fun deleteAllKitOrderCards(taskId: Int) {
+        return dao.deleteAllKitOrderCards(taskId)
+    }
+
+    fun deleteAllKitOrderAddCards(kitId: Int) {
+        CoroutineScope(Dispatchers.IO).launch {
+            return@launch dao.deleteAllKitOrderAddCards(kitId)
+        }
     }
 
     fun deleteOverCard(taskId: Int) {
@@ -184,6 +203,12 @@ class RoomRepository(private val dao: RoomDao) {
     fun deleteKitItem(kitId: Int) {
         CoroutineScope(Dispatchers.IO).launch {
             return@launch dao.deleteKitItem(kitId)
+        }
+    }
+
+    fun deleteKitOrderAddCard(id: Int) {
+        CoroutineScope(Dispatchers.IO).launch {
+            return@launch dao.deleteKitOrderAddCard(id)
         }
     }
 

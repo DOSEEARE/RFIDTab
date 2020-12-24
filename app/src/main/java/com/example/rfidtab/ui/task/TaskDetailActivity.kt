@@ -23,6 +23,7 @@ import com.example.rfidtab.extension.loadingHide
 import com.example.rfidtab.extension.loadingShow
 import com.example.rfidtab.extension.toast
 import com.example.rfidtab.service.AppPreferences
+import com.example.rfidtab.service.RetrofitClient
 import com.example.rfidtab.service.Status
 import com.example.rfidtab.service.db.entity.task.*
 import com.example.rfidtab.service.model.CardModel
@@ -57,6 +58,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
@@ -183,7 +187,6 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener,
                 Status.ERROR -> toast("Ошибка")
                 Status.NETWORK -> toast("Ошибка сети")
             }
-
         })
     }
 
@@ -371,13 +374,13 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener,
     }
     override fun cameraBtnClicked(model: TaskCardListEntity) {
         val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        MyUtil().createCardFolder()
+        MyUtil().createCardFolder(this)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE)
         }
         filePath = File(
-            Environment.getExternalStorageDirectory().path + "/RFID cards",
+            getExternalFilesDir(Environment.DIRECTORY_DCIM)?.path + "/RFID cards",
             "/card ${Calendar.getInstance().time}.jpg"
         )
         cardId = model.cardId
@@ -458,32 +461,28 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener,
     }
 
     private fun getOverCardsAndSave(taskId: Int) {
-        viewModel.getOverCards(taskId).observe(this, Observer { result ->
-            val data = result.data
-            val msg = result.msg
-            when (result.status) {
-                Status.SUCCESS -> {
-                    val overCardsList = ArrayList<OverCardsEntity>()
-                    data?.forEach { it ->
-                        overCardsList.add(OverCardsEntity(it.id, taskId, it.pipeSerialNumber, it.serialNoOfNipple, it.couplingSerialNumber, it.rfidTagNo, it.comment))
+        RetrofitClient.apiService().getOverCardsNoLive(taskId).enqueue(object :
+            Callback<List<OverCardsResponse>> {
+            override fun onFailure(call: Call<List<OverCardsResponse>>, t: Throwable) {
+                println(t)
+            }
+
+            override fun onResponse(call: Call<List<OverCardsResponse>>, response: Response<List<OverCardsResponse>>) {
+                println(response)
+                if (response.isSuccessful){
+                    if (!response.body().isNullOrEmpty()){
+                        val overCardsList = ArrayList<OverCardsEntity>()
+                        response.body()?.forEach { it ->
+                            overCardsList.add(OverCardsEntity(it.id, taskId, it.pipeSerialNumber, it.serialNoOfNipple, it.couplingSerialNumber, it.rfidTagNo, it.comment))
+                        }
+                        Log.d("TASKID", "taskid onlineFragment: $overCardsList")
+                        viewModel.insertOverCardsList(overCardsList)
                     }
-                    Log.d("TASKID", "taskid onlineFragment: $overCardsList")
-                    viewModel.insertOverCardsList(overCardsList)
-                }
-                Status.ERROR -> {
-                    Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
-                }
-                Status.NETWORK -> {
-                    Toast.makeText(this, "Проблемы с интернетом", Toast.LENGTH_LONG).show()
-                }
-                else -> {
-                    Toast.makeText(this, "Произошла ошибка", Toast.LENGTH_LONG).show()
                 }
             }
         })
 
     }
-
 
     //сохранить задачи на кнопку сохранить
     private fun saveItemToDb(model: TaskResponse) {
@@ -610,7 +609,6 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener,
                         loadingHide()
                     }
                     else -> {
-
                         viewModel.taskStatusChange(
                             TaskStatusModel(
                                 savedData.id,

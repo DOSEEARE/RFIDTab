@@ -12,10 +12,14 @@ import com.example.rfidtab.service.model.kit.ImageListBase64Model
 import com.example.rfidtab.service.model.kitorder.KitOrderModel
 import com.example.rfidtab.service.model.overlist.TaskOverCards
 import com.example.rfidtab.service.model.search.SearchModel
+import com.example.rfidtab.service.response.task.OverCardsResponse
 import kotlinx.coroutines.Dispatchers
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.io.File
 
 
@@ -75,7 +79,6 @@ class NetworkRepository {
     }
 
     fun cardChangeList(model: CardModelList) = liveData(Dispatchers.IO) {
-
         try {
             val response = RetrofitClient.apiService().changeCardList(model)
             val code = response.code()

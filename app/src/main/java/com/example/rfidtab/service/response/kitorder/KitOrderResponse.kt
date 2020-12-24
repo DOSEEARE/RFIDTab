@@ -2,7 +2,7 @@ package com.example.rfidtab.service.response.kitorder
 
 import com.google.gson.annotations.SerializedName
 
-class KitOrderResponse(
+data class KitOrderResponse(
     @SerializedName("id") val id: Int,
     @SerializedName("mainReason") val mainReason: String?,
     @SerializedName("tenantName") val tenantName: String?,
@@ -14,6 +14,7 @@ class KitOrderResponse(
     @SerializedName("createdByFio") val createdByFio: String?,
     @SerializedName("executorFio") val executorFio: String?,
     @SerializedName("kitCount") val kitCount: String?,
+    @SerializedName("withKit") val withKit: String?,
     @SerializedName("kitType") val kitType: String?,
     @SerializedName("cardCount") val cardCount: String?,
     @SerializedName("kitCardCount") val kitCardCount: String?,

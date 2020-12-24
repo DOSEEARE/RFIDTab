@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class TaskEditOverBS(val taskId: Int, val overCardId: Int) : BottomSheetDialogFragment(),
+class TaskEditOverBS(private val taskId: Int, private val overCardId: Int) : BottomSheetDialogFragment(),
     RfidScannerListener {
     private val viewModel: TaskViewModel by viewModel()
 
@@ -43,8 +43,7 @@ class TaskEditOverBS(val taskId: Int, val overCardId: Int) : BottomSheetDialogFr
         super.onViewCreated(view, savedInstanceState)
         initViews()
     }
-
-
+    
     private fun initViews() {
         viewModel.findOverCardById(overCardId).observe(viewLifecycleOwner, Observer {
             over_pipe_in.setText(it.pipeSerialNumber)

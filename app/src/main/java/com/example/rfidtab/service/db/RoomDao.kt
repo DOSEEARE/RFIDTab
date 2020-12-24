@@ -52,10 +52,13 @@ interface RoomDao {
     fun insertAddCard(entity: KitOrderAddCardEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertProblemCard (entity: ProblemCardEntity)
+    fun insertKitOrderAddCardList(list: List<KitOrderAddCardEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertProblemCard(entity: ProblemCardEntity)
 
     @Query("SELECT * FROM ProblemCardEntity WHERE ProblemCardEntity.cardId=:cardId AND taskId=:taskId")
-    fun findProblemCard (cardId : Int, taskId : Int): LiveData<ProblemCardEntity>
+    fun findProblemCard(cardId: Int, taskId: Int): LiveData<ProblemCardEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertKitOrderCards(list: List<KitOrderCardEntity>)
@@ -126,6 +129,12 @@ interface RoomDao {
     @Query("DELETE FROM OverCardsEntity WHERE OverCardsEntity.taskId=:taskId")
     fun deleteAllOverCards(taskId: Int)
 
+    @Query("DELETE FROM KitOrderCardEntity WHERE KitOrderCardEntity.taskId=:taskId")
+    fun deleteAllKitOrderCards(taskId: Int)
+
+    @Query("DELETE FROM KitOrderAddCardEntity WHERE KitOrderAddCardEntity.kitId=:kitId")
+    fun deleteAllKitOrderAddCards(kitId: Int)
+
     @Query("DELETE FROM OverCardsEntity WHERE OverCardsEntity.id=:overCardId")
     fun deleteOverCard(overCardId: Int)
 
@@ -140,6 +149,9 @@ interface RoomDao {
 
     @Query("DELETE FROM KitItemEntity WHERE KitItemEntity.kitId=:kitId")
     fun deleteKitItem(kitId: Int)
+
+    @Query("DELETE FROM KitOrderAddCardEntity WHERE KitOrderAddCardEntity.id=:id")
+    fun deleteKitOrderAddCard(id: Int)
 
     @Query("DELETE FROM TaskCardListEntity WHERE TaskCardListEntity.taskId=:id")
     fun deleteCardsById(id: Int)

@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import com.example.rfidtab.R
 import com.example.rfidtab.adapter.kitorder.kit.KitOrderOnlineAdapter
@@ -24,6 +25,7 @@ import com.example.rfidtab.service.model.enums.TaskTypeEnum
 import com.example.rfidtab.service.model.kitorder.KitOrderCards
 import com.example.rfidtab.service.model.kitorder.KitOrderModel
 import com.example.rfidtab.service.response.kitorder.KitOrderKit
+import com.example.rfidtab.service.response.kitorder.KitOrderResponse
 import com.example.rfidtab.service.response.task.TaskResponse
 import com.example.rfidtab.ui.task.TaskActivity
 import com.example.rfidtab.ui.task.TaskViewModel
@@ -38,6 +40,7 @@ class KitOrderActivity : AppCompatActivity(),
 
     private lateinit var onlineData: TaskResponse
     private lateinit var savedData: KitOrderEntity
+    private lateinit var kitOrder : KitOrderResponse
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,46 +50,42 @@ class KitOrderActivity : AppCompatActivity(),
         initViews()
     }
 
-
     private fun initViews() {
         val isOnline = intent.getBooleanExtra("isOnline", true)
 
         if (isOnline) {
+            task_kit_save_btn.isVisible = true
             onlineData = intent.getSerializableExtra("data") as TaskResponse
-
+            Log.d("AddCardsCheck", "Добавленные карточки айди задании ${Gson().toJson(onlineData.id)}:")
             kitOrderViewModel.kitOrder(onlineData.id).observe(this, Observer { result ->
                 val data = result.data
                 val msg = result.msg
                 when (result.status) {
                     Status.SUCCESS -> {
+                        kitOrder = data!!
                         kit_order_executor.text = "Исполнитель: ${data?.executorFio}"
                         kit_order_createdby.text = "Автор: ${data?.createdByFio}"
                         kit_order_status.text = "Статус: ${data?.statusTitle}"
                         kit_comment.text = "Комментарии: ${data?.comment}"
                         kit_card_counter.text = "Всего единиц оборудования для комплектации в аренду: ${allCardCount(data?.kitType, data?.kitCardCount)}"
                         kit_order_send_btn.visibility = View.GONE
-                        kit_order_kits_rv.adapter =
-                            KitOrderOnlineAdapter(
-                                this,
-                                data?.kits as ArrayList<KitOrderKit>)
+                        kit_order_kits_rv.adapter = KitOrderOnlineAdapter(this, data?.kits as ArrayList<KitOrderKit>)
                     }
                     Status.ERROR -> {
                         toast(msg)
                     }
                     Status.NETWORK -> {
                         toast(msg)
-
-                    }
-                    else -> {
-                        toast(msg)
                     }
                 }
-
             })
+            task_kit_save_btn.setOnClickListener {
+
+            }
 
         } else {
             savedData = intent.getSerializableExtra("data") as KitOrderEntity
-
+            task_kit_save_btn.isVisible = false
             kit_order_executor.text = "Исполнитель: ${savedData?.executorFio}"
             kit_order_createdby.text = "Автор: ${savedData?.createdByFio}"
             kit_order_status.text = "Статус: ${savedData?.statusTitle}"
@@ -99,27 +98,25 @@ class KitOrderActivity : AppCompatActivity(),
 
             kit_order_send_btn.setOnClickListener {
                 kitOrderViewModel.findKitItem(savedData.id).observe(this, Observer {
-                    var kitIndex = 0
-                    kitIndex++
                     var model: KitOrderModel
                     it.forEach { kit ->
                         kitOrderViewModel.findKitCards(kit.id)
                             .observe(this, Observer { networkCards ->
-
                                 if (networkCards.isEmpty()) {
                                     val createdCards = ArrayList<KitOrderCards>()
-                                    //без каталога
+                                    // без каталога
                                     // Если карчтоки пусты значит с тех заданием, без карточек
                                     kitOrderViewModel.findAddCardByKitId(kit.id)
                                         .observe(this, Observer { addedCards ->
                                             addedCards.forEach {
                                                 createdCards.add(
                                                     KitOrderCards(
+                                                        it.id,
                                                         it.pipeSerialNumber,
                                                         it.couplingSerialNumber,
                                                         it.serialNoOfNipple,
                                                         it.rfidTagNo,
-                                                        "",
+                                                        it.comment,
                                                         it.comment
                                                     )
                                                 )
@@ -128,7 +125,7 @@ class KitOrderActivity : AppCompatActivity(),
                                             model = KitOrderModel(kit.id, createdCards)
 
                                             val modelJson = Gson().toJson(model)
-                                            Log.e("METKA", modelJson)
+                                            Log.d("AddCardsCheck", "Добавленные карточки при отправке $modelJson")
                                             kitOrderViewModel.sendKitOrderCards(model).observe(this, Observer { result ->
                                                 when (result.status) {
                                                     Status.SUCCESS -> {
@@ -142,8 +139,9 @@ class KitOrderActivity : AppCompatActivity(),
                                                                 when (result.status) {
                                                                     Status.SUCCESS -> {
                                                                         toast("Успешно отправлен!")
+                                                                        kitOrderViewModel.deleteAllKitOrderAddCards(kit.id)
                                                                         kitOrderViewModel.deleteKitTaskById(savedData.id)
-
+                                                                        kitOrderViewModel.deleteAllKitOrderCards(savedData.id)
                                                                         startActivity(Intent(this, TaskActivity::class.java))
                                                                         finish()
                                                                     }
@@ -156,9 +154,6 @@ class KitOrderActivity : AppCompatActivity(),
                                                     }
                                                     Status.NETWORK -> {
                                                         toast("Карточка уже в комплекте!")
-                                                    }
-                                                    else -> {
-                                                        toast("Неизвестная ошибка!")
                                                     }
                                                 }
                                             })
@@ -173,6 +168,7 @@ class KitOrderActivity : AppCompatActivity(),
                                     networkCards.forEach {
                                         cards.add(
                                             KitOrderCards(
+                                                it.id,
                                                 it.pipeSerialNumber,
                                                 it.couplingSerialNumber,
                                                 it.serialNoOfNipple,
@@ -224,13 +220,7 @@ class KitOrderActivity : AppCompatActivity(),
                                             Status.NETWORK -> {
                                                 toast("Карточка уже в комплекте!")
                                             }
-                                            else -> {
-                                                toast("Неизвестная ошибка!")
-
-                                            }
                                         }
-
-
                                     })
 
                                 }
@@ -252,19 +242,25 @@ class KitOrderActivity : AppCompatActivity(),
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onOnlineKitClicked(model: KitOrderKit) {
+    override fun onOnlineKitClicked(model: KitOrderKit, position : Int) {
         val json = Gson().toJson(model)
         Log.e("kow", json)
         val detailIntent = Intent(this, KitOrderDetailActivity::class.java)
         detailIntent.putExtra("data", model)
         detailIntent.putExtra("isOnline", true)
+        detailIntent.putExtra("kitPosition", position)
+        detailIntent.putExtra("taskId", onlineData.id)
+        detailIntent.putExtra("withKit", kitOrder.withKit)
         startActivity(detailIntent)
     }
 
-    override fun onSavedKitClicked(model: KitOrderKitEntity) {
+    override fun onSavedKitClicked(model: KitOrderKitEntity, position: Int) {
         val detailIntent = Intent(this, KitOrderDetailActivity::class.java)
         detailIntent.putExtra("data", model)
         detailIntent.putExtra("isOnline", false)
+        detailIntent.putExtra("kitPosition", position)
+        detailIntent.putExtra("taskId", savedData.id)
+        detailIntent.putExtra("withKit", savedData.withKit)
         startActivity(detailIntent)
     }
 

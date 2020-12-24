@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 data class  KitOrderCardEntity(
     @PrimaryKey
     val id: Int,
+    val taskId : Int,
     val kitId: Int,
     val rfidTagNo: String?,
     val pipeSerialNumber: String?,

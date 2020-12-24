@@ -19,7 +19,7 @@ class KitOrderOnlineAdapter(
         holder.itemView.search_item_title.text = "${holder.adapterPosition + 1}) ${item.title}"
 
         holder.itemView.setOnClickListener {
-            listener.onOnlineKitClicked(item)
+            listener.onOnlineKitClicked(item, holder.adapterPosition)
         }
     }
 

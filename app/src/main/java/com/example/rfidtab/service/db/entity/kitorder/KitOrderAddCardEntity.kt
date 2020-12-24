@@ -3,10 +3,11 @@ package com.example.rfidtab.service.db.entity.kitorder
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 
 @Entity
-class KitOrderAddCardEntity(
+data class KitOrderAddCardEntity(
     @PrimaryKey
     val id: Int,
     val kitId: Int,
@@ -16,4 +17,4 @@ class KitOrderAddCardEntity(
     @SerializedName("rfidTagNo") val rfidTagNo: String?,
     val accounting: Int = 0,
     @SerializedName("comment") val comment: String?
-)
+) : Serializable

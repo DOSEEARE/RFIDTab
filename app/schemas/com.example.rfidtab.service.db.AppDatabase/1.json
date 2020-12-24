@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "c08491240477e6e01d618ff6f1a6aa23",
+    "identityHash": "776a02f058bc4b84ab7d0683a96afcad",
     "entities": [
       {
         "tableName": "TaskResultEntity",
@@ -368,11 +368,17 @@
       },
       {
         "tableName": "KitOrderCardEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `kitId` INTEGER NOT NULL, `rfidTagNo` TEXT, `pipeSerialNumber` TEXT, `serialNoOfNipple` TEXT, `couplingSerialNumber` TEXT, `fullName` TEXT, `comment` TEXT, `problemComment` TEXT NOT NULL, `isConfirmed` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `taskId` INTEGER NOT NULL, `kitId` INTEGER NOT NULL, `rfidTagNo` TEXT, `pipeSerialNumber` TEXT, `serialNoOfNipple` TEXT, `couplingSerialNumber` TEXT, `fullName` TEXT, `comment` TEXT, `problemComment` TEXT NOT NULL, `isConfirmed` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "taskId",
+            "columnName": "taskId",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -442,7 +448,7 @@
       },
       {
         "tableName": "KitOrderEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `userLogin` TEXT, `mainReason` TEXT, `tenantName` TEXT, `createAt` TEXT, `comment` TEXT, `statusTitle` TEXT, `statusId` TEXT, `createdByFio` TEXT, `executorFio` TEXT, `kitCount` TEXT, `cardCount` TEXT, `kitCardCount` TEXT, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `userLogin` TEXT, `mainReason` TEXT, `tenantName` TEXT, `createAt` TEXT, `comment` TEXT, `statusTitle` TEXT, `statusId` TEXT, `createdByFio` TEXT, `executorFio` TEXT, `kitCount` TEXT, `withKit` TEXT, `cardCount` TEXT, `kitCardCount` TEXT, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -507,6 +513,12 @@
           {
             "fieldPath": "kitCount",
             "columnName": "kitCount",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "withKit",
+            "columnName": "withKit",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -754,7 +766,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c08491240477e6e01d618ff6f1a6aa23')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '776a02f058bc4b84ab7d0683a96afcad')"
     ]
   }
 }

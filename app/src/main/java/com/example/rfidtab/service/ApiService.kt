@@ -18,6 +18,7 @@ import com.example.rfidtab.service.response.task.TaskCardResponse
 import com.example.rfidtab.service.response.task.TaskResponse
 import com.example.rfidtab.service.response.user.UserInfoResponse
 import okhttp3.MultipartBody
+import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -49,6 +50,9 @@ interface ApiService {
 
     @GET("inventory/over/list/{id}")
     suspend fun getOverCards (@Path("id") taskId: Int): Response<List<OverCardsResponse>>
+
+    @GET("inventory/over/list/{id}")
+    fun getOverCardsNoLive (@Path("id") taskId: Int): Call<List<OverCardsResponse>>
 
     @GET("user/item")
     suspend fun userInfo(@Query("number") number: Int): Response<UserInfoResponse>
