@@ -64,13 +64,18 @@ class KitOrderViewModel(application: Application) : BaseViewModel(application) {
         return db.findKitItem(taskId)
     }
 
+    suspend fun findAddCardsByKitIdNOLV(kitId: Int): List<KitOrderAddCardEntity> {
+        return db.findAddCardsByKitIdNOLV(kitId)
+    }
+
     fun findKitCards(kitId: Int): LiveData<List<KitOrderCardEntity>> {
         return db.findOrderCard(kitId)
     }
 
-    fun findKitOrderProblemComment(kitId: Int) : LiveData<List<KitOrderCardEntity>>{
+    fun findKitOrderProblemComment(kitId: Int): LiveData<List<KitOrderCardEntity>> {
         return db.findKitOrderProblemComment(kitId)
     }
+
     fun insertProblemCard(entity: ProblemCardEntity) {
         db.insertProblemCard(entity)
     }

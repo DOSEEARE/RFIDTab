@@ -36,7 +36,7 @@ class KitDetailAddCardAdapter(
             }
         }
 
-        if (item.accounting == 1) {
+        if (item.accounting == 1 || !item.rfidTagNo.isNullOrBlank()) {
             holder.itemView.card_over_count.setBackgroundColor(Color.GREEN)
             holder.itemView.card_over_count.setText("Подтвержден")
         } else {

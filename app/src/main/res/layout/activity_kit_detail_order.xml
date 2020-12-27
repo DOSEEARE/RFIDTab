@@ -59,7 +59,7 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/kit_order_spec_diameter_pipe"
+                    android:id="@+id/kit_order_tv_1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="8dp"
@@ -71,7 +71,7 @@
                     tools:text="Наружный диаметр трубы: " />
 
                 <TextView
-                    android:id="@+id/kit_order_spec_pipe_wall"
+                    android:id="@+id/kit_order_tv_2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="8dp"
@@ -80,10 +80,10 @@
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:text="Толщина стенки трубы: " />
+                    tools:text="Наружный диаметр трубы: " />
 
                 <TextView
-                    android:id="@+id/kit_order_spec_od_nipple"
+                    android:id="@+id/kit_order_tv_3"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="8dp"
@@ -92,10 +92,10 @@
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:text="O.D замка ниппель: " />
+                    tools:text="Наружный диаметр трубы: " />
 
                 <TextView
-                    android:id="@+id/kit_order_spec_id_nipple"
+                    android:id="@+id/kit_order_tv_4"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="8dp"
@@ -104,10 +104,10 @@
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:text="I.D замка ниппель: " />
+                    tools:text="Наружный диаметр трубы: " />
 
                 <TextView
-                    android:id="@+id/kit_order_spec_long_pipe"
+                    android:id="@+id/kit_order_tv_5"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="8dp"
@@ -116,10 +116,10 @@
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:text="Длина трубы: " />
+                    tools:text="Наружный диаметр трубы: " />
 
                 <TextView
-                    android:id="@+id/kit_order_spec_angle_plait"
+                    android:id="@+id/kit_order_tv_6"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="8dp"
@@ -128,10 +128,10 @@
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:text="Угол заплетчика: " />
+                    tools:text="Наружный диаметр трубы: " />
 
                 <TextView
-                    android:id="@+id/kit_order_spec_long_nipple"
+                    android:id="@+id/kit_order_tv_7"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="8dp"
@@ -140,10 +140,10 @@
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:text="Длина под ключ ниппель : " />
+                    tools:text="Наружный диаметр трубы: " />
 
                 <TextView
-                    android:id="@+id/kit_order_spec_long_couple"
+                    android:id="@+id/kit_order_tv_8"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="8dp"
@@ -152,10 +152,10 @@
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:text="Длина под ключ муфта: " />
+                    tools:text="Наружный диаметр трубы: " />
 
                 <TextView
-                    android:id="@+id/kit_order_spec_comment"
+                    android:id="@+id/kit_order_tv_9"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="8dp"
@@ -164,7 +164,80 @@
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:text="Комментарий постановщика задачи: " />
+                    tools:text="Наружный диаметр трубы: " />
+
+                <TextView
+                    android:id="@+id/kit_order_tv_10"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="8dp"
+                    android:textColor="@color/blue"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Наружный диаметр трубы: " />
+
+                <TextView
+                    android:id="@+id/kit_order_tv_11"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="8dp"
+                    android:textColor="@color/blue"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Наружный диаметр трубы: " />
+
+                <TextView
+                    android:id="@+id/kit_order_tv_12"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="8dp"
+                    android:textColor="@color/blue"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Наружный диаметр трубы: " />
+
+                <TextView
+                    android:id="@+id/kit_order_tv_13"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="8dp"
+                    android:textColor="@color/blue"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Наружный диаметр трубы: " />
+
+                <TextView
+                    android:id="@+id/kit_order_tv_14"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="8dp"
+                    android:textColor="@color/blue"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Наружный диаметр трубы: " />
+
+                <TextView
+                    android:id="@+id/kit_order_tv_15"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="8dp"
+                    android:textColor="@color/blue"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Наружный диаметр трубы: " />
+
 
             </LinearLayout>
 

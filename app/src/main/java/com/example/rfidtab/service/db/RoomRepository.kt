@@ -63,14 +63,18 @@ class RoomRepository(private val dao: RoomDao) {
         return dao.findAddCardsByKitId(kitId)
     }
 
+    suspend fun findAddCardsByKitIdNOLV(kitId: Int): List<KitOrderAddCardEntity> {
+        return dao.findAddCardsByKitIdNOLV(kitId)
+    }
+
     fun insertKitOrderAddCard(entity: KitOrderAddCardEntity) {
         CoroutineScope(Dispatchers.IO).launch {
             dao.insertAddCard(entity)
         }
     }
 
-    fun insertKitOrderAddCardList(list : List<KitOrderAddCardEntity>){
-            dao.insertKitOrderAddCardList(list)
+    fun insertKitOrderAddCardList(list: List<KitOrderAddCardEntity>) {
+        dao.insertKitOrderAddCardList(list)
     }
 
     fun insertProblemCard(entity: ProblemCardEntity) {
@@ -89,6 +93,10 @@ class RoomRepository(private val dao: RoomDao) {
 
     fun findKitItem(taskId: Int): LiveData<List<KitOrderKitEntity>> {
         return dao.findKitItem(taskId)
+    }
+
+    suspend fun findKitItemNoLV(taskId: Int): List<KitOrderKitEntity> {
+        return dao.findKitItemNoLV(taskId)
     }
 
     fun findKitOrderSpecByKitId(kitId: Int): LiveData<KitOrderSpecificationEntity> {

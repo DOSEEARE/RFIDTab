@@ -66,11 +66,17 @@ interface RoomDao {
     @Query("SELECT * FROM KitOrderAddCardEntity WHERE KitOrderAddCardEntity.kitId=:kitId")
     fun findAddCardsByKitId(kitId: Int): LiveData<List<KitOrderAddCardEntity>>
 
+    @Query("SELECT * FROM KitOrderAddCardEntity WHERE KitOrderAddCardEntity.kitId=:kitId")
+    suspend fun findAddCardsByKitIdNOLV(kitId: Int): List<KitOrderAddCardEntity>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertKitOrderSpec(entity: KitOrderSpecificationEntity)
 
     @Query("SELECT * FROM KitOrderKitEntity WHERE KitOrderKitEntity.taskId=:taskId")
     fun findKitItem(taskId: Int): LiveData<List<KitOrderKitEntity>>
+
+    @Query("SELECT * FROM KitOrderKitEntity WHERE KitOrderKitEntity.taskId=:taskId")
+   suspend fun findKitItemNoLV(taskId: Int): List<KitOrderKitEntity>
 
     @Query("SELECT * FROM KitOrderSpecificationEntity WHERE KitOrderSpecificationEntity.kitId=:kitId")
     fun findKitOrderSpecByKitId(kitId: Int): LiveData<KitOrderSpecificationEntity>
@@ -132,8 +138,8 @@ interface RoomDao {
     @Query("DELETE FROM KitOrderCardEntity WHERE KitOrderCardEntity.taskId=:taskId")
     fun deleteAllKitOrderCards(taskId: Int)
 
-    @Query("DELETE FROM KitOrderAddCardEntity WHERE KitOrderAddCardEntity.kitId=:kitId")
-    fun deleteAllKitOrderAddCards(kitId: Int)
+    @Query("DELETE FROM KitOrderAddCardEntity WHERE KitOrderAddCardEntity.taskId=:taskId")
+    fun deleteAllKitOrderAddCards(taskId: Int)
 
     @Query("DELETE FROM OverCardsEntity WHERE OverCardsEntity.id=:overCardId")
     fun deleteOverCard(overCardId: Int)

@@ -54,7 +54,6 @@ class KitOrderActivity : AppCompatActivity(),
         val isOnline = intent.getBooleanExtra("isOnline", true)
 
         if (isOnline) {
-            task_kit_save_btn.isVisible = true
             onlineData = intent.getSerializableExtra("data") as TaskResponse
             Log.d("AddCardsCheck", "Добавленные карточки айди задании ${Gson().toJson(onlineData.id)}:")
             kitOrderViewModel.kitOrder(onlineData.id).observe(this, Observer { result ->
@@ -79,13 +78,9 @@ class KitOrderActivity : AppCompatActivity(),
                     }
                 }
             })
-            task_kit_save_btn.setOnClickListener {
-
-            }
 
         } else {
             savedData = intent.getSerializableExtra("data") as KitOrderEntity
-            task_kit_save_btn.isVisible = false
             kit_order_executor.text = "Исполнитель: ${savedData?.executorFio}"
             kit_order_createdby.text = "Автор: ${savedData?.createdByFio}"
             kit_order_status.text = "Статус: ${savedData?.statusTitle}"
@@ -100,12 +95,12 @@ class KitOrderActivity : AppCompatActivity(),
                 kitOrderViewModel.findKitItem(savedData.id).observe(this, Observer {
                     var model: KitOrderModel
                     it.forEach { kit ->
+                        Log.d("insertKitOrder", "delete add cards kit id : ${kit.id}")
                         kitOrderViewModel.findKitCards(kit.id)
                             .observe(this, Observer { networkCards ->
-                                if (networkCards.isEmpty()) {
+                                if (savedData.withKit == "withoutCatalog") {
                                     val createdCards = ArrayList<KitOrderCards>()
                                     // без каталога
-                                    // Если карчтоки пусты значит с тех заданием, без карточек
                                     kitOrderViewModel.findAddCardByKitId(kit.id)
                                         .observe(this, Observer { addedCards ->
                                             addedCards.forEach {
@@ -139,9 +134,9 @@ class KitOrderActivity : AppCompatActivity(),
                                                                 when (result.status) {
                                                                     Status.SUCCESS -> {
                                                                         toast("Успешно отправлен!")
-                                                                        kitOrderViewModel.deleteAllKitOrderAddCards(kit.id)
                                                                         kitOrderViewModel.deleteKitTaskById(savedData.id)
                                                                         kitOrderViewModel.deleteAllKitOrderCards(savedData.id)
+                                                                        kitOrderViewModel.deleteAllKitOrderAddCards(savedData.id)
                                                                         startActivity(Intent(this, TaskActivity::class.java))
                                                                         finish()
                                                                     }
@@ -208,6 +203,7 @@ class KitOrderActivity : AppCompatActivity(),
                                                             Status.SUCCESS -> {
                                                                 toast("Успешно отправлен!")
                                                                 kitOrderViewModel.deleteKitTaskById(savedData.id)
+                                                                kitOrderViewModel.deleteAllKitOrderCards(savedData.id)
                                                                 startActivity(Intent(this, TaskActivity::class.java))
                                                                 finish()
                                                             }

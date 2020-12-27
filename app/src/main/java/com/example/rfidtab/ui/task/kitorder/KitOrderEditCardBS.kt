@@ -59,7 +59,8 @@ class KitOrderEditCardBS(val kitId: Int, val item: KitOrderAddCardEntity) :
                 couplingSerialNumber = coupleText,
                 rfidTagNo = rfidText,
                 accounting = accounting(rfidText, commentText),
-                comment = commentText
+                comment = commentText,
+                taskId = item.taskId
             )
             kitOrderViewModel.insertKitOrderAddCard(model)
             toast("Сохранён")

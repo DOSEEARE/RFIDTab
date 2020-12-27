@@ -270,14 +270,15 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                             kitOrderKit.cardListConfirmed.forEach {
                                 addedCardList.add(
                                     KitOrderAddCardEntity(
-                                        id = it.id,
+                                        Random.nextInt(),
                                         serialNoOfNipple = it.serialNoOfNipple,
                                         pipeSerialNumber = it.pipeSerialNumber,
                                         couplingSerialNumber = it.couplingSerialNumber,
                                         rfidTagNo = it.rfidTagNo,
                                         comment = it.comment,
                                         accounting = initAccounting(it.accounting),
-                                        kitId = kitOrderKit.id
+                                        kitId = kitOrderKit.id,
+                                        taskId = model.id
                                     )
                                 )
                             }
@@ -285,14 +286,15 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                             kitOrderKit.cardListNotConfirmed.forEach {
                                 addedCardList.add(
                                     KitOrderAddCardEntity(
-                                        id = it.id,
+                                        Random.nextInt(),
                                         serialNoOfNipple = it.serialNoOfNipple,
                                         pipeSerialNumber = it.pipeSerialNumber,
                                         couplingSerialNumber = it.couplingSerialNumber,
                                         rfidTagNo = it.rfidTagNo,
                                         comment = it.comment,
                                         accounting = initAccounting(it.accounting),
-                                        kitId = kitOrderKit.id
+                                        kitId = kitOrderKit.id,
+                                        taskId = model.id
                                     )
                                 )
                             }
@@ -314,42 +316,74 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                                     )
                                 )
                             }
-                            if (data.kits[indexKit].cards.isEmpty()) {
+                            Log.d("insertKitOrder", "insertKitOrderSpec withKit: ${data.withKit}")
+                            if (data.withKit == "withoutCatalog") {
                                 val spec = data.kits[indexKit].specification
-
                                 if (data.kitType == "multi" && data.kitCardCount!!.length > 1) {
                                     val kitCardCount: String =
                                         data.kitCardCount.split(",")[indexKit]
 
                                     val kitOrderSpec = KitOrderSpecificationEntity(
-                                        spec.id,
-                                        kitOrderKit.id,
-                                        spec.outerDiameterOfThePipe,
-                                        spec.pipeWallThickness,
-                                        spec.odlockNipple,
-                                        spec.idlockNipple,
-                                        spec.pipeLength,
-                                        spec.shoulderAngle,
-                                        spec.turnkeyLengthNipple,
-                                        spec.turnkeyLengthCoupling,
-                                        spec.comment,
-                                        kitCardCount
+                                        id = spec.id,
+                                        kitId = kitOrderKit.id,
+                                        outerDiameterOfThePipe = spec.outerDiameterOfThePipe,
+                                        pipeWallThickness = spec.pipeWallThickness,
+                                        odlockNipple = spec.odlockNipple,
+                                        idlockNipple = spec.idlockNipple,
+                                        pipeLength = spec.pipeLength,
+                                        shoulderAngle = spec.shoulderAngle,
+                                        turnkeyLengthNipple = spec.turnkeyLengthNipple,
+                                        turnkeyLengthCoupling = spec.turnkeyLengthCoupling,
+                                        refTypeEquipmentTitle = spec.refTypeEquipmentTitle,
+                                        refTypeDisembarkationTitle = spec.refTypeDisembarkationTitle,
+                                        refTypeThreadTitle = spec.refTypeThreadTitle,
+                                        refInnerCoatingTitle = spec.refInnerCoatingTitle,
+                                        refThreadCoatingTitle = spec.refThreadCoatingTitle,
+                                        refHardbandingCouplingTitle = spec.refHardbandingCouplingTitle,
+                                        refHardbandingCoupling = spec.refHardbandingCoupling?.value,
+                                        refInnerCoating = spec.refInnerCoating?.value,
+                                        refThreadCoating = spec.refThreadCoating?.value,
+                                        refTypeDisembarkation = spec.refTypeDisembarkation?.value,
+                                        refTypeEquipment = spec.refTypeEquipment?.value,
+                                        refTypeThread = spec.refTypeThread?.value,
+                                        comment = spec.comment,
+                                        cardCount = kitCardCount
+                                    )
+                                    Log.d(
+                                        "insertKitOrder",
+                                        "insertKitOrderSpec ID: ${kitOrderKit.id}"
                                     )
                                     kitOrderViewModel.insertKitOrderSpec(kitOrderSpec)
                                 } else {
                                     val kitOrderSpec = KitOrderSpecificationEntity(
-                                        spec.id,
-                                        kitOrderKit.id,
-                                        spec.outerDiameterOfThePipe,
-                                        spec.pipeWallThickness,
-                                        spec.odlockNipple,
-                                        spec.idlockNipple,
-                                        spec.pipeLength,
-                                        spec.shoulderAngle,
-                                        spec.turnkeyLengthNipple,
-                                        spec.turnkeyLengthCoupling,
-                                        spec.comment,
-                                        data.cardCount!!
+                                        id = spec.id,
+                                        kitId = kitOrderKit.id,
+                                        outerDiameterOfThePipe = spec.outerDiameterOfThePipe,
+                                        pipeWallThickness = spec.pipeWallThickness,
+                                        odlockNipple = spec.odlockNipple,
+                                        idlockNipple = spec.idlockNipple,
+                                        pipeLength = spec.pipeLength,
+                                        shoulderAngle = spec.shoulderAngle,
+                                        turnkeyLengthNipple = spec.turnkeyLengthNipple,
+                                        turnkeyLengthCoupling = spec.turnkeyLengthCoupling,
+                                        refTypeEquipmentTitle = spec.refTypeEquipmentTitle,
+                                        refTypeDisembarkationTitle = spec.refTypeDisembarkationTitle,
+                                        refTypeThreadTitle = spec.refTypeThreadTitle,
+                                        refInnerCoatingTitle = spec.refInnerCoatingTitle,
+                                        refThreadCoatingTitle = spec.refThreadCoatingTitle,
+                                        refHardbandingCouplingTitle = spec.refHardbandingCouplingTitle,
+                                        refHardbandingCoupling = spec.refHardbandingCoupling?.value,
+                                        refInnerCoating = spec.refInnerCoating?.value,
+                                        refThreadCoating = spec.refThreadCoating?.value,
+                                        refTypeDisembarkation = spec.refTypeDisembarkation?.value,
+                                        refTypeEquipment = spec.refTypeEquipment?.value,
+                                        refTypeThread = spec.refTypeThread?.value,
+                                        comment = spec.comment,
+                                        cardCount = data.cardCount!!
+                                    )
+                                    Log.d(
+                                        "insertKitOrder",
+                                        "insertKitOrderSpec ID: ${kitOrderKit.id}"
                                     )
                                     kitOrderViewModel.insertKitOrderSpec(kitOrderSpec)
                                 }

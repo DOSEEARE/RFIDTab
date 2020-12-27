@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "776a02f058bc4b84ab7d0683a96afcad",
+    "identityHash": "e1777053c5af71337f5a8d97ad4c0de0",
     "entities": [
       {
         "tableName": "TaskResultEntity",
@@ -578,7 +578,7 @@
       },
       {
         "tableName": "KitOrderSpecificationEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER, `kitId` INTEGER NOT NULL, `outerDiameterOfThePipe` INTEGER NOT NULL, `pipeWallThickness` TEXT, `odlockNipple` TEXT, `idlockNipple` TEXT, `pipeLength` TEXT, `shoulderAngle` TEXT, `turnkeyLengthNipple` TEXT, `turnkeyLengthCoupling` TEXT, `comment` TEXT, `cardCount` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER, `kitId` INTEGER NOT NULL, `refTypeEquipment` TEXT, `refTypeDisembarkation` TEXT, `outerDiameterOfThePipe` TEXT, `pipeWallThickness` TEXT, `refTypeThread` TEXT, `odlockNipple` TEXT, `idlockNipple` TEXT, `pipeLength` TEXT, `shoulderAngle` TEXT, `turnkeyLengthNipple` TEXT, `turnkeyLengthCoupling` TEXT, `refThreadCoating` TEXT, `refInnerCoating` TEXT, `refHardbandingCoupling` TEXT, `comment` TEXT, `refTypeEquipmentTitle` TEXT, `refTypeDisembarkationTitle` TEXT, `refTypeThreadTitle` TEXT, `refThreadCoatingTitle` TEXT, `refInnerCoatingTitle` TEXT, `refHardbandingCouplingTitle` TEXT, `cardCount` TEXT, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -593,14 +593,32 @@
             "notNull": true
           },
           {
+            "fieldPath": "refTypeEquipment",
+            "columnName": "refTypeEquipment",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "refTypeDisembarkation",
+            "columnName": "refTypeDisembarkation",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
             "fieldPath": "outerDiameterOfThePipe",
             "columnName": "outerDiameterOfThePipe",
-            "affinity": "INTEGER",
-            "notNull": true
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "pipeWallThickness",
             "columnName": "pipeWallThickness",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "refTypeThread",
+            "columnName": "refTypeThread",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -641,8 +659,62 @@
             "notNull": false
           },
           {
+            "fieldPath": "refThreadCoating",
+            "columnName": "refThreadCoating",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "refInnerCoating",
+            "columnName": "refInnerCoating",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "refHardbandingCoupling",
+            "columnName": "refHardbandingCoupling",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
             "fieldPath": "comment",
             "columnName": "comment",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "refTypeEquipmentTitle",
+            "columnName": "refTypeEquipmentTitle",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "refTypeDisembarkationTitle",
+            "columnName": "refTypeDisembarkationTitle",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "refTypeThreadTitle",
+            "columnName": "refTypeThreadTitle",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "refThreadCoatingTitle",
+            "columnName": "refThreadCoatingTitle",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "refInnerCoatingTitle",
+            "columnName": "refInnerCoatingTitle",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "refHardbandingCouplingTitle",
+            "columnName": "refHardbandingCouplingTitle",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -650,7 +722,7 @@
             "fieldPath": "cardCount",
             "columnName": "cardCount",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -664,7 +736,7 @@
       },
       {
         "tableName": "KitOrderAddCardEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `kitId` INTEGER NOT NULL, `pipeSerialNumber` TEXT, `serialNoOfNipple` TEXT, `couplingSerialNumber` TEXT, `rfidTagNo` TEXT, `accounting` INTEGER NOT NULL, `comment` TEXT, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `kitId` INTEGER NOT NULL, `taskId` INTEGER NOT NULL, `pipeSerialNumber` TEXT, `serialNoOfNipple` TEXT, `couplingSerialNumber` TEXT, `rfidTagNo` TEXT, `accounting` INTEGER NOT NULL, `comment` TEXT, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -675,6 +747,12 @@
           {
             "fieldPath": "kitId",
             "columnName": "kitId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "taskId",
+            "columnName": "taskId",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -766,7 +844,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '776a02f058bc4b84ab7d0683a96afcad')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e1777053c5af71337f5a8d97ad4c0de0')"
     ]
   }
 }

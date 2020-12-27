@@ -66,24 +66,24 @@ class KitOrderDetailActivity : AppCompatActivity(), KitCardSavedListener, RfidSc
                 Log.d("AddCardsCheck", "Добавленные карточки withOutCatalog $withKit}: ")
                 kit_order_count_card.isVisible = false
                 kit_order_rv_card.visibility = View.GONE
-                kit_order_spec_angle_plait.text =
-                    "Угол заплётчика: ${onlineData.specification.shoulderAngle}"
-                kit_order_spec_long_couple.text =
-                    "Длина под ключ муфта: ${onlineData.specification.turnkeyLengthCoupling}"
-                kit_order_spec_long_nipple.text =
-                    "Длина под ключ ниппель: ${onlineData.specification.turnkeyLengthNipple}"
-                kit_order_spec_long_pipe.text =
-                    "Длина трубы: ${onlineData.specification.pipeLength}"
-                kit_order_spec_od_nipple.text =
-                    "O.D замка ниппеля: ${onlineData.specification.odlockNipple}"
-                kit_order_spec_diameter_pipe.text =
-                    "Наружный диаметр трубы: ${onlineData.specification.outerDiameterOfThePipe}"
-                kit_order_spec_pipe_wall.text =
-                    "Толщина стенки трубы: ${onlineData.specification.pipeWallThickness}"
-                kit_order_spec_id_nipple.text =
-                    "I.D замка ниппель: ${onlineData.specification.idlockNipple}"
-                kit_order_spec_comment.text =
-                    "Комментарий постановщика задачи: ${onlineData.specification.comment}"
+                val info = onlineData.specification
+
+                kit_order_tv_1.text = "Тип оборудования: ${info.refTypeEquipment?.value}"
+                kit_order_tv_2.text = "Тип высадки: ${info.refTypeDisembarkation?.value}"
+                kit_order_tv_3.text = "Наружный диаметр трубы, (мм): ${info.outerDiameterOfThePipe}"
+                kit_order_tv_4.text = "Толщина стенки трубы, (мм): ${info.pipeWallThickness}"
+                kit_order_tv_5.text = "Тип резьбы:${info.refTypeThreadTitle}"
+                kit_order_tv_6.text = "O.D. Замка ниппель (мм): ${info.odlockNipple}"
+                kit_order_tv_7.text = "I.D. Замка ниппель (мм): ${info.idlockNipple}"
+                kit_order_tv_8.text = "Длина трубы: ${info.pipeLength}"
+                kit_order_tv_9.text = "Угол заплетчика:${info.shoulderAngle}"
+                kit_order_tv_10.text ="Длина под ключ ниппель, (мм): ${ info.turnkeyLengthNipple}"
+                kit_order_tv_11.text ="Длина под ключ муфта, (мм): ${ info.turnkeyLengthCoupling}"
+                kit_order_tv_12.text ="Покрытие резьбы: ${ info.refThreadCoatingTitle}"
+                kit_order_tv_13.text ="Внутреннее покрытие: ${ info.refInnerCoatingTitle}"
+                kit_order_tv_14.text ="Хардбендинг (муфта): ${ info.refHardbandingCouplingTitle}"
+                kit_order_tv_15.text ="Комментарий: ${ info.comment}"
+
 
                 kitOrderViewModel.kitOrder(taskId).observe(this, Observer { result ->
                     val data = result.data
@@ -101,7 +101,8 @@ class KitOrderDetailActivity : AppCompatActivity(), KitCardSavedListener, RfidSc
                                         rfidTagNo = it.rfidTagNo,
                                         comment = it.comment,
                                         accounting = initAccounting(it.accounting),
-                                        kitId = onlineData.id
+                                        kitId = onlineData.id,
+                                        taskId = taskId
                                     )
                                 )
                             }
@@ -116,16 +117,14 @@ class KitOrderDetailActivity : AppCompatActivity(), KitCardSavedListener, RfidSc
                                         rfidTagNo = it.rfidTagNo,
                                         comment = it.comment,
                                         accounting = initAccounting(it.accounting),
-                                        kitId = onlineData.id
+                                        kitId = onlineData.id,
+                                        taskId = taskId
                                     )
                                 )
                             }
 
                             kit_order_detail_rv.visibility = View.VISIBLE
-                            Log.d(
-                                "AddCardsCheck",
-                                "Добавленные карточки показано в сохраненных ${Gson().toJson(listRe)}: "
-                            )
+                            Log.d("AddCardsCheck", "Добавленные карточки показано в сохраненных ${Gson().toJson(listRe)}: ")
                             kit_order_rv_card.isVisible = true
                             kit_order_added_rv.adapter = KitDetailAddCardAdapter(listRe, true, this)
                         }
@@ -135,28 +134,29 @@ class KitOrderDetailActivity : AppCompatActivity(), KitCardSavedListener, RfidSc
 
         } else {
             savedData = intent.getSerializableExtra("data") as KitOrderKitEntity
-
             if (withKit == "withoutCatalog") {
+                kit_order_count_card.isVisible = false
+
                 Log.d("AddCardsCheck", "Добавленные карточки withoutCatalog $withKit}: ")
+                Log.d("insertKitOrder", "insertKitOrderSpec ID: ${savedData.id}")
                 kitOrderViewModel.findKitOrderSpecByKitId(savedData.id)
                     .observe(this, Observer { spec ->
-                        kit_order_spec_angle_plait.text = "Угол заплётчика: ${spec.shoulderAngle}"
-                        kit_order_spec_long_couple.text =
-                            "Длина под ключ муфта: ${spec.turnkeyLengthCoupling}"
-                        kit_order_spec_long_nipple.text =
-                            "Длина под ключ ниппель: ${spec.turnkeyLengthNipple}"
-                        kit_order_spec_long_pipe.text = "Длина трубы: ${spec.pipeLength}"
-                        kit_order_spec_od_nipple.text = "O.D замка ниппеля: ${spec.odlockNipple}"
-                        kit_order_spec_diameter_pipe.text =
-                            "Наружный диаметр трубы: ${spec.outerDiameterOfThePipe}"
-                        kit_order_spec_pipe_wall.text =
-                            "Толщина стенки трубы: ${spec.pipeWallThickness}"
-                        kit_order_spec_id_nipple.text = "I.aD замка ниппель: ${spec.idlockNipple}"
 
-                        kit_order_detail_title.text =
-                            "Количество единиц оборудования: ${spec.cardCount}"
-
-                        kit_order_spec_comment.text = "Комментарий постановщика задачи: ${spec.comment}"
+                        kit_order_tv_1.text = "Тип оборудования: ${spec.refTypeEquipment}"
+                        kit_order_tv_2.text = "Тип высадки: ${spec.refTypeDisembarkation}"
+                        kit_order_tv_3.text = "Наружный диаметр трубы, (мм): ${spec.outerDiameterOfThePipe}"
+                        kit_order_tv_4.text = "Толщина стенки трубы, (мм): ${spec.pipeWallThickness}"
+                        kit_order_tv_5.text = "Тип резьбы: ${spec.refTypeThreadTitle}"
+                        kit_order_tv_6.text = "O.D. Замка ниппель (мм): ${spec.odlockNipple}"
+                        kit_order_tv_7.text = "I.D. Замка ниппель (мм): ${spec.idlockNipple}"
+                        kit_order_tv_8.text = "Длина трубы: ${spec.pipeLength}"
+                        kit_order_tv_9.text = "Угол заплетчика: ${spec.shoulderAngle}"
+                        kit_order_tv_10.text ="Длина под ключ ниппель, (мм): ${ spec.turnkeyLengthNipple}"
+                        kit_order_tv_11.text ="Длина под ключ муфта, (мм): ${ spec.turnkeyLengthCoupling}"
+                        kit_order_tv_12.text ="Покрытие резьбы: ${ spec.refThreadCoatingTitle}"
+                        kit_order_tv_13.text ="Внутреннее покрытие: ${ spec.refInnerCoatingTitle}"
+                        kit_order_tv_14.text ="Хардбендинг (муфта): ${ spec.refHardbandingCouplingTitle}"
+                        kit_order_tv_15.text ="Комментарий: ${ spec.comment}"
 
                         kitOrderViewModel.findAddCardByKitId(savedData.id).observe(this, Observer {
                             kit_order_added_rv.adapter = KitDetailAddCardAdapter(
@@ -260,7 +260,7 @@ class KitOrderDetailActivity : AppCompatActivity(), KitCardSavedListener, RfidSc
 
     private fun addCardsToKit(kitId: Int) {
         kit_order_add_btn.setOnClickListener {
-            KitOrderAddCardBS(kitId, savedData.id).run {
+            KitOrderAddCardBS(kitId, savedData.taskId).run {
                 show(supportFragmentManager, "KitOrderAddCardBS")
             }
         }
@@ -298,6 +298,4 @@ class KitOrderDetailActivity : AppCompatActivity(), KitCardSavedListener, RfidSc
 
         alertDialog.show()
     }
-
-
 }

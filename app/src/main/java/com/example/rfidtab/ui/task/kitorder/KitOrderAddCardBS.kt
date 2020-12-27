@@ -81,6 +81,7 @@ class KitOrderAddCardBS(val kitId: Int, val taskId : Int) : BottomSheetDialogFra
             val model = KitOrderAddCardEntity(
                 Random.nextInt(),
                 kitId,
+                taskId,
                 pipe,
                 nipple,
                 couple,

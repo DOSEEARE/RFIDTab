@@ -11,6 +11,7 @@ data class KitOrderAddCardEntity(
     @PrimaryKey
     val id: Int,
     val kitId: Int,
+    val taskId: Int,
     @SerializedName("pipeSerialNumber") val pipeSerialNumber: String?,
     @SerializedName("serialNoOfNipple") val serialNoOfNipple: String?,
     @SerializedName("couplingSerialNumber") val couplingSerialNumber: String?,
