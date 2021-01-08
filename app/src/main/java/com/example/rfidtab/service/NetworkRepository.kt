@@ -1,5 +1,6 @@
 package com.example.rfidtab.service
 
+import android.util.Log
 import androidx.lifecycle.liveData
 import com.example.rfidtab.service.db.entity.task.CardImagesEntity
 import com.example.rfidtab.service.model.AuthModel
@@ -12,14 +13,12 @@ import com.example.rfidtab.service.model.kit.ImageListBase64Model
 import com.example.rfidtab.service.model.kitorder.KitOrderModel
 import com.example.rfidtab.service.model.overlist.TaskOverCards
 import com.example.rfidtab.service.model.search.SearchModel
-import com.example.rfidtab.service.response.task.OverCardsResponse
+import com.example.rfidtab.util.MyUtil
+import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.io.File
 
 
@@ -114,6 +113,7 @@ class NetworkRepository {
     fun sendImage(imagesPath: List<CardImagesEntity>, cardId: Int, taskTypeId: Int, taskId: Int) =
         liveData(Dispatchers.IO) {
             try {
+                Log.d("sendImage", "images ${Gson().toJson(imagesPath)}")
                 imagesPath.forEachIndexed { index, it ->
                     if (File(it.imagePath).exists()) {
                         val file = File(it.imagePath)
@@ -124,11 +124,13 @@ class NetworkRepository {
 
                         val response =
                             RetrofitClient.apiService().sendImage(image, taskId, taskTypeId, cardId)
+                        Log.d("sendImage", "$requestFile $index")
                         val code = response.code()
                         when {
                             response.isSuccessful -> {
-                                if (index == imagesPath.size -1)
-                                emit(Resource.success(response.body()))
+                            //    MyUtil().deleteFileFromStorage(it.imagePath)
+                                if (index == imagesPath.lastIndex)
+                                    emit(Resource.success(response.body()))
                             }
                             else -> {
                                 emit(Resource.error("Ошибка ${response.message()}!", null))

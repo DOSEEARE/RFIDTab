@@ -27,7 +27,7 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun initViews() {
-        profile_app_version.text = "${packageManager.getPackageInfo(packageName, 0).versionName}v 28.12.2020"
+        profile_app_version.text = "${packageManager.getPackageInfo(packageName, 0).versionName}v 08.01.2021"
         profile_exit_btn.setOnClickListener {
             val builder = AlertDialog.Builder(this)
             builder.setTitle("Вы хотите выйти?")

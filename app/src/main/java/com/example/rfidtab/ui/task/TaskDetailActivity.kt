@@ -14,7 +14,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
-import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import com.example.rfidtab.BuildConfig
 import com.example.rfidtab.R
@@ -143,7 +142,7 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener,
             viewModel.findCardsById(savedData.id).observe(this, Observer {
                 val sortedList = ArrayList<TaskCardListEntity>()
                 sortedList.addAll(it.sortedWith(compareBy(TaskCardListEntity::sortOrder)))
-                sortedListFromBd.addAll(it)
+                sortedListFromBd = it as ArrayList<TaskCardListEntity>
                 task_detail_rv.adapter = TaskDetailSavedAdapter(
                     this,
                     savedData.taskTypeId,
@@ -191,13 +190,11 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener,
     }
 
     private fun sendToCheck() {
-        var cardListIndex = 0
         task_detail_send_btn.setOnClickListener {
             loadingShow()
             //Изменение карточек по циклу
             val arrayList = ArrayList<CardModel>()
-            sortedListFromBd.forEach { card ->
-                cardListIndex++
+            sortedListFromBd.forEachIndexed { index, card ->
                 val model = CardModel(
                     card.cardId,
                     savedData.id,
@@ -212,10 +209,13 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener,
                     TaskTypeEnum.inspection, TaskTypeEnum.kitForFix -> sendCardsImages(
                         card.cardId,
                         card.taskId,
-                        card.taskTypeId
+                        card.taskTypeId,
+                        index,
+                        sortedListFromBd.lastIndex
                     )
                 }
             }
+            Log.d("changeCardList", "sendToCheck: ")
             viewModel.changeCardList(CardModelList(arrayList))
                 .observe(this@TaskDetailActivity, Observer { result ->
                     when (result.status) {
@@ -235,13 +235,13 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener,
                                 when (result.status) {
                                     Status.SUCCESS -> {
                                         toast("$data")
-                                        startActivity(Intent(this, TaskActivity::class.java))
-                                        finish()
+                                        /*startActivity(Intent(this, TaskActivity::class.java))
+                                                        finish()*/
+                                        Log.d("finishActivity", "t: ")
                                         loadingHide()
                                     }
                                 }
                             })
-                            loadingHide()
                         }
                     }
                 })
@@ -251,9 +251,15 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener,
 
     }
 
-    private fun sendCardsImages(cardId: Int, taskId: Int, taskTypId: Int) {
+    private fun sendCardsImages(
+        cardId: Int,
+        taskId: Int,
+        taskTypId: Int,
+        currentIndex: Int,
+        lastIndex: Int
+    ) {
         //отправка и закрытие таска если картинки есть
-        viewModel.findImagesById(cardId, taskId).observe(this, Observer {
+        viewModel.findImagesByTaskId(taskId).observe(this, Observer {
             if (it.isNotEmpty()) {
                 loadingShow()
                 viewModel.sendImage(it, cardId, taskTypId, taskId)
@@ -261,7 +267,12 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener,
                         val msg = result.msg
                         when (result.status) {
                             Status.SUCCESS -> {
-                                toast("Фото отправлено!")
+                                if (currentIndex == lastIndex) {
+                                    toast("Фотографии отправлены!")
+                                    Log.d("finishActivity", "o: ")
+                                    viewModel.deleteImagesPath(taskId)
+                                    finish()
+                                }
                             }
                             Status.ERROR -> {
                                 toast(msg)
@@ -271,12 +282,7 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener,
                                 toast(msg)
                                 loadingHide()
                             }
-                            else -> {
-                                toast(msg)
-                                loadingHide()
-                            }
                         }
-
                     })
             } else {
                 //закрытие таска если картинок нет
@@ -285,26 +291,19 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener,
                     viewModel.deleteCardsById(savedData.id)
                     viewModel.deleteAllOverCards(savedData.id)
                 }
-                viewModel.taskStatusChange(
-                    TaskStatusModel(
-                        savedData.id,
-                        savedData.taskTypeId,
-                        TaskStatusEnum.savedToLocal
-                    )
-                ).observe(this, Observer { result ->
+                viewModel.taskStatusChange(TaskStatusModel(savedData.id, savedData.taskTypeId, TaskStatusEnum.savedToLocal)).observe(this, Observer { result ->
                     val data = result.data
                     when (result.status) {
                         Status.SUCCESS -> {
                             toast("$data")
                             startActivity(Intent(this, TaskActivity::class.java))
                             finish()
+                            Log.d("finishActivity", "r: ")
                             loadingHide()
                         }
                         else -> loadingHide()
                     }
-
                 })
-
             }
         })
     }
@@ -443,6 +442,7 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener,
                         getOverCardsAndSave(onlineData.id)
                     }
                     finish()
+                    Log.d("finishActivity", "e: ")
                 }
                 Status.ERROR -> {
                     Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
@@ -602,6 +602,7 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener,
                                         )
                                     )
                                     finish()
+                                    Log.d("finishActivity", "w: ")
                                     loadingHide()
                                 }
                             }
@@ -630,15 +631,14 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener,
                                         )
                                     )
                                     finish()
+                                    Log.d("finishActivity", "q: ")
                                     loadingHide()
                                 }
                             }
                         })
                         loadingHide()
-
                     }
                 }
-
             })
         }
     }
@@ -675,5 +675,6 @@ private fun accounting(isConfirm: Boolean, problemComment: String): Int {
     } else {
         0
     }
+
 }
 

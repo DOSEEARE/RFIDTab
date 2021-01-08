@@ -13,6 +13,7 @@ import com.example.rfidtab.base.GenericRecyclerAdapter
 import com.example.rfidtab.base.ViewHolder
 import com.example.rfidtab.service.db.entity.task.CardImagesEntity
 import kotlinx.android.synthetic.main.item_image.view.*
+import java.io.File
 
 class CardDetailAdapter(
     private val listener: CardDetailListener,
@@ -24,20 +25,22 @@ class CardDetailAdapter(
     private val size = Point()
 
     override fun bind(item: CardImagesEntity, holder: ViewHolder) {
-        display.getSize(size)
-        holder.itemView.card_item_image.layoutParams.height = size.x / 3
-        holder.itemView.card_item_image.layoutParams.width = size.x / 3
+        if (File(item.imagePath).exists()){
+            display.getSize(size)
+            holder.itemView.card_item_image.layoutParams.height = size.x / 3
+            holder.itemView.card_item_image.layoutParams.width = size.x / 3
 
-        val bitmap = BitmapFactory.decodeFile(item.imagePath)
-        val bitmapResized = Bitmap.createScaledBitmap(bitmap, bitmap.width / 10, bitmap.height / 10, true)
+            val bitmap = BitmapFactory.decodeFile(item.imagePath)
+            val bitmapResized = Bitmap.createScaledBitmap(bitmap, bitmap.width / 10, bitmap.height / 10, true)
 
-        Glide
-            .with(holder.itemView)
-            .load(bitmapResized)
-            .into(holder.itemView.card_item_image)
+            Glide
+                .with(holder.itemView)
+                .load(bitmapResized)
+                .into(holder.itemView.card_item_image)
 
-        holder.itemView.setOnClickListener {
-            listener.imageClicked(item)
+            holder.itemView.setOnClickListener {
+                listener.imageClicked(item)
+            }
         }
     }
 

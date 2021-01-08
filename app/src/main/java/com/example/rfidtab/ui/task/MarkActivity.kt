@@ -194,6 +194,9 @@ class MarkActivity : AppCompatActivity(), TaskDetailListener, RfidScannerListene
                                                 CoroutineScope(Dispatchers.IO).launch {
                                                     viewModel.deleteTaskById(savedData.id)
                                                     viewModel.deleteCardsById(savedData.id)
+                                                    withContext(Dispatchers.Main){
+                                                        finish()
+                                                    }
                                                     loadingHide()
                                                 }
                                             }

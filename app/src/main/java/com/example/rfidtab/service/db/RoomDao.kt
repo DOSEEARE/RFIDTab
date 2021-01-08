@@ -108,6 +108,9 @@ interface RoomDao {
     @Query("SELECT * FROM CardImagesEntity WHERE CardImagesEntity.cardId=:cardId AND CardImagesEntity.taskId=:taskId")
     fun findImagesById(cardId: Int, taskId: Int): LiveData<List<CardImagesEntity>>
 
+    @Query("SELECT * FROM CardImagesEntity WHERE CardImagesEntity.taskId=:taskId")
+    fun findImagesByTaskId(taskId: Int): LiveData<List<CardImagesEntity>>
+
     @Query("SELECT * FROM OverCardsEntity WHERE OverCardsEntity.taskId=:id")
     fun findAllOverCardById(id: Int): LiveData<List<OverCardsEntity>>
 
@@ -128,6 +131,9 @@ interface RoomDao {
 
     @Query("DELETE FROM TaskResultEntity WHERE TaskResultEntity.id=:id")
     fun deleteTaskById(id: Int)
+
+    @Query("DELETE FROM CardImagesEntity WHERE CardImagesEntity.taskId=:taskId")
+    fun deleteImagesPath(taskId: Int)
 
     @Query("DELETE FROM CardImagesEntity WHERE CardImagesEntity.cardId=:cardId")
     fun deleteCardImageById(cardId: Int)

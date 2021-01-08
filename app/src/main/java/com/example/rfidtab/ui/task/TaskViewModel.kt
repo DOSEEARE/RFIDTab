@@ -79,6 +79,10 @@ class TaskViewModel(application: Application) : BaseViewModel(application) {
         return db.findImagesById(cardId, taskId)
     }
 
+    fun findImagesByTaskId(taskId: Int): LiveData<List<CardImagesEntity>> {
+        return db.findImagesByTaskId(taskId)
+    }
+
     fun findAllOverCardById(id: Int): LiveData<List<OverCardsEntity>> {
         return db.findAllOverCardById(id)
     }
@@ -98,6 +102,9 @@ class TaskViewModel(application: Application) : BaseViewModel(application) {
         return db.deleteTaskById(id)
     }
 
+    fun deleteImagesPath (taskId : Int){
+        return db.deleteImagesPath(taskId)
+    }
     fun deleteCardsById(id: Int) {
         return db.deleteCardsById(id)
     }
@@ -156,4 +163,4 @@ class TaskViewModel(application: Application) : BaseViewModel(application) {
     fun confirmCards (model : ConfirmCardModel) :LiveData<Resource<String>>{
         return network.confirmCards(model)
     }
-}
+    }

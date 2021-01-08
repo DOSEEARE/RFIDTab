@@ -177,6 +177,7 @@ class KitOrderActivity : AppCompatActivity(),
                                         kitOrderViewModel.sendKitOrderCards(model).observe(this, Observer { result ->
                                             when (result.status) {
                                                 Status.SUCCESS -> {
+
                                                 }
                                             }
                                         })

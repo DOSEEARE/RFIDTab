@@ -8,6 +8,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Environment
 import android.util.Base64
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.core.app.ActivityCompat
@@ -26,6 +27,14 @@ class MyUtil {
             val cardsDirectory = File(folderPath)
             cardsDirectory.mkdirs()
         }
+    }
+
+    fun deleteFileFromStorage (filePath : String){
+        val file = File(filePath)
+        if (file.delete())
+            Log.d("Delete image after send", "DELETED $filePath ")
+        else
+            Log.d("Delete image after send", "NOT DELETED $filePath ")
     }
 
     fun askPermissionForCamera(context: Activity, code: Int) {

@@ -1,12 +1,15 @@
 package com.example.rfidtab.service
 
+import android.util.Log
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.util.concurrent.TimeUnit
+
 
 object RetrofitClient {
 
@@ -24,13 +27,25 @@ object RetrofitClient {
         chain.proceed(newRequest)
     }
 
+    var httpLoggingInterceptor = run {
+        val httpLoggingInterceptor1 = HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
+            override fun log(message: String) {
+                Log.d("okhttp", message)
+            }
+        })
+        httpLoggingInterceptor1.apply {
+            httpLoggingInterceptor1.level = HttpLoggingInterceptor.Level.BODY
+        }
+    }
+
     private val client =
         OkHttpClient().newBuilder()
             .addInterceptor(authInterceptor)
+            .addInterceptor(httpLoggingInterceptor)
             .authenticator(Authenticator())
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
+            .connectTimeout(240, TimeUnit.SECONDS)
+            .readTimeout(240, TimeUnit.SECONDS)
+            .writeTimeout(240, TimeUnit.SECONDS)
             .build()
 
     private fun retrofit(baseUrl: String = "http://78.139.104.111:5902/api/") =

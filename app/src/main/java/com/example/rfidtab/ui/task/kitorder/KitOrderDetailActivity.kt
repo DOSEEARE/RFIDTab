@@ -211,7 +211,6 @@ class KitOrderDetailActivity : AppCompatActivity(), KitCardSavedListener, RfidSc
         view.scan_result_et.setText(accessTag)
         //Сохранение карточки
         view.scan_access_btn.setOnClickListener {
-
             if (accessTag.isNotEmpty()) {
                 if (MyUtil().equalsNoSpace(model.rfidTagNo!!, accessTag)) {
                     kitOrderViewModel.kitOrderCardConfirm(model.id, true)
@@ -222,13 +221,13 @@ class KitOrderDetailActivity : AppCompatActivity(), KitCardSavedListener, RfidSc
                     toast("Не совпадает!")
                     scanDialog.dismiss()
                 }
-
             } else {
                 if (view.scan_comment_et.text.toString().isNotEmpty()) {
                     kitOrderViewModel.updateProblemCommentKitCard(
                         model.id,
                         view.scan_comment_et.text.toString()
                     )
+                    kitOrderViewModel.kitOrderCardConfirm(model.id, true)
                     toast("Успешно сохранён!")
                     scanDialog.dismiss()
                 } else {

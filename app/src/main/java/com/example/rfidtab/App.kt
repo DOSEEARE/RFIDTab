@@ -18,7 +18,6 @@ class App : Application() {
             androidContext(this@App)
             modules(getModule())
         }
-
     }
 
     private fun getModule(): List<Module> {

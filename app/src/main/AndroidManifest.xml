@@ -17,26 +17,45 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.search.SearchDetailActivity" />
-        <activity android:name="com.example.rfidtab.ui.task.kitorder.KitOrderActivity" />
-        <activity android:name="com.example.rfidtab.ui.task.kitorder.KitOrderDetailActivity" />
-        <activity android:name=".ui.search.SearchActivity" />
-        <activity android:name=".ui.createkit.CreateKitActivity" />
-        <activity android:name=".ui.task.MarkActivity" />
+        <activity
+            android:name=".ui.search.SearchDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.example.rfidtab.ui.task.kitorder.KitOrderActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.example.rfidtab.ui.task.kitorder.KitOrderDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.search.SearchActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.createkit.CreateKitActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.task.MarkActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.task.CardDetailActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.profile.ProfileActivity"
+            android:screenOrientation="portrait"
             android:noHistory="true" />
-        <activity android:name=".ui.task.TaskDetailActivity" />
+        <activity
+            android:name=".ui.task.TaskDetailActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.auth.AuthActivity"
+            android:screenOrientation="portrait"
             android:noHistory="true" />
-        <activity android:name=".ui.task.TaskActivity" />
+        <activity
+            android:name=".ui.task.TaskActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.splash.SplashActivity"
             android:noHistory="true"
+            android:screenOrientation="portrait"
             android:theme="@style/NoToolbar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

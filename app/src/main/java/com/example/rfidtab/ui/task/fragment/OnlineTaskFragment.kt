@@ -203,25 +203,13 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                     println(t)
                 }
 
-                override fun onResponse(
-                    call: Call<List<OverCardsResponse>>,
-                    response: Response<List<OverCardsResponse>>
-                ) {
-                    println(response)
+                override fun onResponse(call: Call<List<OverCardsResponse>>, response: Response<List<OverCardsResponse>>) { println(response)
                     if (response.isSuccessful) {
                         if (!response.body().isNullOrEmpty()) {
                             val overCardsList = ArrayList<OverCardsEntity>()
                             response.body()?.forEach { it ->
                                 overCardsList.add(
-                                    OverCardsEntity(
-                                        it.id,
-                                        taskId,
-                                        it.pipeSerialNumber,
-                                        it.serialNoOfNipple,
-                                        it.couplingSerialNumber,
-                                        it.rfidTagNo,
-                                        it.comment
-                                    )
+                                    OverCardsEntity(it.id, taskId, it.pipeSerialNumber, it.serialNoOfNipple, it.couplingSerialNumber, it.rfidTagNo, it.comment)
                                 )
                             }
                             Log.d("TASKID", "taskid onlineFragment: $overCardsList")
@@ -381,15 +369,10 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
                                         comment = spec.comment,
                                         cardCount = data.cardCount!!
                                     )
-                                    Log.d(
-                                        "insertKitOrder",
-                                        "insertKitOrderSpec ID: ${kitOrderKit.id}"
-                                    )
                                     kitOrderViewModel.insertKitOrderSpec(kitOrderSpec)
                                 }
                             }
                         }
-                        Log.d("DDASDSA", "saveKitOrder: ${Gson().toJson(data)}")
                         kitOrderViewModel.insertKitOrderAddCardList(addedCardList)
                         kitOrderViewModel.insertKitOrder(entity)
                         kitOrderViewModel.insertKitItem(listKit)

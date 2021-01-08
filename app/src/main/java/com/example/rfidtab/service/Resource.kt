@@ -11,7 +11,6 @@ data class Resource<out T>(val status: Status, val data: T?, val msg: String?) {
             return Resource(Status.ERROR, data, msg)
         }
 
-
         fun <T> netwrok(msg: String = "", data: T? = null): Resource<T> {
             return Resource(Status.NETWORK, data, msg)
         }
