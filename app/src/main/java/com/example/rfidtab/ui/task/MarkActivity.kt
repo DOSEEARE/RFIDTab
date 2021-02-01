@@ -79,7 +79,6 @@ class MarkActivity : AppCompatActivity(), TaskDetailListener, RfidScannerListene
 
     private fun initViews() {
         val isOnline = intent.getBooleanExtra("isOnline", true)
-
         if (isOnline) {
             val model = intent.getSerializableExtra("data") as TaskResponse
             onlineData = model
@@ -131,10 +130,9 @@ class MarkActivity : AppCompatActivity(), TaskDetailListener, RfidScannerListene
             alertDialog.setCancelable(false)
 
             view.add_positive_btn.setOnClickListener {
-                if (changeTaskStatus(onlineData)) {
+                if (changeTaskStatus(onlineData, alertDialog)) {
                     alertDialog.dismiss()
                 }
-
             }
 
             view.add_negative_btn.setOnClickListener {
@@ -316,7 +314,7 @@ class MarkActivity : AppCompatActivity(), TaskDetailListener, RfidScannerListene
     }
 
     //изменить статус
-    private fun changeTaskStatus(model: TaskResponse): Boolean {
+    private fun changeTaskStatus(model: TaskResponse, alertDialog: AlertDialog): Boolean {
         var isSuccess = false
         viewModel.taskStatusChange(
             TaskStatusModel(
@@ -330,7 +328,7 @@ class MarkActivity : AppCompatActivity(), TaskDetailListener, RfidScannerListene
                 Status.SUCCESS -> {
                     isSuccess = true
                     toast("Вы взяли задание на исполнение")
-                    saveItemToDb(model)
+                    saveItemToDb(model, alertDialog)
                 }
                 Status.ERROR -> {
                     Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
@@ -349,7 +347,7 @@ class MarkActivity : AppCompatActivity(), TaskDetailListener, RfidScannerListene
     }
 
     //сохранить задачи на кнопку сохранить
-    private fun saveItemToDb(model: TaskResponse) {
+    private fun saveItemToDb(model: TaskResponse, alertDialog: AlertDialog) {
         CoroutineScope(Dispatchers.IO).launch {
             val cards = ArrayList<TaskCardListEntity>()
 
@@ -393,6 +391,8 @@ class MarkActivity : AppCompatActivity(), TaskDetailListener, RfidScannerListene
 
             withContext(Dispatchers.Main) {
                 toast("Успешно сохранён!")
+                alertDialog.dismiss()
+                //suda
             }
         }
     }

@@ -40,6 +40,7 @@ import com.example.rfidtab.ui.task.fragment.TaskEditOverBS
 import com.example.rfidtab.util.MyUtil
 import com.example.rfidtab.util.scanrfid.RfidScannerListener
 import com.example.rfidtab.util.scanrfid.RfidScannerUtil
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_task_detail.*
 import kotlinx.android.synthetic.main.activity_task_detail.task_detail_createdby
 import kotlinx.android.synthetic.main.activity_task_detail.task_detail_executor
@@ -251,17 +252,13 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener,
 
     }
 
-    private fun sendCardsImages(
-        cardId: Int,
-        taskId: Int,
-        taskTypId: Int,
-        currentIndex: Int,
-        lastIndex: Int
-    ) {
+    private fun sendCardsImages(cardId: Int, taskId: Int, taskTypId: Int, currentIndex: Int, lastIndex: Int) {
         //отправка и закрытие таска если картинки есть
-        viewModel.findImagesByTaskId(taskId).observe(this, Observer {
+        viewModel.findImagesById(cardId, taskId).observe(this, Observer {
+            Log.d("findImagesById", "sendCardsImages: ${Gson().toJson(it)}")
             if (it.isNotEmpty()) {
                 loadingShow()
+                toast("Отправка фотографий...")
                 viewModel.sendImage(it, cardId, taskTypId, taskId)
                     .observe(this, Observer { result ->
                         val msg = result.msg
@@ -378,15 +375,11 @@ class TaskDetailActivity : AppCompatActivity(), TaskDetailListener,
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE)
         }
-        filePath = File(
-            getExternalFilesDir(Environment.DIRECTORY_DCIM)?.path + "/RFID cards",
-            "/card ${Calendar.getInstance().time}.jpg"
-        )
+        filePath = File(getExternalFilesDir(Environment.DIRECTORY_DCIM)?.path + "/RFID cards", "/card ${Calendar.getInstance().time}.jpg")
         cardId = model.cardId
         mTaskId = savedData.id
 
-        val uri =
-            FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", filePath)
+        val uri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", filePath)
         //      val uri = Uri.fromFile(filePath)
 
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri)

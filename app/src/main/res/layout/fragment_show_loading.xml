@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
         android:gravity="center"
-        android:text="Сканировение..."
+        android:text="Сканирование..."
         android:textColor="@color/blackColor"
         android:textSize="36dp"
         app:layout_constraintBottom_toTopOf="@id/loading_dismiss_btn" />
