@@ -1,5 +1,6 @@
 package com.example.rfidtab.util.scanrfid
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,6 +13,7 @@ import androidx.fragment.app.FragmentActivity
 import com.example.rfidtab.R
 import com.example.rfidtab.util.DataTransfer
 import com.senter.support.openapi.StUhf
+import kotlinx.android.synthetic.main.alert_found.view.*
 import kotlinx.android.synthetic.main.fragment_show_loading.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -55,19 +57,19 @@ class RfidScannerUtil(val onScanListener: RfidScannerListener) : DialogFragment(
 
                             }
 
-                            override fun onTagRead(
-                                tagCount: Int,
-                                uii: StUhf.UII,
-                                data: ByteArray,
-                                frequencyPoint: StUhf.InterrogatorModelDs.UmdFrequencyPoint,
-                                antennaId: Int,
-                                readCount: Int
-                            ) {
+                            override fun onTagRead(tagCount: Int, uii: StUhf.UII, data: ByteArray, frequencyPoint: StUhf.InterrogatorModelDs.UmdFrequencyPoint, antennaId: Int, readCount: Int) {
                                 tag = DataTransfer.xGetString(uii.bytes)
                                 context.runOnUiThread {
                                     if (tag.isNotEmpty()) {
-                                        onScanListener.onAccessScan(tag)
-                                        dismiss()
+                                        val builder = AlertDialog.Builder(context)
+                                        val view  = layoutInflater.inflate( R.layout.alert_found, null)
+                                        view.add_found_tv.text = tag
+                                        builder.setView(view)
+                                        builder.setOnCancelListener {
+                                            onScanListener.onAccessScan(tag)
+                                            dismiss()
+                                        }
+                                        builder.show()
                                     }
                                 }
                             }

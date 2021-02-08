@@ -145,14 +145,8 @@ class OnlineTaskFragment : Fragment(), TaskOnlineListener {
 
     }
 
-    private fun saveTask(model: TaskResponse) {
-        viewModel.taskStatusChange(
-            TaskStatusModel(
-                model.id,
-                model.taskTypeId,
-                TaskStatusEnum.takenForExecution
-            )
-        ).observe(viewLifecycleOwner, Observer { result ->
+    private fun saveTask(model: TaskResponse) { viewModel.taskStatusChange(TaskStatusModel(model.id, model.taskTypeId, TaskStatusEnum.takenForExecution))
+        .observe(viewLifecycleOwner, Observer { result ->
             val data = result.data
             val msg = result.msg
             when (result.status) {

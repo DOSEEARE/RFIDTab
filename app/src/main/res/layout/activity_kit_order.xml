@@ -137,6 +137,17 @@
                     android:textColor="@color/whiteColor"
                     app:layout_constraintBottom_toBottomOf="parent" />
 
+                <Button
+                    android:id="@+id/kit_order_save_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/marginHorizontal"
+                    android:layout_marginBottom="8dp"
+                    android:visibility="gone"
+                    android:background="@drawable/bg_main_button"
+                    android:text="Сохранить"
+                    android:textColor="@color/whiteColor"
+                    app:layout_constraintBottom_toBottomOf="parent" />
 
 
             </LinearLayout>

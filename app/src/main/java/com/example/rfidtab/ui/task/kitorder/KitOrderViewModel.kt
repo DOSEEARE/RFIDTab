@@ -6,6 +6,8 @@ import com.example.rfidtab.base.BaseViewModel
 import com.example.rfidtab.service.Resource
 import com.example.rfidtab.service.db.entity.kit.ProblemCardEntity
 import com.example.rfidtab.service.db.entity.kitorder.*
+import com.example.rfidtab.service.db.entity.task.TaskWithCards
+import com.example.rfidtab.service.model.TaskStatusModel
 import com.example.rfidtab.service.model.confirm.ConfirmCardModel
 import com.example.rfidtab.service.model.kitorder.KitOrderModel
 import com.example.rfidtab.service.response.kitorder.KitOrderResponse
@@ -16,8 +18,16 @@ class KitOrderViewModel(application: Application) : BaseViewModel(application) {
         return network.kitOrder(id)
     }
 
+    fun insertTaskToDb(item: TaskWithCards) {
+        db.insertTaskToDB(item)
+    }
+
     fun deleteAllKitOrderCards(taskId: Int) {
         return db.deleteAllOverCards(taskId)
+    }
+
+    fun taskStatusChange(model: TaskStatusModel): LiveData<Resource<String>> {
+        return network.taskStatusChange(model)
     }
 
     fun deleteKitOrderAddCard(id: Int) {
